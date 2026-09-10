@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="theme-color" content="#5b6cff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="寶貝積分">
+<title>寶貝積分</title>
+<style>
+:root{
+  --bg:#e9edfa; --bg2:#dfe5f8; --surface:#fff; --surface2:#f5f7ff; --ink:#111a30; --muted:#6a7492; --line:#e0e6f5;
+  --brand:#4353ff; --brand-soft:#e9ebff; --good:#0fa66f; --good-soft:#e3f8ef;
+  --bad:#e8474b; --bad-soft:#ffe9ea; --gold:#e08700; --gold-soft:#fff2da;
+  --shadow:0 1px 2px rgba(16,24,48,.06), 0 10px 26px rgba(16,24,48,.09);
+  --glow:0 0 0 rgba(0,0,0,0);
+  --r:18px; --r-sm:12px; --nav:66px;
+  --c1:#7c879f; --c2:#12a150; --c3:#2f7cf6; --c4:#9b4dff; --c5:#f0a000;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#070a13; --bg2:#0d1220; --surface:#151b2c; --surface2:#1b2235; --ink:#eaf0ff; --muted:#8d99ba; --line:#28304a;
+  --brand:#7f8dff; --brand-soft:#1e2544; --good:#2fd493; --good-soft:#102e26;
+  --bad:#ff7276; --bad-soft:#33191d; --gold:#ffbc4d; --gold-soft:#332612;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
+  --c1:#98a2bd; --c2:#35d98a; --c3:#5b9dff; --c4:#b478ff; --c5:#ffc247;
+}}
+:root[data-theme="dark"]{
+  --bg:#070a13; --bg2:#0d1220; --surface:#151b2c; --surface2:#1b2235; --ink:#eaf0ff; --muted:#8d99ba; --line:#28304a;
+  --brand:#7f8dff; --brand-soft:#1e2544; --good:#2fd493; --good-soft:#102e26;
+  --bad:#ff7276; --bad-soft:#33191d; --gold:#ffbc4d; --gold-soft:#332612;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
+  --c1:#98a2bd; --c2:#35d98a; --c3:#5b9dff; --c4:#b478ff; --c5:#ffc247;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  color:var(--ink); min-height:100vh;
+  background:
+    radial-gradient(1100px 480px at 50% -180px, color-mix(in srgb,var(--brand) 16%,transparent), transparent 70%),
+    var(--bg);
+  background-attachment:fixed;
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 12px);
+  overscroll-behavior-y:none;
+}
+.wrap{max-width:600px;margin:0 auto;padding:0 14px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+input,select,textarea{font-size:16px}
+
+/* ---- header ---- */
+header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);
+  border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);padding-top:env(safe-area-inset-top)}
+.hrow{max-width:600px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.logo{font-weight:850;font-size:17px;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+.logo span{width:27px;height:27px;border-radius:8px;display:grid;place-items:center;font-size:15px;
+  background:linear-gradient(150deg,var(--c5),var(--c4));box-shadow:0 3px 10px color-mix(in srgb,var(--c4) 45%,transparent)}
+.sync{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:var(--muted);
+  background:var(--surface);border:1px solid var(--line);padding:5px 10px;border-radius:999px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:0 0 auto}
+.dot.ok{background:var(--good)} .dot.warn{background:var(--gold)} .dot.err{background:var(--bad)}
+.dot.busy{background:var(--brand);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.sec{margin:18px 0 9px;display:flex;align-items:center;gap:8px}
+.sec h2{margin:0;font-size:12px;font-weight:800;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase}
+.sec .more{margin-left:auto;font-size:13px;color:var(--brand);font-weight:700}
+
+/* ============ 卡框系統 ============ */
+.tcg{position:relative;border-radius:var(--r);padding:2px;background:linear-gradient(160deg,var(--rc),color-mix(in srgb,var(--rc) 25%,var(--surface)));
+  box-shadow:var(--shadow);--rc:var(--c1)}
+.tcg.r2{--rc:var(--c2)} .tcg.r3{--rc:var(--c3)} .tcg.r4{--rc:var(--c4)} .tcg.r5{--rc:var(--c5)}
+.tcg.r4,.tcg.r5{box-shadow:var(--shadow),0 0 22px color-mix(in srgb,var(--rc) 32%,transparent)}
+.tcg-in{position:relative;border-radius:calc(var(--r) - 2px);background:var(--surface);overflow:hidden;height:100%;display:flex;flex-direction:column}
+.tcg.holo .tcg-in:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:conic-gradient(from 210deg,#ff5f6d22,#ffc37122,#3ef0c722,#5b8cff22,#c86dff22,#ff5f6d22);
+  mix-blend-mode:soft-light;opacity:.85;animation:holo 7s linear infinite}
+@keyframes holo{to{filter:hue-rotate(360deg)}}
+.rarity{display:flex;gap:1px;font-size:11.5px;font-weight:900;letter-spacing:-.5px;color:var(--rc);
+  text-shadow:0 0 7px color-mix(in srgb,var(--rc) 55%,transparent)}
+
+/* ---- 訓練卡（小孩） ---- */
+.kidgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(158px,1fr))}
+.kid{--rc:var(--kc);position:relative;border-radius:var(--r);padding:2px;text-align:left;display:block;width:100%;
+  background:linear-gradient(155deg,var(--kc),color-mix(in srgb,var(--kc) 22%,var(--surface)));
+  box-shadow:var(--shadow),0 0 18px color-mix(in srgb,var(--kc) 22%,transparent);transition:transform .12s}
+.kid:active{transform:scale(.975)}
+.kid .in{border-radius:calc(var(--r) - 2px);background:var(--surface);padding:12px 12px 13px;position:relative;overflow:hidden}
+.kid .in:before{content:"";position:absolute;inset:-40% -20% auto -20%;height:120px;border-radius:50%;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--kc) 26%,transparent),transparent)}
+.kid .top{position:relative;display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.av{width:44px;height:44px;border-radius:13px;object-fit:cover;background:var(--kc);display:grid;place-items:center;color:#fff;
+  font-weight:850;font-size:17px;flex:0 0 auto;box-shadow:0 3px 10px color-mix(in srgb,var(--kc) 45%,transparent)}
+.kid .nm{font-weight:850;font-size:15.5px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kid .sub{font-size:10.5px;color:var(--muted);font-weight:600;letter-spacing:.3px}
+.bigscore{display:flex;align-items:baseline;gap:4px;position:relative}
+.bigscore b{font-size:36px;font-weight:850;letter-spacing:-2px;line-height:1;
+  background:linear-gradient(160deg,var(--ink),color-mix(in srgb,var(--kc) 70%,var(--ink)));-webkit-background-clip:text;background-clip:text;color:transparent}
+.bigscore i{font-style:normal;font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.5px}
+.smallscore{font-size:11.5px;color:var(--muted);margin-top:3px;position:relative;font-weight:600}
+.pips{display:flex;gap:4px;margin-top:10px;position:relative}
+.pips i{flex:1;height:7px;border-radius:99px;background:var(--line);transition:.3s}
+.pips i.on{background:var(--kc);box-shadow:0 0 8px color-mix(in srgb,var(--kc) 55%,transparent)}
+.kid .todo{margin-top:9px;font-size:11px;font-weight:700;color:var(--muted);display:flex;gap:8px;position:relative}
+.kid .todo b{color:var(--good)} .kid .todo u{text-decoration:none;color:var(--bad)}
+
+/* ---- 按鈕 ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:0 16px;border-radius:var(--r-sm);
+  font-weight:750;font-size:15px;background:var(--surface);border:1px solid var(--line);color:var(--ink);box-shadow:var(--shadow)}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--c4) 55%,var(--brand)));color:#fff;border-color:transparent;
+  box-shadow:0 4px 16px color-mix(in srgb,var(--brand) 45%,transparent)}
+.btn.good{background:var(--good);color:#fff;border-color:transparent}
+.btn.bad{background:var(--bad);color:#fff;border-color:transparent}
+.btn.ghost{box-shadow:none;background:transparent}
+.btn.sm{min-height:36px;padding:0 12px;font-size:13.5px;border-radius:10px}
+.btn.wide{width:100%}
+.btn[disabled]{opacity:.42;pointer-events:none}
+.row{display:flex;gap:9px} .row>*{flex:1}
+
+/* ---- chips ---- */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 13px 6px 6px;border-radius:999px;border:1.5px solid var(--line);
+  background:var(--surface);font-weight:750;font-size:14px;white-space:nowrap}
+.chip .av{width:28px;height:28px;border-radius:9px;font-size:12px;box-shadow:none}
+.chip.on{border-color:var(--kc);background:color-mix(in srgb,var(--kc) 13%,var(--surface));box-shadow:0 0 14px color-mix(in srgb,var(--kc) 25%,transparent)}
+.chip.plain{padding:7px 13px;font-size:13px}
+.chip.plain.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+
+/* ---- 規則按鈕 ---- */
+.rules{display:grid;gap:9px;grid-template-columns:repeat(auto-fill,minmax(152px,1fr))}
+.rule{display:flex;align-items:center;gap:9px;padding:10px;border-radius:var(--r-sm);text-align:left;
+  background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);min-height:58px}
+.rule:active{transform:scale(.96)}
+.rule .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:18px;flex:0 0 auto;
+  background:var(--good-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--good) 18%,transparent)}
+.rule.dd .ic{background:var(--bad-soft);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--bad) 18%,transparent)}
+.rule .tx{min-width:0;flex:1}
+.rule .tx b{display:block;font-size:13.5px;font-weight:700;line-height:1.25}
+.rule .tx u{text-decoration:none;font-size:11.5px;color:var(--good);font-weight:800}
+.rule.dd .tx u{color:var(--bad)}
+
+/* ---- 獎勵卡 ---- */
+.rw{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(152px,1fr))}
+.rwc{text-align:left}
+.rwc:active{transform:scale(.975)}
+.rwc .hd{display:flex;align-items:center;padding:7px 9px 4px;gap:6px}
+.rwc .ntd{margin-left:auto;font-size:9.5px;font-weight:850;color:var(--muted);letter-spacing:.3px;
+  background:var(--surface2);border:1px solid var(--line);padding:2px 6px;border-radius:6px}
+.rwc .art{aspect-ratio:1/.82;display:grid;place-items:center;font-size:44px;overflow:hidden;margin:0 8px;border-radius:10px;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--rc) 22%,var(--surface2)),var(--surface2));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--rc) 22%,transparent)}
+.rwc .art img{width:100%;height:100%;object-fit:cover}
+.rwc .bd{padding:9px 10px 10px;flex:1;display:flex;flex-direction:column}
+.rwc .bd b{display:block;font-size:13px;font-weight:800;line-height:1.32;margin-bottom:6px}
+.cost{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:850;color:#fff;
+  background:linear-gradient(150deg,var(--rc),color-mix(in srgb,var(--rc) 60%,#000));padding:3px 9px;border-radius:999px;align-self:flex-start}
+.rwc .who{margin-top:auto;padding-top:8px;display:flex;gap:5px;flex-wrap:wrap}
+.pill{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.yes{background:var(--good-soft);border-color:transparent;color:var(--good)}
+.stock{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:600}
+.rwc[disabled]{opacity:.45}
+
+/* ---- 清單 ---- */
+.list{border-radius:var(--r);overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.li{display:flex;align-items:center;gap:11px;padding:11px 13px;border-bottom:1px solid var(--line);text-align:left;width:100%}
+.li:last-child{border-bottom:0}
+.li .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:16px;flex:0 0 auto;background:var(--surface2)}
+.li .tx{flex:1;min-width:0}
+.li .tx b{display:block;font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .tx u{text-decoration:none;font-size:11.5px;color:var(--muted)}
+.delta{font-weight:850;font-size:14.5px;flex:0 0 auto}
+.delta.p{color:var(--good)} .delta.n{color:var(--bad)}
+.li.void{opacity:.42} .li.void .tx b{text-decoration:line-through}
+.daylab{font-size:11.5px;font-weight:850;color:var(--muted);padding:15px 3px 7px;letter-spacing:1px}
+.empty{text-align:center;color:var(--muted);padding:36px 16px;font-size:14px}
+.empty .e{font-size:42px;display:block;margin-bottom:8px;opacity:.55}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.st{padding:12px 8px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);text-align:center;box-shadow:var(--shadow)}
+.st b{display:block;font-size:21px;font-weight:850;letter-spacing:-.8px}
+.st u{text-decoration:none;font-size:10.5px;color:var(--muted);font-weight:600}
+
+/* ---- 表單 ---- */
+.f{margin-bottom:13px}
+.f label{display:block;font-size:12px;font-weight:800;color:var(--muted);margin-bottom:5px;letter-spacing:.3px}
+.f input,.f select,.f textarea{width:100%;padding:11px 12px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:var(--surface2);color:var(--ink)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:0;border-color:var(--brand)}
+.f .hint{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.55}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.sw{display:flex;align-items:center;gap:11px;padding:12px 13px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.sw:last-child{border-bottom:0}
+.sw .tx{flex:1}.sw .tx b{display:block;font-size:14px;font-weight:700}
+.sw .tx u{text-decoration:none;font-size:11.5px;color:var(--muted);line-height:1.45;display:block;margin-top:2px}
+.tg{width:46px;height:28px;border-radius:99px;background:var(--line);position:relative;flex:0 0 auto;transition:background .18s}
+.tg:after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.28)}
+.tg.on{background:var(--good)} .tg.on:after{transform:translateX(18px)}
+
+.avpick{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.avpick .av{width:64px;height:64px;border-radius:18px;font-size:24px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.sws{width:30px;height:30px;border-radius:10px;border:2.5px solid transparent}
+.sws.on{border-color:var(--ink)}
+
+/* ---- nav ---- */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.nrow{max-width:600px;margin:0 auto;display:flex;height:var(--nav)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:750;color:var(--muted)}
+.nb em{font-style:normal;font-size:20px;line-height:1;filter:grayscale(1);opacity:.5;transition:.15s}
+.nb.on{color:var(--brand)} .nb.on em{filter:none;opacity:1;transform:translateY(-1px)}
+
+/* ---- modal ---- */
+.scrim{position:fixed;inset:0;z-index:90;background:rgba(8,11,20,.58);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
+.scrim.on{display:flex}
+.sheet{background:var(--surface);width:100%;max-width:600px;max-height:90vh;overflow-y:auto;border-radius:22px 22px 0 0;
+  padding:6px 16px calc(20px + env(safe-area-inset-bottom));animation:up .22s ease;border-top:1px solid var(--line)}
+@keyframes up{from{transform:translateY(24px);opacity:.6}}
+.grab{width:38px;height:4px;border-radius:9px;background:var(--line);margin:8px auto 12px}
+.sheet h3{margin:0 0 14px;font-size:18px;font-weight:850;display:flex;align-items:center;gap:8px}
+.sheet h3 .x{margin-left:auto;font-size:22px;color:var(--muted);line-height:1;padding:2px 6px}
+
+/* ---- toast ---- */
+.toast{position:fixed;left:50%;transform:translateX(-50%) translateY(30px) scale(.96);bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 14px);
+  z-index:95;background:var(--ink);color:var(--bg);padding:11px 13px;border-radius:14px;display:flex;align-items:center;gap:11px;
+  font-size:14px;font-weight:700;box-shadow:0 12px 34px rgba(0,0,0,.35);max-width:calc(100vw - 28px);
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:transform .24s cubic-bezier(.2,.9,.3,1.2),opacity .18s ease,visibility 0s linear .24s}
+.toast.on{transform:translateX(-50%) translateY(0) scale(1);opacity:1;visibility:visible;pointer-events:auto;
+  transition:transform .26s cubic-bezier(.2,.9,.3,1.2),opacity .16s ease,visibility 0s}
+.toast button{color:var(--bg);font-weight:850;font-size:13.5px;border:1.5px solid color-mix(in srgb,var(--bg) 40%,transparent);padding:5px 11px;border-radius:9px;flex:0 0 auto}
+
+/* ---- pin ---- */
+.pinv{display:flex;gap:11px;justify-content:center;margin:6px 0 18px}
+.pinv i{width:14px;height:14px;border-radius:50%;background:var(--line)}
+.pinv i.f{background:var(--brand);box-shadow:0 0 10px color-mix(in srgb,var(--brand) 55%,transparent)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:290px;margin:0 auto}
+.pad button{height:58px;border-radius:15px;background:var(--surface2);border:1px solid var(--line);font-size:22px;font-weight:750}
+.pad button:active{background:var(--brand-soft)}
+
+.banner{display:flex;gap:11px;align-items:flex-start;padding:12px 13px;border-radius:var(--r-sm);background:var(--gold-soft);
+  border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);font-size:13px;margin-top:14px}
+.banner b{display:block;font-weight:800;margin-bottom:2px}
+.danger{color:var(--bad)}
+.fab{position:fixed;right:16px;bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 14px);z-index:45;width:54px;height:54px;border-radius:18px;
+  background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--c4) 55%,var(--brand)));color:#fff;font-size:24px;display:grid;place-items:center;
+  box-shadow:0 10px 26px color-mix(in srgb,var(--brand) 50%,transparent)}
+.hide{display:none!important}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;word-break:break-all}
+
+/* ---- 開卡動畫 ---- */
+.reveal{position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:rgba(6,9,18,.82);backdrop-filter:blur(6px)}
+.reveal .rc{width:210px;animation:pop .55s cubic-bezier(.2,1.3,.4,1)}
+.reveal .cap{position:absolute;bottom:16%;left:0;right:0;text-align:center;color:#fff;font-weight:850;font-size:17px;
+  text-shadow:0 2px 12px rgba(0,0,0,.6);animation:up2 .5s .2s both}
+@keyframes pop{0%{transform:scale(.3) rotateY(90deg);opacity:0}60%{transform:scale(1.08) rotateY(0);opacity:1}100%{transform:scale(1)}}
+@keyframes up2{from{transform:translateY(14px);opacity:0}}
+.sparks{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.sparks i{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall 1.5s ease-in forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(70vh) rotate(540deg);opacity:0}}
+</style>
+</head>
+<body>
+<header><div class="hrow">
+  <div class="logo"><span>⭐</span>寶貝積分</div>
+  <button class="sync" data-act="syncpanel"><i class="dot" id="sdot"></i><span id="stxt">載入中</span></button>
+</div></header>
+
+<main class="wrap" id="view"></main>
+
+<nav><div class="nrow" id="nav"></div></nav>
+
+<div class="scrim" id="scrim"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"><span id="ttx"></span><button id="tbtn" class="hide">復原</button></div>
+<input type="file" accept="image/*" id="filepick" class="hide">
+<script>
+/* ============================================================
+   寶貝積分 Kid Points  —  基礎架構
+   資料：本機 localStorage 立即存，GitHub repo data.json 同步
+   分數：內部一律以「小分」為單位，1 大分 = settings.bigUnit 小分
+   餘額：完全由帳本 ledger 推導 → 多裝置合併不會算錯
+   ============================================================ */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const uid=p=>(p||'')+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const now=()=>Date.now();
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
+const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
+
+const K_STATE='kp_state_v1', K_MEDIA='kp_media_v1', K_GH='kp_gh_v1', K_DIRTY='kp_dirty_v1', K_SHA='kp_sha_v1';
+
+/* ---------------- 預設資料 ---------------- */
+function seed(){
+  const t=now();
+  const R=(label,emoji,kind,unit,amount)=>({id:uid('r'),label,emoji,kind,unit,amount,sort:0,updatedAt:t});
+  // W(名稱, emoji, 單位, 數量, 參考價格元 或 null=特權型, 備註)
+  const W=(name,emoji,unit,amount,price,note)=>({id:uid('w'),name,emoji,image:null,unit,amount,
+    price:(price==null?null:price),stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
+  return {
+    schema:2,
+    settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
+              pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto'},
+    kids:[
+      {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
+      {id:uid('k'),name:'寶貝二號',color:KC[1],avatar:null,sort:1,updatedAt:t}
+    ],
+    rules:[
+      R('自己收玩具 / 收書包','🎒','earn','small',1),
+      R('主動寫功課不用催','✏️','earn','small',1),
+      R('刷牙洗臉不用催','🪥','earn','small',1),
+      R('幫忙做家事','🧹','earn','small',1),
+      R('有禮貌打招呼','🙋','earn','small',1),
+      R('閱讀 20 分鐘','📖','earn','small',1),
+      R('準時上床睡覺','🛏️','earn','small',1),
+      R('練琴 / 運動 30 分','🏀','earn','small',1),
+      R('自己準備隔天用品','📚','earn','small',1),
+      R('自己把飯吃完','🍚','earn','small',1),
+      R('幫忙照顧弟弟妹妹','🤝','earn','small',1),
+      R('考試 90 分以上','💯','earn','big',1),
+      R('考試滿分','🏆','earn','big',1),
+      R('一整週都準時起床','⏰','earn','big',1),
+      R('看完一本書並分享','📚','earn','big',1),
+      R('被老師稱讚','🌟','earn','big',1),
+      R('亂丟東西不收','🧦','deduct','small',1),
+      R('吃飯拖拖拉拉','🐌','deduct','small',1),
+      R('講話沒禮貌','😤','deduct','small',1),
+      R('賴床叫三次以上','⏰','deduct','small',1),
+      R('超時看螢幕','📱','deduct','small',1),
+      R('功課沒寫完','📝','deduct','small',2),
+      R('兄弟姊妹吵架','💥','deduct','small',2),
+      R('說謊','🙈','deduct','big',1),
+      R('動手打人','✋','deduct','big',1)
+    ],
+    rewards:[
+      W('遊戲時間 10 分鐘','🎮','small',2,null),
+      W('看卡通 1 集','📺','small',3,null),
+      W('小零食一份','🍪','small',3,30),
+      W('文具小物','✏️','small',3,30,'貼紙、橡皮擦之類'),
+      W('跟爸媽玩桌遊 30 分','🎲','small',3,null),
+      W('遊戲時間 30 分鐘','🕹️','big',1,null),
+      W('飲料一杯','🥤','big',1,50),
+      W('指定單卡一張','🃏','big',1,50),
+      W('免做一次家事','🧹','big',1,null),
+      W('晚睡 30 分鐘','🌙','big',1,null),
+      W('今天晚餐我決定','🍜','big',1,null),
+      W('週末跟朋友約玩','🛼','big',2,null),
+      W('選假日去哪玩','🗺️','big',2,null),
+      W('寶可夢卡包 1 包','🎴','big',3,150),
+      W('兒童餐','🍟','big',3,150),
+      W('一本新書','📕','big',6,300),
+      W('電影票一張','🎬','big',6,300),
+      W('卡冊 / 卡套組','📒','big',6,300),
+      W('玩具一份','🎁','big',10,500),
+      W('遊樂園 / 展覽門票','🎡','big',10,500)
+    ],
+    ledger:[],
+    deviceId:uid('d')
+  };
+}
+
+/* ---------------- 狀態 ---------------- */
+let S=LS.get(K_STATE,null);
+let M=LS.get(K_MEDIA,{updatedAt:0,items:{}});
+let GH=LS.get(K_GH,{owner:'',repo:'',branch:'main',path:'data.json',mediaPath:'media.json',token:''});
+let dirty=LS.get(K_DIRTY,false);
+let shaCache=LS.get(K_SHA,{});
+let firstRun=false;
+if(!S||!S.kids){S=seed();firstRun=true;LS.set(K_STATE,S)}
+if(!S.settings)S.settings=seed().settings;
+if(!S.deviceId)S.deviceId=uid('d');
+if(S.settings.ntdPerSmall==null)S.settings.ntdPerSmall=10;
+if(!S.schema||S.schema<2){S.schema=2;S.needsSeedRefresh=true}
+
+let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null;
+
+/* ---------------- 分數計算 ---------------- */
+const BU=()=>Math.max(2,S.settings.bigUnit|0||5);
+const toSmall=(unit,amount)=>unit==='big'?amount*BU():amount;
+const live=arr=>arr.filter(x=>!x.deleted);
+function ledgerOf(kidId){return S.ledger.filter(e=>e.kidId===kidId&&!e.voided)}
+function balanceOf(kidId){let b=0;for(const e of S.ledger)if(e.kidId===kidId&&!e.voided)b+=e.small;return b}
+function earnedOf(kidId){let b=0;for(const e of S.ledger)if(e.kidId===kidId&&!e.voided&&e.small>0)b+=e.small;return b}
+function sinceOf(kidId,ts){let g=0,l=0,r=0;for(const e of S.ledger){if(e.kidId!==kidId||e.voided||e.ts<ts)continue;
+  if(e.small>0)g+=e.small;else if(e.type==='redeem')r-=e.small;else l-=e.small}return{g,l,r}}
+function splitScore(small){const bu=BU(),neg=small<0,a=Math.abs(small);return{neg,big:Math.floor(a/bu),small:a%bu}}
+function fmtScore(small){const s=splitScore(small);const p=[];if(s.big)p.push(s.big+' 大分');if(s.small||!s.big)p.push(s.small+' 小分');return(s.neg?'−':'')+p.join(' ')}
+function fmtCost(unit,amount){return amount+(unit==='big'?' 大分':' 小分')}
+function kid(id){return S.kids.find(k=>k.id===id)}
+function startOfDay(d){const x=new Date(d||now());x.setHours(0,0,0,0);return x.getTime()}
+function startOfWeek(){const x=new Date();const d=(x.getDay()+6)%7;x.setDate(x.getDate()-d);x.setHours(0,0,0,0);return x.getTime()}
+function mediaUrl(key){return key&&M.items[key]||null}
+const NTD=()=>Math.max(1,S.settings.ntdPerSmall|0||10);
+function valueOf(w){return w.price!=null?w.price:toSmall(w.unit,w.amount)*NTD()}
+function priceTag(w){return w.price!=null?'NT$'+w.price:'特權'}
+function rarity(costSmall){return costSmall<5?1:costSmall<15?2:costSmall<30?3:costSmall<50?4:5}
+function stars(n){return '<span class="rarity">'+'★'.repeat(n)+'</span>'}
+
+/* ---------------- 儲存 ---------------- */
+function touch(o){o.updatedAt=now();return o}
+function save(opts){
+  opts=opts||{};
+  LS.set(K_STATE,S);
+  if(opts.media)LS.set(K_MEDIA,M);
+  dirty=true;LS.set(K_DIRTY,true);
+  if(opts.silent!==true)render();
+  queuePush(opts.media?true:false);
+}
+function commit(entry){
+  const e=Object.assign({id:uid('e'),ts:now(),updatedAt:now(),voided:false},entry);
+  S.ledger.push(e);
+  if(S.ledger.length>1200)S.ledger=S.ledger.slice(-1200);
+  return e;
+}
+
+/* ---------------- 回饋 ---------------- */
+function buzz(ms){try{if(S.settings.haptics&&navigator.vibrate)navigator.vibrate(ms||25)}catch(e){}}
+let AC=null;
+function beep(kind){
+  if(!S.settings.sound)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const seq=kind==='bad'?[[440,0],[300,.1]]:kind==='big'?[[660,0],[880,.09],[1175,.18]]:[[784,0],[1047,.08]];
+    for(const[f,d]of seq){
+      const o=AC.createOscillator(),g=AC.createGain();
+      o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(AC.destination);
+      const t=AC.currentTime+d;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.012);
+      g.gain.exponentialRampToValueAtTime(.0005,t+.2);o.start(t);o.stop(t+.22);
+    }
+  }catch(e){}
+}
+function toast(msg,undoFn){
+  $('#ttx').textContent=msg;
+  const b=$('#tbtn');
+  pendingUndo=undoFn||null;
+  b.classList.toggle('hide',!undoFn);
+  $('#toast').classList.add('on');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>{$('#toast').classList.remove('on');pendingUndo=null},undoFn?5200:2300);
+}
+$('#tbtn').onclick=()=>{if(pendingUndo){pendingUndo();pendingUndo=null}$('#toast').classList.remove('on')};
+
+/* ---------------- 彈窗 ---------------- */
+function sheet(title,html,onOpen){
+  $('#sheet').innerHTML='<div class="grab"></div><h3>'+title+'<button class="x" data-act="close">✕</button></h3>'+html;
+  $('#scrim').classList.add('on');
+  document.body.style.overflow='hidden';
+  if(onOpen)onOpen($('#sheet'));
+}
+function closeSheet(){$('#scrim').classList.remove('on');document.body.style.overflow=''}
+$('#scrim').addEventListener('click',e=>{if(e.target.id==='scrim')closeSheet()});
+
+/* ---------------- PIN ---------------- */
+const pinSet=()=>!!S.settings.pinHash;
+const unlocked=()=>!pinSet()||now()<unlockUntil;
+function askPin(title,ok){
+  if(!pinSet()){ok();return}
+  let buf='';
+  const dots=()=>Array.from({length:4},(_,i)=>'<i class="'+(i<buf.length?'f':'')+'"></i>').join('');
+  const keys=[1,2,3,4,5,6,7,8,9,'',0,'⌫'];
+  sheet(title||'請輸入家長密碼',
+    '<div class="pinv" id="pv">'+dots()+'</div><div class="pad" id="pad">'+
+    keys.map(k=>k===''?'<div></div>':'<button data-k="'+k+'">'+k+'</button>').join('')+
+    '</div><div class="f hint" style="text-align:center;margin-top:14px" id="pmsg">4 位數字</div>',
+    el=>{
+      el.querySelector('#pad').addEventListener('click',ev=>{
+        const b=ev.target.closest('button[data-k]');if(!b)return;
+        const k=b.dataset.k;buzz(12);
+        if(k==='⌫')buf=buf.slice(0,-1);else if(buf.length<4)buf+=k;
+        el.querySelector('#pv').innerHTML=dots();
+        if(buf.length===4){
+          if(h33(buf)===S.settings.pinHash){unlockUntil=now()+10*60*1000;closeSheet();ok()}
+          else{el.querySelector('#pmsg').innerHTML='<b class="danger">密碼不對，再試一次</b>';buf='';el.querySelector('#pv').innerHTML=dots();buzz(120)}
+        }
+      });
+    });
+}
+function guard(fn,title){return ()=>{unlocked()?fn():askPin(title,fn)}}
+
+/* ============================================================
+   GitHub 同步：repo 內的 data.json / media.json
+   Token 只存在這支裝置的 localStorage，不會寫進網頁或雲端
+   ============================================================ */
+function b64enc(str){
+  const by=new TextEncoder().encode(str);let bin='';const C=0x8000;
+  for(let i=0;i<by.length;i+=C)bin+=String.fromCharCode.apply(null,by.subarray(i,i+C));
+  return btoa(bin);
+}
+function b64dec(b64){
+  const bin=atob(String(b64).replace(/\s/g,''));const by=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)by[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(by);
+}
+const ghReady=()=>!!(GH.owner&&GH.repo&&GH.token);
+let syncState='idle', syncMsg='', pushTimer=null, pushing=false, needMedia=false;
+
+function setSync(s,msg){syncState=s;syncMsg=msg||'';paintSync()}
+function paintSync(){
+  const d=$('#sdot'),t=$('#stxt');if(!d)return;
+  d.className='dot';
+  if(!ghReady()){d.classList.add('warn');t.textContent='僅存本機'}
+  else if(syncState==='busy'){d.classList.add('busy');t.textContent='同步中'}
+  else if(syncState==='err'){d.classList.add('err');t.textContent='同步失敗'}
+  else if(dirty){d.classList.add('warn');t.textContent='待上傳'}
+  else{d.classList.add('ok');t.textContent='已同步'}
+}
+async function gh(path,opts){
+  const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+(opts&&opts.method?'':'?ref='+encodeURIComponent(GH.branch||'main')),
+    Object.assign({headers:{'Authorization':'Bearer '+GH.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}},opts||{}));
+  return r;
+}
+async function ghRead(path){
+  const r=await gh(path);
+  if(r.status===404)return{missing:true};
+  if(!r.ok)throw new Error('讀取失敗 '+r.status+' '+(await r.text()).slice(0,120));
+  const j=await r.json();
+  shaCache[path]=j.sha;LS.set(K_SHA,shaCache);
+  let data=null;
+  try{data=JSON.parse(b64dec(j.content))}catch(e){throw new Error('雲端檔案不是有效 JSON')}
+  return{data,sha:j.sha};
+}
+async function ghWrite(path,obj,msg,remerge){
+  // 衝突時「重新讀 → 重新合併 → 再寫」，只換 sha 會蓋掉別台剛寫的資料
+  let sha=shaCache[path];
+  if(!sha){const cur=await gh(path);if(cur.ok){const j=await cur.json();sha=j.sha}}
+  const build=o=>{const b={message:msg||('update '+path),content:b64enc(JSON.stringify(o,null,1)),branch:GH.branch||'main'};
+    if(sha)b.sha=sha;return b};
+  let r=await gh(path,{method:'PUT',body:JSON.stringify(build(obj))});
+  for(let i=0;i<3&&(r.status===409||r.status===422);i++){
+    const rem=await ghRead(path).catch(()=>null);
+    sha=shaCache[path];
+    if(rem&&rem.data&&remerge)obj=remerge(rem.data);
+    r=await gh(path,{method:'PUT',body:JSON.stringify(build(obj))});
+  }
+  if(!r.ok)throw new Error('寫入失敗 '+r.status+' '+(await r.text()).slice(0,140));
+  const j=await r.json();
+  shaCache[path]=j.content.sha;LS.set(K_SHA,shaCache);
+}
+
+/* ---- 合併：帳本取聯集，其他依 updatedAt 後寫贏 ---- */
+const newer=(a,b)=>((a&&a.updatedAt)||0)>=((b&&b.updatedAt)||0)?a:b;
+function mergeList(L,R){
+  const m=new Map();
+  for(const it of (R||[]))if(it&&it.id)m.set(it.id,it);
+  for(const it of (L||[])){if(!it||!it.id)continue;const o=m.get(it.id);m.set(it.id,o?newer(it,o):it)}
+  return [...m.values()].sort((a,b)=>(a.sort||0)-(b.sort||0));
+}
+function mergeLedger(L,R){
+  const m=new Map();
+  for(const e of (R||[]))if(e&&e.id)m.set(e.id,e);
+  for(const e of (L||[])){if(!e||!e.id)continue;const o=m.get(e.id);m.set(e.id,o?newer(e,o):e)}
+  return [...m.values()].sort((a,b)=>a.ts-b.ts).slice(-1200);
+}
+function mergeState(L,R){
+  if(!R||!R.kids)return L;
+  return{schema:Math.max(L.schema||1,R.schema||1),deviceId:L.deviceId,needsSeedRefresh:L.needsSeedRefresh,
+    settings:newer(L.settings,R.settings),
+    kids:mergeList(L.kids,R.kids),
+    rules:mergeList(L.rules,R.rules),
+    rewards:mergeList(L.rewards,R.rewards),
+    ledger:mergeLedger(L.ledger,R.ledger)};
+}
+function mergeMedia(L,R){
+  if(!R||!R.items)return L;
+  const items=Object.assign({},R.items,L.items);
+  return{updatedAt:Math.max(L.updatedAt||0,R.updatedAt||0),items};
+}
+
+function queuePush(media){
+  if(media)needMedia=true;
+  paintSync();
+  if(!ghReady())return;
+  clearTimeout(pushTimer);
+  pushTimer=setTimeout(()=>push(),2200);
+}
+async function push(){
+  if(!ghReady()||pushing)return;
+  if(!navigator.onLine){setSync('idle');return}
+  pushing=true;setSync('busy');
+  try{
+    const rem=await ghRead(GH.path||'data.json');
+    if(rem.data){S=mergeState(S,rem.data);LS.set(K_STATE,S)}
+    await ghWrite(GH.path||'data.json',S,'積分更新 '+new Date().toLocaleString('zh-TW'),
+      rd=>{S=mergeState(S,rd);LS.set(K_STATE,S);return S});
+    if(needMedia){
+      const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
+      if(rm.data)M=mergeMedia(M,rm.data);
+      M.updatedAt=now();LS.set(K_MEDIA,M);
+      await ghWrite(GH.mediaPath||'media.json',M,'圖片更新',rd=>{M=mergeMedia(M,rd);LS.set(K_MEDIA,M);return M});
+      needMedia=false;
+    }
+    dirty=false;LS.set(K_DIRTY,false);setSync('idle');render();
+  }catch(e){
+    setSync('err',e.message||String(e));
+  }finally{pushing=false}
+}
+async function pull(quiet){
+  if(!ghReady())return;
+  setSync('busy');
+  try{
+    const rs=await ghRead(GH.path||'data.json');
+    if(rs.data){S=mergeState(S,rs.data);LS.set(K_STATE,S)}
+    const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
+    if(rm.data){M=mergeMedia(M,rm.data);LS.set(K_MEDIA,M)}
+    setSync('idle');render();
+    if(dirty)queuePush();
+    if(!quiet)toast('已從 GitHub 取回最新資料');
+  }catch(e){setSync('err',e.message||String(e));if(!quiet)toast('讀取失敗：'+(e.message||''))}
+}
+window.addEventListener('online',()=>{if(dirty)queuePush()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ghReady())pull(true)});
+
+/* ---------------- 圖片：選檔 → 壓縮成方形 dataURL ---------------- */
+let pickCb=null;
+$('#filepick').addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0];e.target.value='';
+  if(!f||!pickCb)return;
+  try{const d=await shrink(f,340,.8);pickCb(d)}catch(err){toast('圖片讀取失敗')}
+});
+function pickImage(cb){pickCb=cb;$('#filepick').click()}
+async function shrink(file,size,q){
+  const bmp=await loadBitmap(file);
+  const c=document.createElement('canvas');c.width=c.height=size;
+  const ctx=c.getContext('2d');
+  const s=Math.min(bmp.width,bmp.height);
+  ctx.drawImage(bmp,(bmp.width-s)/2,(bmp.height-s)/2,s,s,0,0,size,size);
+  if(bmp.close)bmp.close();
+  let out=c.toDataURL('image/jpeg',q);
+  if(out.length>180000)out=c.toDataURL('image/jpeg',.62);
+  return out;
+}
+function loadBitmap(file){
+  if(window.createImageBitmap)return createImageBitmap(file).catch(()=>viaImg(file));
+  return viaImg(file);
+}
+function viaImg(file){
+  return new Promise((res,rej)=>{
+    const fr=new FileReader();
+    fr.onload=()=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=fr.result};
+    fr.onerror=rej;fr.readAsDataURL(file);
+  });
+}
+function putMedia(dataUrl){const k=uid('m');M.items[k]=dataUrl;M.updatedAt=now();return k}
+
+/* ============================================================
+   畫面
+   ============================================================ */
+const TABS=[['home','🏠','首頁'],['score','➕','計分'],['reward','🎁','獎勵'],['log','🧾','紀錄'],['set','⚙️','設定']];
+function renderNav(){
+  $('#nav').innerHTML=TABS.map(([k,e,l])=>
+    '<button class="nb '+(view===k?'on':'')+'" data-act="tab" data-v="'+k+'"><em>'+e+'</em>'+l+'</button>').join('');
+}
+function avatarHTML(k,cls){
+  const u=mediaUrl(k.avatar);
+  return u?'<img class="av '+(cls||'')+'" src="'+u+'" alt="">'
+          :'<div class="av '+(cls||'')+'" style="--kc:'+k.color+';background:'+k.color+'">'+esc((k.name||'?').slice(0,1))+'</div>';
+}
+function render(){
+  renderNav();paintSync();
+  const v=$('#view');
+  if(view==='home')v.innerHTML=vHome();
+  else if(view==='score')v.innerHTML=vScore();
+  else if(view==='reward')v.innerHTML=vReward();
+  else if(view==='log')v.innerHTML=vLog();
+  else v.innerHTML=vSet();
+  const fab=$('.fab');if(fab)fab.remove();
+  if(view==='home'||view==='score'){
+    const b=document.createElement('button');b.className='fab';b.dataset.act='manual';b.innerHTML='✎';
+    document.body.appendChild(b);
+  }
+}
+
+/* ---------- 首頁 ---------- */
+function vHome(){
+  const ks=live(S.kids);
+  const today=startOfDay(),week=startOfWeek();
+  let h='<div class="sec"><h2>今天</h2><span class="more" data-act="tab" data-v="score">去計分 →</span></div><div class="kidgrid">';
+  if(!ks.length)h+='<div class="empty"><span class="e">👶</span>還沒有小孩資料<br><button class="btn sm pri" style="margin-top:10px" data-act="editkid" data-id="">新增小孩</button></div>';
+  for(const k of ks){
+    const bal=balanceOf(k.id),sp=splitScore(bal),d=sinceOf(k.id,today),w=sinceOf(k.id,week);
+    const pct=Math.round((Math.abs(bal)%BU())/BU()*100);
+    const rem=Math.abs(bal)%BU();
+    let pips='';for(let i=0;i<BU();i++)pips+='<i class="'+(i<rem?'on':'')+'"></i>';
+    h+='<button class="kid" style="--kc:'+k.color+'" data-act="kid" data-id="'+k.id+'"><div class="in">'+
+      '<div class="top">'+avatarHTML(k)+
+      '<div style="min-width:0"><div class="nm">'+esc(k.name)+'</div><div class="sub">本週 +'+w.g+(w.l?' / −'+w.l:'')+'</div></div></div>'+
+      '<div class="bigscore"><b>'+(sp.neg?'−':'')+sp.big+'</b><i>大分</i>'+
+      (sp.small?'<b style="font-size:21px;margin-left:5px">'+sp.small+'</b><i>小</i>':'')+'</div>'+
+      '<div class="smallscore">可用 '+bal+' 小分 ≈ NT$'+(bal*NTD())+'</div>'+
+      '<div class="pips">'+pips+'</div>'+
+      '<div class="todo"><b>今天 +'+d.g+'</b>'+(d.l?'<u>−'+d.l+'</u>':'')+'</div></div></button>';
+  }
+  h+='</div>';
+
+  const quick=live(S.rules).filter(r=>r.kind==='earn').slice(0,6);
+  if(ks.length&&quick.length){
+    h+='<div class="sec"><h2>快速加分</h2><span class="more" data-act="tab" data-v="score">全部規則 →</span></div><div class="rules">';
+    for(const r of quick)h+=ruleBtn(r);
+    h+='</div>';
+  }
+  const recent=S.ledger.slice(-4).reverse();
+  if(recent.length){
+    h+='<div class="sec"><h2>最近紀錄</h2><span class="more" data-act="tab" data-v="log">全部 →</span></div><div class="list">';
+    for(const e of recent)h+=logRow(e,false);
+    h+='</div>';
+  }
+  if(S.needsSeedRefresh)h+='<div class="banner"><span style="font-size:20px">🔄</span><div><b>有更新的預設清單</b>獎勵品現在會依實際價格定價（1 小分 = NT$'+NTD()+'），規則也改成國小版。<br><button class="btn sm pri" style="margin-top:8px" data-act="reseed">載入新清單</button></div></div>';
+  if(!ghReady())h+='<div class="banner"><span style="font-size:20px">☁️</span><div><b>還沒連結 GitHub</b>分數目前只存在這支手機，清快取就會不見。<br><button class="btn sm pri" style="margin-top:8px" data-act="ghsetup">設定同步</button></div></div>';
+  return h;
+}
+function ruleBtn(r){
+  const dd=r.kind==='deduct';
+  return '<button class="rule '+(dd?'dd':'')+'" data-act="rule" data-id="'+r.id+'">'+
+    '<div class="ic">'+esc(r.emoji||(dd?'➖':'➕'))+'</div><div class="tx"><b>'+esc(r.label)+'</b>'+
+    '<u>'+(dd?'−':'+')+fmtCost(r.unit,r.amount)+'</u></div></button>';
+}
+
+/* ---------- 計分 ---------- */
+function vScore(){
+  const ks=live(S.kids);
+  if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先到設定新增小孩</div>';
+  if(!selKid||!kid(selKid))selKid=ks[0].id;
+  const k=kid(selKid),bal=balanceOf(k.id);
+  let h='<div class="sec"><h2>選擇對象</h2></div><div class="chips">';
+  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+'</button>';
+  h+='</div>';
+  h+='<div class="card" style="padding:13px;margin-top:12px;display:flex;align-items:center;gap:12px">'+avatarHTML(k)+
+     '<div><div style="font-weight:800">'+esc(k.name)+'</div><div style="font-size:12.5px;color:var(--muted)">目前 '+fmtScore(bal)+'（'+bal+' 小分）</div></div>'+
+     '<button class="btn sm" style="margin-left:auto" data-act="manual">自訂</button></div>';
+  const earn=live(S.rules).filter(r=>r.kind==='earn'),ded=live(S.rules).filter(r=>r.kind==='deduct');
+  h+='<div class="sec"><h2>加分 ('+earn.length+')</h2></div><div class="rules">'+(earn.map(ruleBtn).join('')||'<div class="empty">尚無加分規則</div>')+'</div>';
+  h+='<div class="sec"><h2>扣分 ('+ded.length+')</h2></div><div class="rules">'+(ded.map(ruleBtn).join('')||'<div class="empty">尚無扣分規則</div>')+'</div>';
+  h+='<div style="height:20px"></div>';
+  return h;
+}
+
+/* ---------- 獎勵 ---------- */
+function vReward(){
+  const ks=live(S.kids),ws=live(S.rewards);
+  let h='<div class="sec"><h2>獎勵品</h2><span class="more" data-act="tab" data-v="set">管理 →</span></div>';
+  if(ks.length){
+    h+='<div class="chips">';
+    for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+' '+balanceOf(x.id)+'</button>';
+    h+='</div>';
+  }
+  if(!ws.length)return h+'<div class="empty"><span class="e">🎁</span>還沒有獎勵品<br><button class="btn sm pri" style="margin-top:10px" data-act="editrw" data-id="">新增獎勵</button></div>';
+  h+='<div class="rw" style="margin-top:12px">';
+  for(const w of ws)h+=rewardCard(w);
+  return h+'</div><div style="height:20px"></div>';
+}
+
+function rewardCard(w){
+  const cost=toSmall(w.unit,w.amount),img=mediaUrl(w.image),r=rarity(cost);
+  const out=w.stock!=null&&w.stock<=0;
+  return '<button class="tcg rwc r'+r+(r>=4?' holo':'')+'" data-act="redeem" data-id="'+w.id+'" '+(out?'disabled':'')+'>'+
+    '<div class="tcg-in">'+
+    '<div class="hd">'+stars(r)+'<span class="ntd">'+priceTag(w)+'</span></div>'+
+    '<div class="art">'+(img?'<img src="'+img+'" alt="">':esc(w.emoji||'🎁'))+'</div>'+
+    '<div class="bd"><b>'+esc(w.name)+'</b><span class="cost">'+fmtCost(w.unit,w.amount)+'</span>'+
+    (w.note?'<div class="stock">'+esc(w.note)+'</div>':'')+
+    (w.stock!=null?'<div class="stock">剩 '+w.stock+' 個'+(out?'（已兌完）':'')+'</div>':'')+
+    '<div class="who">'+live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id))
+      .map(k=>'<span class="pill '+(balanceOf(k.id)>=cost?'yes':'')+'">'+esc(k.name.slice(0,4))+'</span>').join('')+'</div>'+
+    '</div></div></button>';
+}
+
+/* ---------- 紀錄 ---------- */
+function logRow(e,allowTap){
+  const k=kid(e.kidId),p=e.small>0;
+  const ic=e.type==='redeem'?'🎁':e.type==='adjust'?'✎':(e.emoji||(p?'➕':'➖'));
+  const d=new Date(e.ts);
+  const tm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
+  return '<button class="li '+(e.voided?'void':'')+'" '+(allowTap?'data-act="entry" data-id="'+e.id+'"':'')+'>'+
+    '<div class="ic">'+esc(ic)+'</div><div class="tx"><b>'+esc(e.label||'調整')+'</b>'+
+    '<u>'+tm+' ・ '+esc(k?k.name:'已刪除')+(e.voided?' ・ 已撤銷':'')+'</u></div>'+
+    '<span class="delta '+(p?'p':'n')+'">'+(p?'+':'−')+fmtScore(Math.abs(e.small))+'</span></button>';
+}
+function vLog(){
+  const ks=live(S.kids);
+  let h='<div class="chips"><button class="chip plain '+(!selKid?'on':'')+'" data-act="sel" data-id="">全部</button>';
+  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+'</button>';
+  h+='</div>';
+  const tgt=selKid?[kid(selKid)].filter(Boolean):ks;
+  const week=startOfWeek(),month=new Date();month.setDate(1);month.setHours(0,0,0,0);
+  let wg=0,mg=0,bal=0;
+  for(const k of tgt){wg+=sinceOf(k.id,week).g;mg+=sinceOf(k.id,month.getTime()).g;bal+=balanceOf(k.id)}
+  h+='<div class="stats" style="margin-top:12px"><div class="st"><b>'+bal+'</b><u>可用小分</u></div>'+
+     '<div class="st"><b style="color:var(--good)">+'+wg+'</b><u>本週獲得</u></div>'+
+     '<div class="st"><b style="color:var(--brand)">+'+mg+'</b><u>本月獲得</u></div></div>';
+  const es=S.ledger.filter(e=>!selKid||e.kidId===selKid).slice().reverse();
+  if(!es.length)return h+'<div class="empty"><span class="e">🧾</span>還沒有任何紀錄</div>';
+  let last='';
+  for(const e of es.slice(0,200)){
+    const day=new Date(e.ts).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'});
+    if(day!==last){if(last)h+='</div>';h+='<div class="daylab">'+day+'</div><div class="list">';last=day}
+    h+=logRow(e,true);
+  }
+  return h+'</div><div style="height:20px"></div>';
+}
+
+/* ---------- 設定 ---------- */
+function vSet(){
+  if(!unlocked())return '<div class="empty" style="padding-top:60px"><span class="e">🔒</span>設定已上鎖<br>'+
+    '<button class="btn pri" style="margin-top:14px" data-act="unlock">輸入家長密碼</button></div>';
+  const st=S.settings;
+  const sw=(act,label,desc,on)=>'<button class="sw" data-act="'+act+'"><div class="tx"><b>'+label+'</b>'+(desc?'<u>'+desc+'</u>':'')+'</div><div class="tg '+(on?'on':'')+'"></div></button>';
+  const nav=(act,icon,label,desc,extra)=>'<button class="li" data-act="'+act+'"><div class="ic">'+icon+'</div><div class="tx"><b>'+label+'</b><u>'+desc+'</u></div><span style="color:var(--muted)">'+(extra||'')+' ›</span></button>';
+  let h='';
+  h+='<div class="sec"><h2>資料</h2></div><div class="list">'+
+    nav('mkids','👧','小孩','名稱、照片、顏色',live(S.kids).length+' 位')+
+    nav('mrules','📋','加分 / 扣分規則','新增、修改、刪除',live(S.rules).length+' 條')+
+    nav('mrw','🎁','獎勵品','名稱、圖片、所需分數',live(S.rewards).length+' 項')+
+    '</div>';
+  h+='<div class="sec"><h2>積分規則</h2></div><div class="list">'+
+    nav('bigunit','⭐','1 大分 = ? 小分','目前 '+BU()+' 小分換 1 大分',BU())+
+    nav('ntdrate','💰','1 小分 = ? 元','獎勵品換算基準，1 大分 = NT$'+(NTD()*BU()),'NT$'+NTD())+
+    sw('tgneg','允許出現負分','關閉時扣分最多扣到 0',st.allowNegative)+
+    sw('tgundo','撤銷紀錄需密碼','避免小孩自己撤銷扣分',st.pinForUndo)+
+    sw('tgredeem','兌換獎勵需密碼','兌換時要家長輸入密碼',st.pinForRedeem)+
+    '</div>';
+  h+='<div class="sec"><h2>雲端同步（GitHub）</h2></div><div class="list">'+
+    nav('ghsetup','☁️','GitHub 連線設定',ghReady()?GH.owner+'/'+GH.repo+' · '+GH.path:'尚未設定',ghReady()?'已連線':'未設定')+
+    nav('ghpull','⬇️','立即從雲端取回','以雲端資料為準合併')+
+    nav('ghpush','⬆️','立即上傳到雲端',dirty?'有未上傳的變更':'目前已同步')+
+    '</div>';
+  if(syncState==='err'&&syncMsg)h+='<div class="banner"><span style="font-size:20px">⚠️</span><div><b>同步失敗</b><span class="mono">'+esc(syncMsg)+'</span></div></div>';
+  h+='<div class="sec"><h2>其他</h2></div><div class="list">'+
+    nav('setpin','🔑','家長密碼',pinSet()?'已設定（鎖住設定頁）':'未設定')+
+    sw('tgsound','音效',null,st.sound)+
+    sw('tghap','震動回饋',null,st.haptics)+
+    nav('theme','🌓','外觀',st.theme==='auto'?'跟隨系統':st.theme==='dark'?'深色':'淺色')+
+    nav('backup','💾','備份 / 還原','下載或貼入 JSON 檔')+
+    nav('reseed','🔄','載入最新預設清單','換成國小版規則與含價格的獎勵（小孩與紀錄保留）')+
+    '</div>';
+  h+='<div class="sec"><h2>危險區</h2></div><div class="list">'+
+    '<button class="li" data-act="clearlog"><div class="ic">🧹</div><div class="tx"><b class="danger">清空所有紀錄</b><u>分數會歸零，規則與獎勵保留</u></div></button>'+
+    '<button class="li" data-act="reset"><div class="ic">💣</div><div class="tx"><b class="danger">回復為預設資料</b><u>全部重來（雲端下次同步也會被覆蓋）</u></div></button>'+
+    '</div><div style="height:26px"></div>';
+  return h;
+}
+
+/* ============================================================
+   動作
+   ============================================================ */
+function applyRule(ruleId){
+  const r=S.rules.find(x=>x.id===ruleId);if(!r)return;
+  const ks=live(S.kids);
+  if(!selKid||!kid(selKid))selKid=ks[0]&&ks[0].id;
+  if(!selKid){toast('請先新增小孩');return}
+  addPoints(selKid,r.kind==='deduct'?-toSmall(r.unit,r.amount):toSmall(r.unit,r.amount),r.label,{ruleId:r.id,emoji:r.emoji,type:r.kind});
+}
+function addPoints(kidId,small,label,extra){
+  const k=kid(kidId);if(!k||!small)return;
+  let delta=small;
+  if(small<0&&!S.settings.allowNegative){
+    const bal=balanceOf(kidId);
+    delta=-Math.min(Math.abs(small),Math.max(0,bal));
+    if(delta===0){toast(k.name+' 已經是 0 分，不再扣分');buzz(90);return}
+  }
+  const e=commit(Object.assign({kidId,small:delta,label},extra||{}));
+  buzz(delta>0?25:90);beep(delta<0?'bad':Math.abs(delta)>=BU()?'big':'good');
+  save();
+  toast((delta>0?'✅ ':'⚠️ ')+k.name+' '+(delta>0?'+':'−')+fmtScore(Math.abs(delta))+'　'+label,()=>{
+    e.voided=true;touch(e);save();toast('已復原');
+  });
+}
+function doRedeem(wid){
+  const w=S.rewards.find(x=>x.id===wid);if(!w)return;
+  const cost=toSmall(w.unit,w.amount);
+  const ks=live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id));
+  const body='<div class="f" style="display:flex;gap:12px;align-items:center">'+
+    (mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:64px;height:64px;border-radius:14px;object-fit:cover">':'<div style="font-size:40px">'+esc(w.emoji||'🎁')+'</div>')+
+    '<div><b style="font-size:16px">'+esc(w.name)+'</b><div style="color:var(--gold);font-weight:850">需要 '+fmtCost(w.unit,w.amount)+'（'+cost+' 小分）</div>'+
+    '<div style="font-size:12px;color:var(--muted)">'+stars(rarity(cost))+' ・ 參考價值 NT$'+valueOf(w)+'</div></div></div>'+
+    '<div class="f"><label>誰要兌換？</label>'+ks.map(k=>{
+      const bal=balanceOf(k.id),ok=bal>=cost;
+      return '<button class="li" style="border:1px solid var(--line);border-radius:12px;margin-bottom:8px" data-act="dordm" data-id="'+w.id+'" data-kid="'+k.id+'" '+(ok?'':'disabled')+'>'+
+        avatarHTML(k)+'<div class="tx"><b>'+esc(k.name)+'</b><u>目前 '+fmtScore(bal)+'</u></div>'+
+        '<span class="delta '+(ok?'p':'n')+'">'+(ok?'可兌換':'還差 '+(cost-bal)+' 小分')+'</span></button>';
+    }).join('')+'</div>';
+  sheet('🎁 兌換獎勵',body);
+}
+function finishRedeem(wid,kidId){
+  const w=S.rewards.find(x=>x.id===wid),k=kid(kidId);if(!w||!k)return;
+  const cost=toSmall(w.unit,w.amount);
+  if(balanceOf(kidId)<cost){toast('分數不足');return}
+  const go=()=>{
+    const e=commit({kidId,small:-cost,label:'兌換：'+w.name,type:'redeem',rewardId:w.id,emoji:w.emoji});
+    if(w.stock!=null){w.stock=Math.max(0,w.stock-1);touch(w)}
+    closeSheet();buzz(40);beep('big');save();revealCard(w,k);
+    toast('🎉 '+k.name+' 兌換了「'+w.name+'」',()=>{e.voided=true;touch(e);if(w.stock!=null){w.stock++;touch(w)}save();toast('已復原')});
+  };
+  S.settings.pinForRedeem&&!unlocked()?askPin('兌換需要家長密碼',go):go();
+}
+function revealCard(w,k){
+  const cost=toSmall(w.unit,w.amount),r=rarity(cost);
+  const d=document.createElement('div');d.className='reveal';
+  const cols=['#7c879f','#12a150','#2f7cf6','#9b4dff','#f0a000'];
+  let sp='';for(let i=0;i<26;i++)sp+='<i style="left:'+Math.random()*100+'%;top:-'+(Math.random()*20+5)+'%;background:'+cols[(Math.random()*5)|0]+';animation-delay:'+(Math.random()*.5)+'s"></i>';
+  d.innerHTML='<div class="sparks">'+sp+'</div><div class="rc">'+rewardCard(w).replace('<button','<div').replace('</button>','</div>')+
+    '</div><div class="cap">'+esc(k.name)+' 換到了！</div>';
+  d.addEventListener('click',()=>d.remove());
+  document.body.appendChild(d);
+  setTimeout(()=>{if(d.parentNode)d.remove()},2600);
+}
+function manualSheet(){
+  const ks=live(S.kids);if(!ks.length){toast('請先新增小孩');return}
+  if(!selKid||!kid(selKid))selKid=ks[0].id;
+  sheet('✎ 自訂加減分',
+   '<div class="f"><label>對象</label><select id="mk">'+ks.map(k=>'<option value="'+k.id+'" '+(k.id===selKid?'selected':'')+'>'+esc(k.name)+'</option>').join('')+'</select></div>'+
+   '<div class="f2"><div class="f"><label>分數類型</label><select id="mu"><option value="small">小分</option><option value="big">大分</option></select></div>'+
+   '<div class="f"><label>數量</label><input id="ma" type="number" inputmode="numeric" value="1" min="1"></div></div>'+
+   '<div class="f"><label>原因</label><input id="ml" placeholder="例如：主動幫媽媽提東西"></div>'+
+   '<div class="row"><button class="btn good" data-act="mdo" data-s="1">＋ 加分</button><button class="btn bad" data-act="mdo" data-s="-1">－ 扣分</button></div>');
+}
+function entrySheet(id){
+  const e=S.ledger.find(x=>x.id===id);if(!e)return;
+  const k=kid(e.kidId);
+  sheet('🧾 紀錄明細',
+    '<div class="f"><div style="font-size:16px;font-weight:800">'+esc(e.label||'調整')+'</div>'+
+    '<div class="hint">'+new Date(e.ts).toLocaleString('zh-TW')+' ・ '+esc(k?k.name:'已刪除')+'<br>'+
+    (e.small>0?'+':'−')+fmtScore(Math.abs(e.small))+'（'+e.small+' 小分）'+(e.voided?' ・ <b class="danger">已撤銷</b>':'')+'</div></div>'+
+    '<button class="btn wide '+(e.voided?'good':'bad')+'" data-act="toggleVoid" data-id="'+e.id+'">'+(e.voided?'恢復這筆紀錄':'撤銷這筆紀錄')+'</button>');
+}
+function toggleVoid(id){
+  const e=S.ledger.find(x=>x.id===id);if(!e)return;
+  const go=()=>{e.voided=!e.voided;touch(e);closeSheet();save();toast(e.voided?'已撤銷':'已恢復')};
+  (S.settings.pinForUndo&&!unlocked())?askPin('撤銷需要家長密碼',go):go();
+}
+
+/* ---------- 管理：小孩 / 規則 / 獎勵 ---------- */
+function manageKids(){
+  sheet('👧 小孩管理',
+    '<div class="list">'+live(S.kids).map(k=>'<button class="li" data-act="editkid" data-id="'+k.id+'">'+avatarHTML(k)+
+      '<div class="tx"><b>'+esc(k.name)+'</b><u>'+fmtScore(balanceOf(k.id))+'</u></div><span style="color:var(--muted)">›</span></button>').join('')+'</div>'+
+    '<button class="btn pri wide" style="margin-top:13px" data-act="editkid" data-id="">＋ 新增小孩</button>');
+}
+function editKid(id){
+  const k=id?kid(id):{id:'',name:'',color:KC[live(S.kids).length%KC.length],avatar:null};
+  let av=k.avatar,color=k.color;
+  sheet(id?'編輯小孩':'新增小孩',
+    '<div class="avpick"><span id="avbox">'+avatarHTML({name:k.name||'?',color:color,avatar:av})+'</span>'+
+    '<div><button class="btn sm" data-act="pickav">📷 上傳照片</button>'+
+    (av?' <button class="btn sm ghost" data-act="rmav">移除</button>':'')+
+    '<div class="hint" style="margin-top:6px">手機可直接拍照或選相簿，會自動裁成方形縮圖</div></div></div>'+
+    '<div class="f"><label>名字</label><input id="kn" value="'+esc(k.name)+'" placeholder="小孩的名字或暱稱" maxlength="12"></div>'+
+    '<div class="f"><label>代表色</label><div class="swatches" id="swt">'+KC.map(c=>'<button class="sws '+(c===color?'on':'')+'" style="background:'+c+'" data-c="'+c+'"></button>').join('')+'</div></div>'+
+    '<button class="btn pri wide" data-act="savekid" data-id="'+(id||'')+'">儲存</button>'+
+    (id?'<button class="btn ghost wide danger" style="margin-top:9px" data-act="delkid" data-id="'+id+'">刪除這位小孩</button>':''),
+    el=>{
+      el.querySelector('#swt').addEventListener('click',ev=>{const b=ev.target.closest('[data-c]');if(!b)return;
+        color=b.dataset.c;$$('.sws',el).forEach(s=>s.classList.toggle('on',s.dataset.c===color));
+        el.querySelector('#avbox').innerHTML=avatarHTML({name:el.querySelector('#kn').value||'?',color,avatar:av})});
+      el.dataset.get='kid';
+      el._get=()=>({name:el.querySelector('#kn').value.trim(),color,avatar:av});
+      el._setav=v=>{av=v;el.querySelector('#avbox').innerHTML=avatarHTML({name:el.querySelector('#kn').value||'?',color,avatar:av})};
+    });
+}
+function manageRules(){
+  const grp=kind=>live(S.rules).filter(r=>r.kind===kind).map(r=>
+    '<button class="li" data-act="editrule" data-id="'+r.id+'"><div class="ic">'+esc(r.emoji||'•')+'</div>'+
+    '<div class="tx"><b>'+esc(r.label)+'</b><u>'+(kind==='deduct'?'−':'+')+fmtCost(r.unit,r.amount)+'</u></div>'+
+    '<span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無規則</div>';
+  sheet('📋 規則管理',
+    '<div class="sec"><h2>加分規則</h2></div><div class="list">'+grp('earn')+'</div>'+
+    '<button class="btn wide" style="margin-top:10px" data-act="editrule" data-id="" data-kind="earn">＋ 新增加分規則</button>'+
+    '<div class="sec"><h2>扣分規則</h2></div><div class="list">'+grp('deduct')+'</div>'+
+    '<button class="btn wide" style="margin-top:10px" data-act="editrule" data-id="" data-kind="deduct">＋ 新增扣分規則</button>');
+}
+function editRule(id,kind){
+  const r=id?S.rules.find(x=>x.id===id):{id:'',label:'',emoji:'',kind:kind||'earn',unit:'small',amount:1};
+  sheet(id?'編輯規則':'新增規則',
+    '<div class="f2"><div class="f"><label>圖示（emoji）</label><input id="re" value="'+esc(r.emoji||'')+'" placeholder="🧸" maxlength="4"></div>'+
+    '<div class="f"><label>類型</label><select id="rk"><option value="earn" '+(r.kind==='earn'?'selected':'')+'>加分</option><option value="deduct" '+(r.kind==='deduct'?'selected':'')+'>扣分</option></select></div></div>'+
+    '<div class="f"><label>規則名稱</label><input id="rl" value="'+esc(r.label)+'" placeholder="例如：自己收玩具" maxlength="24"></div>'+
+    '<div class="f2"><div class="f"><label>分數類型</label><select id="ru"><option value="small" '+(r.unit==='small'?'selected':'')+'>小分</option><option value="big" '+(r.unit==='big'?'selected':'')+'>大分</option></select></div>'+
+    '<div class="f"><label>數量</label><input id="ra" type="number" inputmode="numeric" min="1" value="'+(r.amount||1)+'"></div></div>'+
+    '<button class="btn pri wide" data-act="saverule" data-id="'+(id||'')+'">儲存</button>'+
+    (id?'<button class="btn ghost wide danger" style="margin-top:9px" data-act="delrule" data-id="'+id+'">刪除</button>':''));
+}
+function manageRw(){
+  sheet('🎁 獎勵品管理',
+    '<div class="list">'+(live(S.rewards).map(w=>'<button class="li" data-act="editrw" data-id="'+w.id+'">'+
+      '<div class="ic">'+(mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:34px;height:34px;border-radius:10px;object-fit:cover">':esc(w.emoji||'🎁'))+'</div>'+
+      '<div class="tx"><b>'+esc(w.name)+'</b><u>'+fmtCost(w.unit,w.amount)+' ・ '+priceTag(w)+(w.stock!=null?' ・ 剩 '+w.stock:'')+'</u></div>'+
+      '<span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無獎勵品</div>')+'</div>'+
+    '<button class="btn pri wide" style="margin-top:13px" data-act="editrw" data-id="">＋ 新增獎勵品</button>');
+}
+function editRw(id){
+  const w=id?S.rewards.find(x=>x.id===id):{id:'',name:'',emoji:'🎁',image:null,unit:'small',amount:2,price:null,stock:null,kidIds:[],note:''};
+  let img=w.image,kidIds=(w.kidIds||[]).slice();
+  sheet(id?'編輯獎勵品':'新增獎勵品',
+    '<div class="avpick"><span id="avbox">'+(img?'<img class="av" style="width:64px;height:64px;border-radius:18px;object-fit:cover" src="'+img+'">':'<div class="av" style="width:64px;height:64px;border-radius:18px;background:var(--surface2);color:var(--ink);font-size:28px">'+esc(w.emoji||'🎁')+'</div>')+'</span>'+
+    '<div><button class="btn sm" data-act="pickrw">📷 上傳圖片</button>'+(img?' <button class="btn sm ghost" data-act="rmrw">移除</button>':'')+
+    '<div class="hint" style="margin-top:6px">沒有圖片就用下面的 emoji 顯示</div></div></div>'+
+    '<div class="f2"><div class="f"><label>emoji</label><input id="we" value="'+esc(w.emoji||'')+'" maxlength="4"></div>'+
+    '<div class="f"><label>庫存（空白=不限）</label><input id="ws" type="number" inputmode="numeric" min="0" value="'+(w.stock==null?'':w.stock)+'"></div></div>'+
+    '<div class="f"><label>獎勵名稱</label><input id="wn" value="'+esc(w.name)+'" placeholder="例如：遊戲時間 30 分鐘" maxlength="24"></div>'+
+    '<div class="f"><label>參考價格（元・留空＝特權型獎勵）</label>'+
+    '<div style="display:flex;gap:8px"><input id="wp" type="number" inputmode="numeric" min="0" placeholder="例如 150" value="'+(w.price==null?'':w.price)+'" style="flex:1">'+
+    '<button class="btn sm" data-act="calcpts" style="flex:0 0 auto">價格→分數</button></div>'+
+    '<div class="hint">目前匯率：1 小分 = NT$'+NTD()+'（1 大分 = NT$'+(NTD()*BU())+'）</div></div>'+
+    '<div class="f2"><div class="f"><label>所需分數類型</label><select id="wu"><option value="small" '+(w.unit==='small'?'selected':'')+'>小分</option><option value="big" '+(w.unit==='big'?'selected':'')+'>大分</option></select></div>'+
+    '<div class="f"><label>數量</label><input id="wa" type="number" inputmode="numeric" min="1" value="'+(w.amount||1)+'"></div></div>'+
+    '<div class="f"><label>備註</label><input id="wt" value="'+esc(w.note||'')+'" placeholder="例如：300 元以內" maxlength="30"></div>'+
+    '<div class="f"><label>限定誰可以兌換（都不選＝全部）</label><div class="chips" id="wk">'+
+      live(S.kids).map(k=>'<button class="chip plain '+(kidIds.includes(k.id)?'on':'')+'" data-k="'+k.id+'">'+esc(k.name)+'</button>').join('')+'</div></div>'+
+    '<button class="btn pri wide" data-act="saverw" data-id="'+(id||'')+'">儲存</button>'+
+    (id?'<button class="btn ghost wide danger" style="margin-top:9px" data-act="delrw" data-id="'+id+'">刪除</button>':''),
+    el=>{
+      el.querySelector('#wk').addEventListener('click',ev=>{const b=ev.target.closest('[data-k]');if(!b)return;
+        const i=kidIds.indexOf(b.dataset.k);i<0?kidIds.push(b.dataset.k):kidIds.splice(i,1);b.classList.toggle('on')});
+      el._get=()=>({img,kidIds});
+      el._setimg=v=>{img=v;el.querySelector('#avbox').innerHTML=v?'<img class="av" style="width:64px;height:64px;border-radius:18px;object-fit:cover" src="'+v+'">':'<div class="av" style="width:64px;height:64px;border-radius:18px;background:var(--surface2);color:var(--ink);font-size:28px">'+esc(el.querySelector('#we').value||'🎁')+'</div>'};
+    });
+}
+
+/* ---------- 設定相關動作 ---------- */
+function ghSetup(){
+  sheet('☁️ GitHub 同步設定',
+    '<div class="f hint" style="background:var(--brand-soft);padding:11px;border-radius:11px;margin-bottom:14px">'+
+    '資料會存成你 repo 裡的 <b>data.json</b>（圖片存 media.json）。<br>'+
+    'Token <b>只存在這支裝置的瀏覽器</b>，不會寫進網頁、也不會上傳到 repo。每支手機各自輸入一次。</div>'+
+    '<div class="f2"><div class="f"><label>GitHub 帳號 / 組織</label><input id="go" value="'+esc(GH.owner)+'" placeholder="your-name" autocapitalize="off"></div>'+
+    '<div class="f"><label>Repo 名稱</label><input id="gr" value="'+esc(GH.repo)+'" placeholder="kid-points" autocapitalize="off"></div></div>'+
+    '<div class="f2"><div class="f"><label>分支</label><input id="gb" value="'+esc(GH.branch||'main')+'" autocapitalize="off"></div>'+
+    '<div class="f"><label>資料檔路徑</label><input id="gp" value="'+esc(GH.path||'data.json')+'" autocapitalize="off"></div></div>'+
+    '<div class="f"><label>圖片檔路徑</label><input id="gm" value="'+esc(GH.mediaPath||'media.json')+'" autocapitalize="off"></div>'+
+    '<div class="f"><label>Personal Access Token</label><input id="gt" type="password" value="'+esc(GH.token)+'" placeholder="github_pat_... 或 ghp_..." autocapitalize="off">'+
+    '<div class="hint">建議用 Fine-grained token，只授權這個 repo 的 <b>Contents: Read and write</b>。</div></div>'+
+    '<div class="row"><button class="btn" data-act="ghtest">測試連線</button><button class="btn pri" data-act="ghsave">儲存</button></div>'+
+    '<div class="f hint" id="gmsg" style="margin-top:12px"></div>');
+}
+function readGhForm(){
+  return{owner:$('#go').value.trim(),repo:$('#gr').value.trim(),branch:$('#gb').value.trim()||'main',
+    path:$('#gp').value.trim()||'data.json',mediaPath:$('#gm').value.trim()||'media.json',token:$('#gt').value.trim()};
+}
+async function ghTest(){
+  const g=readGhForm(),msg=$('#gmsg');
+  msg.innerHTML='檢查中…';
+  if(!g.owner||!g.repo||!g.token){msg.innerHTML='<b class="danger">帳號、repo、token 都要填</b>';return}
+  try{
+    const r=await fetch('https://api.github.com/repos/'+g.owner+'/'+g.repo,
+      {headers:{'Authorization':'Bearer '+g.token,'Accept':'application/vnd.github+json'}});
+    if(r.status===401)throw new Error('Token 無效或已過期');
+    if(r.status===404)throw new Error('找不到這個 repo（名稱錯、或 token 沒有授權這個 repo）');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    msg.innerHTML='<b style="color:var(--good)">✅ 連線成功</b>　'+esc(j.full_name)+(j.private?'（私有）':'（公開）');
+  }catch(e){msg.innerHTML='<b class="danger">✗ '+esc(e.message)+'</b>'}
+}
+function ghSave(){
+  GH=readGhForm();LS.set(K_GH,GH);shaCache={};LS.set(K_SHA,{});
+  closeSheet();toast('已儲存，開始同步');pull(true).then(()=>{if(dirty)push()});
+}
+function setPinSheet(){
+  sheet('🔑 家長密碼',
+    '<div class="f hint">設定 4 位數字密碼後，<b>設定頁</b>會被鎖住。加分、扣分、兌換仍然開放（可在積分規則裡改）。</div>'+
+    '<div class="f"><label>新密碼（留空＝取消密碼）</label><input id="p1" type="password" inputmode="numeric" maxlength="4" placeholder="4 位數字"></div>'+
+    '<div class="f"><label>再輸入一次</label><input id="p2" type="password" inputmode="numeric" maxlength="4"></div>'+
+    '<button class="btn pri wide" data-act="savepin">儲存</button>');
+}
+function backupSheet(){
+  sheet('💾 備份 / 還原',
+    '<div class="f hint">備份檔含全部資料與圖片，可貼到另一支手機還原。</div>'+
+    '<button class="btn wide" data-act="dlbak">⬇️ 下載備份 JSON</button>'+
+    '<div class="f" style="margin-top:14px"><label>貼上備份內容還原（會與現有資料合併）</label><textarea id="bk" rows="5" placeholder="{ ... }"></textarea></div>'+
+    '<button class="btn pri wide" data-act="dobak">還原 / 合併</button>');
+}
+
+/* ============================================================
+   事件總線
+   ============================================================ */
+document.addEventListener('click',async ev=>{
+  const t=ev.target.closest('[data-act]');if(!t)return;
+  const a=t.dataset.act,id=t.dataset.id;
+  const el=$('#sheet');
+  switch(a){
+    case 'close':return closeSheet();
+    case 'tab':view=t.dataset.v;if(view==='set'&&!unlocked()){render();}else render();window.scrollTo(0,0);return;
+    case 'unlock':return askPin('請輸入家長密碼',()=>render());
+    case 'sel':selKid=id||null;return render();
+    case 'kid':selKid=id;view='score';return render();
+    case 'rule':return applyRule(id);
+    case 'manual':return manualSheet();
+    case 'mdo':{
+      const k=$('#mk').value,u=$('#mu').value,n=Math.max(1,parseInt($('#ma').value)||1);
+      const lbl=$('#ml').value.trim()||(t.dataset.s==='1'?'自訂加分':'自訂扣分');
+      closeSheet();return addPoints(k,toSmall(u,n)*(t.dataset.s==='1'?1:-1),lbl,{type:'adjust',emoji:'✎'});
+    }
+    case 'redeem':return doRedeem(id);
+    case 'dordm':return finishRedeem(id,t.dataset.kid);
+    case 'entry':return entrySheet(id);
+    case 'toggleVoid':return toggleVoid(id);
+    case 'syncpanel':return ghReady()?(view='set',render(),window.scrollTo(0,0)):ghSetup();
+
+    case 'mkids':return manageKids();
+    case 'editkid':return editKid(id);
+    case 'pickav':return pickImage(d=>el._setav(putMedia(d)));
+    case 'rmav':return el._setav(null);
+    case 'savekid':{
+      const g=el._get(),nm=g.name||'寶貝';
+      if(id){const k=kid(id);Object.assign(k,{name:nm,color:g.color,avatar:g.avatar});touch(k)}
+      else S.kids.push(touch({id:uid('k'),name:nm,color:g.color,avatar:g.avatar,sort:S.kids.length}));
+      closeSheet();save({media:true});return toast('已儲存');
+    }
+    case 'delkid':{
+      if(!confirm('刪除後這位小孩的分數與紀錄不再顯示，確定？'))return;
+      const k=kid(id);k.deleted=true;touch(k);if(selKid===id)selKid=null;closeSheet();save();return toast('已刪除');
+    }
+    case 'mrules':return manageRules();
+    case 'editrule':return editRule(id,t.dataset.kind);
+    case 'saverule':{
+      const o={label:$('#rl').value.trim()||'未命名',emoji:$('#re').value.trim(),kind:$('#rk').value,
+               unit:$('#ru').value,amount:Math.max(1,parseInt($('#ra').value)||1)};
+      if(id)Object.assign(touch(S.rules.find(x=>x.id===id)),o);
+      else S.rules.push(touch(Object.assign({id:uid('r'),sort:S.rules.length},o)));
+      closeSheet();save();return toast('已儲存');
+    }
+    case 'delrule':{const r=S.rules.find(x=>x.id===id);r.deleted=true;touch(r);closeSheet();save();return toast('已刪除')}
+    case 'calcpts':{
+      const pr=Math.max(0,parseInt($('#wp').value)||0);
+      if(!pr)return toast('先填價格');
+      const small=Math.max(1,Math.round(pr/NTD()));
+      if(small>=BU()&&small%BU()===0){$('#wu').value='big';$('#wa').value=small/BU()}
+      else{$('#wu').value='small';$('#wa').value=small}
+      return toast('NT$'+pr+' → '+small+' 小分');
+    }
+    case 'mrw':return manageRw();
+    case 'editrw':return editRw(id);
+    case 'pickrw':return pickImage(d=>el._setimg(d));
+    case 'rmrw':return el._setimg(null);
+    case 'saverw':{
+      const g=el._get(),st=$('#ws').value.trim();
+      const pr=$('#wp').value.trim();
+      const o={name:$('#wn').value.trim()||'未命名',emoji:$('#we').value.trim()||'🎁',
+        unit:$('#wu').value,amount:Math.max(1,parseInt($('#wa').value)||1),
+        price:pr===''?null:Math.max(0,parseInt(pr)||0),
+        stock:st===''?null:Math.max(0,parseInt(st)||0),note:$('#wt').value.trim(),kidIds:g.kidIds};
+      let media=false;
+      if(g.img&&g.img.startsWith('data:')){o.image=putMedia(g.img);media=true}else if(!g.img)o.image=null;
+      if(id){const w=S.rewards.find(x=>x.id===id);if(g.img&&!g.img.startsWith('data:'))o.image=w.image;Object.assign(touch(w),o)}
+      else S.rewards.push(touch(Object.assign({id:uid('w'),sort:S.rewards.length},o)));
+      closeSheet();save({media});return toast('已儲存');
+    }
+    case 'delrw':{const w=S.rewards.find(x=>x.id===id);w.deleted=true;touch(w);closeSheet();save();return toast('已刪除')}
+
+    case 'ntdrate':{
+      const v=prompt('1 小分 = 幾元？（獎勵品價格換算用）',NTD());if(v==null)return;
+      const n=clamp(parseInt(v)||10,1,1000);S.settings.ntdPerSmall=n;touch(S.settings);save();
+      return toast('1 小分 = NT$'+n+'（1 大分 = NT$'+(n*BU())+'）');
+    }
+    case 'reseed':{
+      if(!confirm('把「規則」與「獎勵品」換成最新預設清單？\n小孩、分數、紀錄都會保留。'))return;
+      const fresh=seed();
+      for(const r of S.rules)if(!r.deleted){r.deleted=true;touch(r)}
+      for(const w of S.rewards)if(!w.deleted){w.deleted=true;touch(w)}
+      S.rules=S.rules.concat(fresh.rules);S.rewards=S.rewards.concat(fresh.rewards);
+      S.needsSeedRefresh=false;touch(S.settings);closeSheet();save();return toast('已載入最新預設清單');
+    }
+    case 'bigunit':{
+      const v=prompt('1 大分 = 幾小分？（建議 5）',BU());if(v==null)return;
+      const n=clamp(parseInt(v)||5,2,50);S.settings.bigUnit=n;touch(S.settings);save();return toast('1 大分 = '+n+' 小分');
+    }
+    case 'tgneg':S.settings.allowNegative=!S.settings.allowNegative;touch(S.settings);return save();
+    case 'tgundo':S.settings.pinForUndo=!S.settings.pinForUndo;touch(S.settings);return save();
+    case 'tgredeem':S.settings.pinForRedeem=!S.settings.pinForRedeem;touch(S.settings);return save();
+    case 'tgsound':S.settings.sound=!S.settings.sound;touch(S.settings);beep('good');return save();
+    case 'tghap':S.settings.haptics=!S.settings.haptics;touch(S.settings);buzz();return save();
+    case 'theme':{
+      const o=['auto','light','dark'],i=(o.indexOf(S.settings.theme)+1)%3;
+      S.settings.theme=o[i];touch(S.settings);applyTheme();return save();
+    }
+    case 'setpin':return setPinSheet();
+    case 'savepin':{
+      const a=$('#p1').value.trim(),b=$('#p2').value.trim();
+      if(a===''&&b===''){S.settings.pinHash=null;touch(S.settings);closeSheet();save();return toast('已取消密碼')}
+      if(!/^\d{4}$/.test(a))return toast('請輸入 4 位數字');
+      if(a!==b)return toast('兩次輸入不一樣');
+      S.settings.pinHash=h33(a);touch(S.settings);unlockUntil=now()+10*60*1000;closeSheet();save();return toast('密碼已設定');
+    }
+    case 'ghsetup':return ghSetup();
+    case 'ghtest':return ghTest();
+    case 'ghsave':return ghSave();
+    case 'ghpull':return pull();
+    case 'ghpush':return push().then(()=>toast(syncState==='err'?'上傳失敗：'+syncMsg:'已上傳'));
+    case 'backup':return backupSheet();
+    case 'dlbak':{
+      const blob=new Blob([JSON.stringify({state:S,media:M},null,1)],{type:'application/json'});
+      const u=URL.createObjectURL(blob),aa=document.createElement('a');
+      aa.href=u;aa.download='kidpoints-'+new Date().toISOString().slice(0,10)+'.json';aa.click();
+      setTimeout(()=>URL.revokeObjectURL(u),3000);return;
+    }
+    case 'dobak':{
+      try{
+        const j=JSON.parse($('#bk').value);
+        if(j.state)S=mergeState(S,j.state);
+        if(j.media)M=mergeMedia(M,j.media);
+        closeSheet();save({media:true});return toast('已還原合併');
+      }catch(e){return toast('JSON 格式不正確')}
+    }
+    case 'clearlog':{
+      if(!confirm('清空所有加減分紀錄？分數會全部歸零。'))return;
+      S.ledger=[];touch(S.settings);save();return toast('紀錄已清空');
+    }
+    case 'reset':{
+      if(!confirm('回復成預設資料？現有小孩、規則、獎勵、紀錄都會不見。'))return;
+      S=seed();M={updatedAt:now(),items:{}};selKid=null;save({media:true});return toast('已回復預設');
+    }
+  }
+});
+
+/* ---------- 主題 / 啟動 ---------- */
+function applyTheme(){
+  const t=S.settings.theme||'auto';
+  document.documentElement.setAttribute('data-theme',t==='auto'?'':t);
+  if(t==='auto')document.documentElement.removeAttribute('data-theme');
+}
+applyTheme();
+render();
+if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
+if(ghReady())pull(true);
+window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,mergeState,mergeLedger,render,
+  set view(v){view=v;render()},get view(){return view},set selKid(v){selKid=v},get selKid(){return selKid}};
+</script>
+</body>
+</html>
