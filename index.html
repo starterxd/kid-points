@@ -701,7 +701,7 @@ function vHome(){
   const quick=live(S.rules).filter(r=>r.kind==='earn').slice(0,6);
   if(ks.length&&quick.length){
     h+='<div class="sec"><h2>快速加分</h2><span class="more" data-act="tab" data-v="score">全部規則 →</span></div><div class="rules">';
-    for(const r of quick)h+=ruleBtn(r);
+    for(const r of quick)h+=ruleBtn(r,true);
     h+='</div>';
   }
   const recent=S.ledger.slice(-4).reverse();
@@ -714,9 +714,9 @@ function vHome(){
   if(!ghReady())h+='<div class="banner"><span style="font-size:20px">☁️</span><div><b>還沒連結 GitHub</b>分數目前只存在這支手機，清快取就會不見。<br><button class="btn sm pri" style="margin-top:8px" data-act="ghsetup">設定同步</button></div></div>';
   return h;
 }
-function ruleBtn(r){
+function ruleBtn(r,ask){
   const dd=r.kind==='deduct';
-  return '<button class="rule '+(dd?'dd':'')+'" data-act="rule" data-id="'+r.id+'">'+
+  return '<button class="rule '+(dd?'dd':'')+'" data-act="rule" data-id="'+r.id+'"'+(ask?' data-ask="1"':'')+'>'+
     '<div class="ic">'+esc(r.emoji||(dd?'➖':'➕'))+'</div><div class="tx"><b>'+esc(r.label)+'</b>'+
     '<u>'+(dd?'−':'+')+fmtCost(r.unit,r.amount)+'</u></div></button>';
 }
@@ -725,7 +725,7 @@ function ruleBtn(r){
 function vScore(){
   const ks=live(S.kids);
   if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先到設定新增小孩</div>';
-  if(!selKid||!kid(selKid))selKid=ks[0].id;
+  if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
   const k=kid(selKid),bal=balanceOf(k.id);
   let h='<div class="sec"><h2>選擇對象</h2></div><div class="chips">';
   for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+'</button>';
@@ -848,12 +848,24 @@ function vSet(){
 /* ============================================================
    動作
    ============================================================ */
-function applyRule(ruleId){
+function applyRule(ruleId,ask){
   const r=S.rules.find(x=>x.id===ruleId);if(!r)return;
   const ks=live(S.kids);
-  if(!selKid||!kid(selKid))selKid=ks[0]&&ks[0].id;
-  if(!selKid){toast('請先新增小孩');return}
+  if(!ks.length){toast('請先新增小孩');return}
+  if(ask&&ks.length>1)return pickKidSheet(r);
+  if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
   addPoints(selKid,r.kind==='deduct'?-toSmall(r.unit,r.amount):toSmall(r.unit,r.amount),r.label,{ruleId:r.id,emoji:r.emoji,type:r.kind});
+}
+function pickKidSheet(r){
+  const dd=r.kind==='deduct';
+  sheet(esc(r.emoji||'')+' '+esc(r.label),
+    '<div class="f hint" style="margin-top:-8px;font-size:13.5px">'+
+      '<b style="color:var(--'+(dd?'bad':'good')+');font-size:15px">'+(dd?'−':'+')+fmtCost(r.unit,r.amount)+'</b>　要記給誰？</div>'+
+    '<div class="kidgrid">'+live(S.kids).map(k=>
+      '<button class="kid" style="--kc:'+k.color+'" data-act="ruleFor" data-id="'+r.id+'" data-kid="'+k.id+'"><div class="in">'+
+      '<div class="top">'+avatarHTML(k)+'<div style="min-width:0"><div class="nm">'+esc(k.name)+'</div>'+
+      '<div class="sub">目前 '+fmtScore(balanceOf(k.id))+'</div></div></div></div></button>').join('')+'</div>'+
+    '<button class="btn wide ghost" style="margin-top:12px" data-act="close">取消</button>');
 }
 function addPoints(kidId,small,label,extra){
   const k=kid(kidId);if(!k||!small)return;
@@ -911,7 +923,7 @@ function revealCard(w,k){
 }
 function manualSheet(){
   const ks=live(S.kids);if(!ks.length){toast('請先新增小孩');return}
-  if(!selKid||!kid(selKid))selKid=ks[0].id;
+  if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
   sheet('✎ 自訂加減分',
    '<div class="f"><label>對象</label><select id="mk">'+ks.map(k=>'<option value="'+k.id+'" '+(k.id===selKid?'selected':'')+'>'+esc(k.name)+'</option>').join('')+'</select></div>'+
    '<div class="f2"><div class="f"><label>分數類型</label><select id="mu"><option value="small">小分</option><option value="big">大分</option></select></div>'+
@@ -1087,7 +1099,8 @@ document.addEventListener('click',async ev=>{
     case 'unlock':return askPin('請輸入家長密碼',()=>render());
     case 'sel':selKid=id||null;return render();
     case 'kid':selKid=id;view='score';return render();
-    case 'rule':return applyRule(id);
+    case 'rule':return applyRule(id,t.dataset.ask==='1');
+    case 'ruleFor':{closeSheet();selKid=t.dataset.kid;return applyRule(id,false)}
     case 'manual':return manualSheet();
     case 'mdo':{
       const k=$('#mk').value,u=$('#mu').value,n=Math.max(1,parseInt($('#ma').value)||1);
