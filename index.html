@@ -182,6 +182,26 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .empty{text-align:center;color:var(--muted);padding:36px 16px;font-size:14px}
 .empty .e{font-size:42px;display:block;margin-bottom:8px;opacity:.55}
 
+/* 日常任務 */
+.rt{padding:11px 12px;border-bottom:1px solid var(--line)}
+.rt:last-child{border-bottom:0}
+.rthead{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.rthead .nm{font-weight:800;font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flame{font-size:11px;font-weight:850;color:var(--gold);background:var(--gold-soft);padding:3px 8px;border-radius:999px;white-space:nowrap}
+.dicep{font-size:11px;font-weight:850;color:var(--brand);background:var(--brand-soft);padding:3px 8px;border-radius:999px;white-space:nowrap}
+.rtn{font-size:11.5px;color:var(--muted);font-weight:800}
+.rtrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:7px}
+.rtc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  padding:9px 10px 10px;border-radius:12px;border:1.5px solid var(--line);
+  background:var(--surface2);min-height:70px;text-align:left}
+.rtc:active{transform:scale(.96)}
+.rtc .ck{position:absolute;top:8px;right:8px;width:19px;height:19px;border-radius:6px;
+  border:2px solid var(--line);display:grid;place-items:center;font-size:11px;color:transparent;font-weight:900}
+.rtc .e{font-size:19px;line-height:1}
+.rtc b{font-size:11.5px;font-weight:750;line-height:1.35;width:100%;word-break:break-word}
+.rtc.on{border-color:var(--good);background:var(--good-soft)}
+.rtc.on b{color:var(--good)}
+.rtc.on .ck{background:var(--good);border-color:var(--good);color:#fff}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
 .st{padding:12px 8px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);text-align:center;box-shadow:var(--shadow)}
 .st b{display:block;font-size:21px;font-weight:850;letter-spacing:-.8px}
@@ -308,7 +328,8 @@ function seed(){
   return {
     schema:2,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
-              pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto'},
+              pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
+              routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5},
     kids:[
       {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
       {id:uid('k'),name:'寶貝二號',color:KC[1],avatar:null,sort:1,updatedAt:t}
@@ -362,6 +383,12 @@ function seed(){
       W('玩具一份','🎁','big',10,500),
       W('遊樂園 / 展覽門票','🎡','big',10,500)
     ],
+    routines:[
+      {id:uid('t'),label:'念英文 15 分鐘',emoji:'📖',dice:1,kidIds:[],sort:0,updatedAt:t},
+      {id:uid('t'),label:'練鋼琴 15 分鐘',emoji:'🎹',dice:1,kidIds:[],sort:1,updatedAt:t},
+      {id:uid('t'),label:'運動 15 分鐘',emoji:'🏃',dice:1,kidIds:[],sort:2,updatedAt:t}
+    ],
+    routineLog:[],
     ledger:[],
     deviceId:uid('d')
   };
@@ -379,6 +406,13 @@ if(!S.settings)S.settings=seed().settings;
 if(!S.deviceId)S.deviceId=uid('d');
 if(S.settings.ntdPerSmall==null)S.settings.ntdPerSmall=10;
 if(!S.schema||S.schema<2){S.schema=2;S.needsSeedRefresh=true}
+if(!S.routines||!S.routines.length){const f=seed();S.routines=f.routines}
+if(!S.routineLog)S.routineLog=[];
+if(S.settings.routineAllBonus==null)S.settings.routineAllBonus=1;
+if(S.settings.streak3Bonus==null)S.settings.streak3Bonus=1;
+if(S.settings.streak7Bonus==null)S.settings.streak7Bonus=5;
+if(S.settings.dicePerPoints==null)S.settings.dicePerPoints=5;
+if(S.schema<3)S.schema=3;
 
 let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null;
 
@@ -405,6 +439,61 @@ function rarity(costSmall){return costSmall<5?1:costSmall<15?2:costSmall<30?3:co
 function stars(n){return '<span class="rarity">'+'★'.repeat(n)+'</span>'}
 
 /* ---------------- 儲存 ---------------- */
+/* ---------------- 日常任務 ---------------- */
+function dayKey(ts){const d=new Date(ts||now());
+  return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function routinesFor(kidId){const k=kid(kidId);if(!k)return [];
+  return live(S.routines).filter(r=>!r.kidIds||!r.kidIds.length||r.kidIds.includes(kidId))}
+function routineDone(kidId,routineId,day){day=day||dayKey();
+  return S.routineLog.some(e=>!e.voided&&e.kidId===kidId&&e.routineId===routineId&&e.day===day)}
+function doneCount(kidId,day){return routinesFor(kidId).filter(r=>routineDone(kidId,r.id,day)).length}
+function allDone(kidId,day){const rs=routinesFor(kidId);
+  return rs.length>0&&rs.every(r=>routineDone(kidId,r.id,day))}
+function streakOf(kidId){
+  const d=new Date();let n=0;
+  if(!allDone(kidId,dayKey(d)))d.setDate(d.getDate()-1);
+  while(allDone(kidId,dayKey(d))){n++;d.setDate(d.getDate()-1);if(n>400)break}
+  return n;
+}
+function diceOf(kidId){
+  let rd=0;const days=new Set();
+  for(const e of S.routineLog){if(e.voided||e.kidId!==kidId)continue;
+    const r=S.routines.find(x=>x.id===e.routineId);rd+=(r&&r.dice)||1;days.add(e.day)}
+  for(const d of days)if(allDone(kidId,d))rd+=1;          // 當天全完成再送 1 顆
+  const per=Math.max(1,S.settings.dicePerPoints|0||5);
+  const used=(S.game&&S.game.players&&S.game.players[kidId]&&S.game.players[kidId].rollsUsed)||0;
+  return Math.max(0,rd+Math.floor(earnedOf(kidId)/per)-used);
+}
+function awardRoutineDay(kidId,day){
+  const st=S.settings,k=kid(kidId);if(!k)return;
+  const got=[];
+  if(st.routineAllBonus>0){commit({kidId,small:st.routineAllBonus,label:'今天任務全完成',type:'routine',day,emoji:'✅'});got.push('+'+st.routineAllBonus)}
+  const s=streakOf(kidId);
+  if(s===3&&st.streak3Bonus>0){commit({kidId,small:st.streak3Bonus,label:'連續 3 天全勤',type:'routine',day,emoji:'🔥'});got.push('連續3天 +'+st.streak3Bonus)}
+  if(s>0&&s%7===0&&st.streak7Bonus>0){commit({kidId,small:st.streak7Bonus,label:'連續 '+s+' 天全勤',type:'routine',day,emoji:'🏆'});got.push('連續'+s+'天 +'+st.streak7Bonus)}
+  return {streak:s,got};
+}
+function revokeRoutineDay(kidId,day){
+  for(const e of S.ledger)if(e.type==='routine'&&e.kidId===kidId&&e.day===day&&!e.voided){e.voided=true;touch(e)}
+}
+function toggleRoutine(kidId,routineId){
+  const day=dayKey(),wasAll=allDone(kidId,day);
+  const ex=S.routineLog.find(e=>!e.voided&&e.kidId===kidId&&e.routineId===routineId&&e.day===day);
+  if(ex){ex.voided=true;touch(ex)}
+  else{S.routineLog.push({id:uid('rl'),kidId,routineId,day,ts:now(),voided:false,updatedAt:now()});
+       if(S.routineLog.length>800)S.routineLog=S.routineLog.slice(-800)}
+  const isAll=allDone(kidId,day);
+  let msg='';
+  if(!wasAll&&isAll){const r=awardRoutineDay(kidId,day);
+    msg='🎉 '+kid(kidId).name+' 今天全部完成！'+(r&&r.got.length?'　'+r.got.join(' ・ '):'');
+    buzz(60);beep('big')}
+  else if(wasAll&&!isAll){revokeRoutineDay(kidId,day);msg='已取消今天的全勤獎勵'}
+  else if(!ex){const rr=S.routines.find(x=>x.id===routineId);
+    msg='✅ '+(rr?rr.label:'任務')+'　+1 顆骰子';buzz(25);beep('good')}
+  else msg='已取消打勾';
+  save();if(msg)toast(msg);
+}
+
 function touch(o){o.updatedAt=now();return o}
 function save(opts){
   opts=opts||{};
@@ -578,6 +667,8 @@ function mergeState(L,R){
     kids:mergeList(L.kids,R.kids),
     rules:mergeList(L.rules,R.rules),
     rewards:mergeList(L.rewards,R.rewards),
+    routines:mergeList(L.routines,R.routines),
+    routineLog:mergeList(L.routineLog,R.routineLog).slice(-800),
     ledger:lg};
 }
 function mergeMedia(L,R){
@@ -712,6 +803,24 @@ function vHome(){
   }
   h+='</div>';
 
+  if(ks.length&&live(S.routines).length){
+    const d=new Date().toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'});
+    h+='<div class="sec"><h2>今天的任務</h2><span class="more" style="color:var(--muted);font-weight:600">'+d+'</span></div><div class="list">';
+    for(const k of ks){
+      const rs=routinesFor(k.id),dn=doneCount(k.id),stk=streakOf(k.id);
+      h+='<div class="rt"><div class="rthead">'+avatarHTML(k)+
+        '<div class="nm">'+esc(k.name)+'</div>'+
+        (stk>0?'<span class="flame">🔥 '+stk+' 天</span>':'')+
+        '<span class="dicep">🎲 '+diceOf(k.id)+'</span>'+
+        '<span class="rtn">'+dn+'/'+rs.length+'</span></div><div class="rtrow">';
+      for(const r of rs){
+        h+='<button class="rtc '+(routineDone(k.id,r.id)?'on':'')+'" data-act="rt" data-id="'+r.id+'" data-kid="'+k.id+'">'+
+          '<span class="ck">✓</span><span class="e">'+esc(r.emoji||'⭐')+'</span><b>'+esc(r.label)+'</b></button>';
+      }
+      h+='</div></div>';
+    }
+    h+='</div>';
+  }
   const quick=live(S.rules).filter(r=>r.kind==='earn').slice(0,6);
   if(ks.length&&quick.length){
     h+='<div class="sec"><h2>快速加分</h2><span class="more" data-act="tab" data-v="score">全部規則 →</span></div><div class="rules">';
@@ -828,12 +937,14 @@ function vSet(){
   let h='';
   h+='<div class="sec"><h2>資料</h2></div><div class="list">'+
     nav('mkids','👧','小孩','名稱、照片、顏色',live(S.kids).length+' 位')+
+    nav('mrt','📅','日常任務','每天要做的事，完成給骰子',live(S.routines).length+' 項')+
     nav('mrules','📋','加分 / 扣分規則','新增、修改、刪除',live(S.rules).length+' 條')+
     nav('mrw','🎁','獎勵品','名稱、圖片、所需分數',live(S.rewards).length+' 項')+
     '</div>';
   h+='<div class="sec"><h2>積分規則</h2></div><div class="list">'+
     nav('bigunit','⭐','1 大分 = ? 小分','目前 '+BU()+' 小分換 1 大分',BU())+
     nav('ntdrate','💰','1 小分 = ? 元','獎勵品換算基準，1 大分 = NT$'+(NTD()*BU()),'NT$'+NTD())+
+    nav('rtbonus','🔥','任務獎勵','全完成 +'+st.routineAllBonus+'、連續 3 天 +'+st.streak3Bonus+'、連續 7 天 +'+st.streak7Bonus,'調整')+
     sw('tgneg','允許出現負分','關閉時扣分最多扣到 0',st.allowNegative)+
     sw('tgundo','撤銷紀錄需密碼','避免小孩自己撤銷扣分',st.pinForUndo)+
     sw('tgredeem','兌換獎勵需密碼','兌換時要家長輸入密碼',st.pinForRedeem)+
@@ -988,6 +1099,43 @@ function editKid(id){
       el._setav=v=>{av=v;el.querySelector('#avbox').innerHTML=avatarHTML({name:el.querySelector('#kn').value||'?',color,avatar:av})};
     });
 }
+function manageRt(){
+  sheet('📅 日常任務',
+    '<div class="f hint" style="margin-top:-6px">每天可以各打勾一次。完成一項給 1 顆骰子；當天全部完成再加分數與連續天數。</div>'+
+    '<div class="list">'+(live(S.routines).map(r=>
+      '<button class="li" data-act="editrt" data-id="'+r.id+'"><div class="ic">'+esc(r.emoji||'⭐')+'</div>'+
+      '<div class="tx"><b>'+esc(r.label)+'</b><u>完成給 '+(r.dice||1)+' 顆骰子'+
+      (r.kidIds&&r.kidIds.length?' ・ 限定 '+r.kidIds.map(i=>{const k=kid(i);return k?esc(k.name):''}).join('、'):'')+
+      '</u></div><span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無任務</div>')+'</div>'+
+    '<button class="btn pri wide" style="margin-top:13px" data-act="editrt" data-id="">＋ 新增任務</button>');
+}
+function editRt(id){
+  const r=id?S.routines.find(x=>x.id===id):{id:'',label:'',emoji:'⭐',dice:1,kidIds:[]};
+  let kidIds=(r.kidIds||[]).slice();
+  sheet(id?'編輯任務':'新增任務',
+    '<div class="f2"><div class="f"><label>圖示</label><input id="te" value="'+esc(r.emoji||'')+'" maxlength="4"></div>'+
+    '<div class="f"><label>完成給幾顆骰子</label><input id="td" type="number" inputmode="numeric" min="0" max="9" value="'+(r.dice==null?1:r.dice)+'"></div></div>'+
+    '<div class="f"><label>任務名稱</label><input id="tl" value="'+esc(r.label)+'" placeholder="例如：念英文 15 分鐘" maxlength="24"></div>'+
+    '<div class="f"><label>限定誰要做（都不選＝全部）</label><div class="chips" id="tk">'+
+      live(S.kids).map(k=>'<button class="chip plain '+(kidIds.includes(k.id)?'on':'')+'" data-k="'+k.id+'">'+esc(k.name)+'</button>').join('')+'</div></div>'+
+    '<button class="btn pri wide" data-act="savert" data-id="'+(id||'')+'">儲存</button>'+
+    (id?'<button class="btn ghost wide danger" style="margin-top:9px" data-act="delrt" data-id="'+id+'">刪除</button>':''),
+    el=>{
+      el.querySelector('#tk').addEventListener('click',ev=>{const b=ev.target.closest('[data-k]');if(!b)return;
+        const i=kidIds.indexOf(b.dataset.k);i<0?kidIds.push(b.dataset.k):kidIds.splice(i,1);b.classList.toggle('on')});
+      el._get=()=>({kidIds});
+    });
+}
+function rtBonusSheet(){
+  const st=S.settings;
+  sheet('🔥 任務獎勵',
+    '<div class="f hint" style="margin-top:-6px">完成單項只給骰子；下面這些是「當天全部完成」才給的分數。</div>'+
+    '<div class="f"><label>當天全部完成 → 加幾小分</label><input id="b1" type="number" inputmode="numeric" min="0" value="'+st.routineAllBonus+'"></div>'+
+    '<div class="f"><label>連續 3 天全勤 → 加幾小分</label><input id="b2" type="number" inputmode="numeric" min="0" value="'+st.streak3Bonus+'"></div>'+
+    '<div class="f"><label>連續 7 天全勤 → 加幾小分（之後每 7 天再給一次）</label><input id="b3" type="number" inputmode="numeric" min="0" value="'+st.streak7Bonus+'"></div>'+
+    '<div class="f"><label>每累積幾小分換 1 顆骰子</label><input id="b4" type="number" inputmode="numeric" min="1" value="'+(st.dicePerPoints||5)+'"></div>'+
+    '<button class="btn pri wide" data-act="savertb">儲存</button>');
+}
 function manageRules(){
   const grp=kind=>live(S.rules).filter(r=>r.kind===kind).map(r=>
     '<button class="li" data-act="editrule" data-id="'+r.id+'"><div class="ic">'+esc(r.emoji||'•')+'</div>'+
@@ -1117,6 +1265,7 @@ document.addEventListener('click',async ev=>{
     case 'unlock':return askPin('請輸入家長密碼',()=>render());
     case 'sel':selKid=id||null;return render();
     case 'kid':selKid=id;view='score';return render();
+    case 'rt':return toggleRoutine(t.dataset.kid,id);
     case 'rule':return applyRule(id,t.dataset.ask==='1');
     case 'ruleFor':{closeSheet();selKid=t.dataset.kid;return applyRule(id,false)}
     case 'manual':return manualSheet();
@@ -1144,6 +1293,26 @@ document.addEventListener('click',async ev=>{
     case 'delkid':{
       if(!confirm('刪除後這位小孩的分數與紀錄不再顯示，確定？'))return;
       const k=kid(id);k.deleted=true;touch(k);if(selKid===id)selKid=null;closeSheet();save();return toast('已刪除');
+    }
+    case 'mrt':return manageRt();
+    case 'editrt':return editRt(id);
+    case 'savert':{
+      const g=el._get();
+      const o={label:$('#tl').value.trim()||'未命名',emoji:$('#te').value.trim()||'⭐',
+               dice:clamp(parseInt($('#td').value)||0,0,9),kidIds:g.kidIds};
+      if(id)Object.assign(touch(S.routines.find(x=>x.id===id)),o);
+      else S.routines.push(touch(Object.assign({id:uid('t'),sort:S.routines.length},o)));
+      closeSheet();save();return toast('已儲存');
+    }
+    case 'delrt':{const r=S.routines.find(x=>x.id===id);r.deleted=true;touch(r);closeSheet();save();return toast('已刪除')}
+    case 'rtbonus':return rtBonusSheet();
+    case 'savertb':{
+      const st=S.settings;
+      st.routineAllBonus=Math.max(0,parseInt($('#b1').value)||0);
+      st.streak3Bonus=Math.max(0,parseInt($('#b2').value)||0);
+      st.streak7Bonus=Math.max(0,parseInt($('#b3').value)||0);
+      st.dicePerPoints=Math.max(1,parseInt($('#b4').value)||5);
+      touch(st);closeSheet();save();return toast('已儲存');
     }
     case 'mrules':return manageRules();
     case 'editrule':return editRule(id,t.dataset.kind);
@@ -1238,7 +1407,7 @@ document.addEventListener('click',async ev=>{
     }
     case 'clearlog':{
       if(!confirm('清空所有加減分紀錄？分數會全部歸零。'))return;
-      S.ledger=[];S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
+      S.ledger=[];S.routineLog=[];S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
     }
     case 'reset':{
       if(!confirm('回復成預設資料？現有小孩、規則、獎勵、紀錄都會不見。'))return;
@@ -1258,6 +1427,7 @@ render();
 if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
 if(ghReady())pull(true);
 window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,mergeState,mergeLedger,render,
+  diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   set view(v){view=v;render()},get view(){return view},set selKid(v){selKid=v},get selKid(){return selKid}};
 </script>
 </body>
