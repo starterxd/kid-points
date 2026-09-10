@@ -34,6 +34,8 @@
   --c1:#98a2bd; --c2:#35d98a; --c3:#5b9dff; --c4:#b478ff; --c5:#ffc247;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation}
+button,.li,.rule,.kid,.chip,.rwc,.sw,.nb,.tg,.pad button{touch-action:manipulation;-webkit-user-select:none;user-select:none}
 html,body{margin:0;padding:0}
 body{
   color:var(--ink); min-height:100vh;
@@ -511,8 +513,12 @@ function paintSync(){
   else{d.classList.add('ok');t.textContent='已同步'}
 }
 async function gh(path,opts){
-  const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+(opts&&opts.method?'':'?ref='+encodeURIComponent(GH.branch||'main')),
-    Object.assign({headers:{'Authorization':'Bearer '+GH.token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}},opts||{}));
+  // GitHub 的 GET 回 Cache-Control: private,max-age=60，瀏覽器會給舊的 sha → 寫入永遠 409
+  // 所以一律 no-store，並加上時間戳避開快取
+  const q=(opts&&opts.method)?'':('?ref='+encodeURIComponent(GH.branch||'main')+'&_t='+Date.now());
+  const r=await fetch('https://api.github.com/repos/'+GH.owner+'/'+GH.repo+'/contents/'+path+q,
+    Object.assign({cache:'no-store',headers:{'Authorization':'Bearer '+GH.token,'Accept':'application/vnd.github+json',
+      'X-GitHub-Api-Version':'2022-11-28','If-None-Match':''}},opts||{}));
   return r;
 }
 async function ghRead(path){
@@ -533,6 +539,7 @@ async function ghWrite(path,obj,msg,remerge){
     if(sha)b.sha=sha;return b};
   let r=await gh(path,{method:'PUT',body:JSON.stringify(build(obj))});
   for(let i=0;i<3&&(r.status===409||r.status===422);i++){
+    delete shaCache[path];LS.set(K_SHA,shaCache);
     const rem=await ghRead(path).catch(()=>null);
     sha=shaCache[path];
     if(rem&&rem.data&&remerge)obj=remerge(rem.data);
@@ -559,12 +566,19 @@ function mergeLedger(L,R){
 }
 function mergeState(L,R){
   if(!R||!R.kids)return L;
+  // 「清空紀錄」的時間點取兩邊最大值，不能跟著 settings 一起被後寫贏
+  // （剛裝好的新手機 settings 時間最新，會把清空紀錄洗掉，舊紀錄就倒回來了）
+  const st=Object.assign({},newer(L.settings,R.settings));
+  const cut=Math.max((L.settings&&L.settings.ledgerClearedAt)||0,(R.settings&&R.settings.ledgerClearedAt)||0);
+  if(cut)st.ledgerClearedAt=cut;
+  let lg=mergeLedger(L.ledger,R.ledger);
+  if(cut)lg=lg.filter(e=>((e.updatedAt||e.ts||0)>=cut));
   return{schema:Math.max(L.schema||1,R.schema||1),deviceId:L.deviceId,needsSeedRefresh:L.needsSeedRefresh,
-    settings:newer(L.settings,R.settings),
+    settings:st,
     kids:mergeList(L.kids,R.kids),
     rules:mergeList(L.rules,R.rules),
     rewards:mergeList(L.rewards,R.rewards),
-    ledger:mergeLedger(L.ledger,R.ledger)};
+    ledger:lg};
 }
 function mergeMedia(L,R){
   if(!R||!R.items)return L;
@@ -1095,7 +1109,11 @@ document.addEventListener('click',async ev=>{
   const el=$('#sheet');
   switch(a){
     case 'close':return closeSheet();
-    case 'tab':view=t.dataset.v;if(view==='set'&&!unlocked()){render();}else render();window.scrollTo(0,0);return;
+    case 'tab':{
+      const from=view;view=t.dataset.v;
+      if(from==='set'&&view!=='set')unlockUntil=0;   // 離開設定頁就重新上鎖
+      render();window.scrollTo(0,0);return;
+    }
     case 'unlock':return askPin('請輸入家長密碼',()=>render());
     case 'sel':selKid=id||null;return render();
     case 'kid':selKid=id;view='score';return render();
@@ -1220,7 +1238,7 @@ document.addEventListener('click',async ev=>{
     }
     case 'clearlog':{
       if(!confirm('清空所有加減分紀錄？分數會全部歸零。'))return;
-      S.ledger=[];touch(S.settings);save();return toast('紀錄已清空');
+      S.ledger=[];S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
     }
     case 'reset':{
       if(!confirm('回復成預設資料？現有小孩、規則、獎勵、紀錄都會不見。'))return;
