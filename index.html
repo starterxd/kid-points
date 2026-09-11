@@ -497,6 +497,18 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
+const BUILD='v9.1・2026-09-11';
+let newBuild=null;
+async function checkUpdate(auto){
+  if(location.protocol==='file:')return;
+  try{
+    const r=await fetch(location.pathname+'?_cu='+Date.now(),{cache:'no-store'});
+    if(!r.ok)return;
+    const m=(await r.text()).match(/const BUILD='([^']+)'/);
+    if(m&&m[1]!==BUILD){newBuild=m[1];render();if(!auto)toast('有新版本 '+m[1]+'，點一下更新')}
+    else if(!auto)toast('已經是最新版（'+BUILD+'）');
+  }catch(e){}
+}
 /* ---------------- 像素圖示 ---------------- */
 const PXPAL={"k":"#0b1020","w":"#eaf2ff","l":"#b9c4de","s":"#7c88a8","d":"#38415e","e":"#1a2338","c":"#35e0ff","b":"#4f7bff","p":"#b06cff","m":"#ff5fa8","y":"#ffc93c","o":"#ff8a3d","r":"#ff5a5f","g":"#3ddc84","t":"#17b8a6","n":"#9a6b45","f":"#ffcc9e","h":"#5b3d28"};
 const PXG={"⭐":"............|.....yy.....|.....yy.....|....wyyw....|yy..yyyy..yy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|..yyy..yyy..|..yy....yy..|.y........y.","🌟":".c........c.|..c.wwww.c..|...wwyyww...|..wyyyyyyw..|ccwyyyyyywcc|..wyyyyyyw..|...wyyyyw...|...wyyyyw...|..wyy..yyw..|..ww....ww..|.c........c.|............","🎲":"............|..wwwwwwww..|.wwwwwwwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwkkwwww.|.wwwwkkwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwwwwwww.|..wwwwwwww..|............","🎁":".....mm.....|....mmmm....|..mm.mm.mm..|.mmmmmmmmmm.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|............","🏦":".....c......|....ccc.....|...ccccc....|..ccyyycc...|.cccccccccc.|.cccccccccc.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cccccccccc.|.bbbbbbbbbb.|............","🛡️":".cccccccccc.|cccccccccccc|cccccccccccc|cccccwwccccc|cccccwwccccc|ccwwwwwwwwcc|ccwwwwwwwwcc|cccccwwccccc|.ccccwwcccc.|..cccccccc..|...cccccc...|.....cc.....","🎫":"............|..oooooooo..|.oooooooooo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.oooooooooo.|..oooooooo..|............|............|............","❓":"............|....cccc....|...cc..cc...|...cc..cc...|......cc....|.....cc.....|.....cc.....|.....cc.....|............|.....cc.....|.....cc.....|............","🏁":".ww.........|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........","😈":"............|...pppppp...|..pppppppp..|.pp.pppp.pp.|.pp.pppp.pp.|.pppppppppp.|.pkkkkkkkkp.|.kkwwkkwwkk.|.kkkkkkkkkk.|..kkkkkkkk..|...kkkkkk...|............","💥":"....o..o....|.o..oo.o..o.|..o.ooooo.o.|...oorrooo..|.ooorrrrooo.|oorrryyrrroo|.ooorrrrooo.|..ooorrooo..|.o.ooooo.o..|.o..oo.o..o.|....o..o....|............","🔁":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🔥":"......o.....|.....oyo....|....oyyyo...|...oyyyyo...|..oyyrryyo..|..oyrrrryo..|.ooyrrrryoo.|.oyrrrrrryo.|.oyrryyrryo.|..oyyyyyyo..|...oooooo...|............","✎":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","💡":"....yyyy....|...yyyyyy...|..yyyyyyyy..|..yyyyyyyy..|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|....ssss....|....ssss....|....ssss....|.....ss.....|............","🏠":".....ww.....|....wwww....|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|wwwwwwwwwwww|.cc.cccc.cc.|.cc.cccc.cc.|.cc.cwwc.cc.|.cc.cwwc.cc.|.cccccccccc.|............","➕":"............|.....gg.....|.....gg.....|.....gg.....|..gggggggg..|..gggggggg..|.....gg.....|.....gg.....|.....gg.....|............|............|............","➖":"............|............|............|............|..rrrrrrrr..|..rrrrrrrr..|............|............|............|............|............|............","🧾":"............|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.w.ww.ww.ww.|............","⚙️":"....ssss....|.s..ssss..s.|.ss.ssss.ss.|.ssssssssss.|.sssswwssss.|sssswwwwssss|sssswwwwssss|.sssswwssss.|.ssssssssss.|.ss.ssss.ss.|.s..ssss..s.|....ssss....","💎":"............|..cccccccc..|.cwwccccwwc.|ccwwccccwwcc|.ccccccccccc|..cccccccc..|...cccccc...|....cccc....|.....cc.....|............|............|............","🎮":"............|............|.pppppppppp.|pppwppppwppp|ppwwwppwwwpp|pppwpppppppp|pppppppwppww|.pppppppppp.|............|............|............|............","🕹️":".....rr.....|....rrrr....|....rrrr....|.....rr.....|.....rr.....|.....rr.....|...dddddd...|..dddddddd..|.dddddddddd.|.dddddddddd.|..dddddddd..|............","🍪":"............|...nnnnnn...|..nnnnnnnn..|.nnkknnnnnn.|.nnnnnnkknn.|nnnnkknnnnnn|nnkknnnnkknn|.nnnnnnnnnn.|..nnkknnnn..|...nnnnnn...|............|............","🍭":"............|...mmmmmm...|..mmwwwwmm..|.mmwwmmwwmm.|.mmwmmmmwmm.|.mmwwmmwwmm.|..mmwwwwmm..|...mmmmmm...|.....ww.....|.....ww.....|.....ww.....|.....ww.....","📦":"............|.oooooooooo.|.oo.oooo.oo.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|............|............","📖":"............|.ww......ww.|.wwww..wwww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|..wwwwwwww..|............","✅":"............|..........gg|.........gg.|gg......gg..|.gg....gg...|..gg..gg....|...gggg.....|....gg......|............|............|............|............","🚫":"............|...rrrrrr...|..rr....rr..|.rr.....rrr.|.rr....rrrr.|rr....rr..rr|rr..rr....rr|.rrrr....rr.|.rrr.....rr.|..rr....rr..|...rrrrrr...|............","👶":"............|....ffff....|...ffffff...|..ffffffff..|..fkffffkf..|..ffffffff..|..fffkkfff..|...ffffff...|....ffff....|...cccccc...|..cccccccc..|............","👧":"....hhhh....|...hhhhhh...|..hhffffhh..|..hffffffh..|..hfkffkfhh.|..hffffffh..|..hfffkffh..|...ffffff...|....ffff....|...mmmmmm...|..mmmmmmmm..|............","🏆":"............|.yyyyyyyyyy.|yyyyyyyyyyyy|yy.yyyyyy.yy|yy.yyyyyy.yy|yy.yyyyyy.yy|...yyyyyy...|....yyyy....|....yyyy....|..yyyyyyyy..|.yyyyyyyyyy.|............","💯":"............|.rr.rrr.rrr.|r..r.r.r.r.r|r..r.r.r.r.r|r..r.r.r.r.r|.rr.rrr.rrr.|............|..rrrrrrrr..|..r......r..|..rrrrrrrr..|............|............","🎹":"............|wwwwwwwwwwww|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wwwwwwwwwwww|wwwwwwwwwwww|w.w.w.w.w.w.|wwwwwwwwwwww|............|............","🏃":"....cccc....|....cccc....|............|...cccc..c..|..c.cccccc..|..c.ccccc...|.....cccc...|....cc..cc..|...cc....cc.|..cc......c.|.cc.........|............","🧮":"............|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|............|............","✏️":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","🚀":".....ww.....|....wwww....|....wccw....|...wwccww...|...wwccww...|...wwwwww...|..wwwwwwww..|.rwwwwwwwwr.|.rr.wwww.rr.|....oooo....|....o..o....|.....oo.....","🪐":".....ppp.....|...pppppppp..|..pppppppppp.|.pppppppwppp.|ycccccccccccy|.yyyyyyyyyy..|..pppppppp...|...pppppp....|....pppp.....|.............|.............|.............","🛸":"............|.....cc.....|....cwwc....|...cwwwwc...|..cwwwwwwc..|.pppppppppp.|pppppppppppp|.p.pp.pp.pp.|..c..c..c...|...c..c.....|............|............","☄️":".......nnnn.|......nnnnnn|.....nnnnnnn|....onnnnnn.|...oonnnnn..|..oyyonnn...|.oyyyoo.....|oyyyy.......|ryyy........|rry.........|r...........|............","🌀":"...pppppp...|..pppppppp..|.ppp....ppp.|.pp..cc..pp.|.pp.cccc.pp.|.pp.ccc..pp.|.ppp.....pp.|..pppp..pp..|....ppppp...|......ppp...|............|............","👽":"............|...gggggg...|..gggggggg..|.gggggggggg.|.gkkggggkkg.|.gkkggggkkg.|.gggggggggg.|..gggggggg..|...gggggg...|....gggg....|.....gg.....|............","🔭":".........ww.|........wwww|.......wwcc.|......wwcc..|.....wwcc...|....wwcc....|...wwcc.....|..sscc......|..ss........|.ssss.......|ss..ss......|............","🌌":".w....c....w|...p.....p..|..pppp.ppp..|.ppppppppp..|w.pppcppp..w|..pppppppp..|...ppppp.p..|.c.......c..|....w.......|..w......w..|............|............","⛽":"............|.cccccccc...|.cwwwwwwc.oo|.cwwwwwwc.o.|.cwwwwwwc.o.|.cccccccccc.|.cccccccc.c.|.cccccccc.c.|.cccccccc...|.cccccccc...|............|............","🔄":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🎉":".y....c....m|..y..c..m...|...wwwww....|..wwyywww...|.wwmwwwwww..|.wwwwccwww..|wwyywwwwmww.|wwwwwwwwwww.|.c....m....y|............|............|............","☁️":".............|.............|....llll.....|..lllllllll..|.lllllllllll.|lllllllllllll|.lllllllll...|..lllllll....|.............|.............|.............|.............","⚠️":".....yy.....|.....yy.....|....yyyy....|....yyyy....|...yykyyy...|...yykyyy...|..yyykyyyy..|..yyyyyyyy..|.yyyykyyyyy.|.yyyyyyyyyy.|yyyyyyyyyyyy|............","📚":"............|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rrrgggbbb..|............|............|............","📅":"..w......w..|.wwwwwwwwww.|.wwwwwwwwww.|.wrrrrrrrrw.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","📋":"....wwww....|.wwwwwwwwww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","⬇️":".....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.cc..cc..cc.|..cc.cc.cc..|...cccccc...|....cccc....|.....cc.....|............|............","⬆️":".....cc.....|....cccc....|...cccccc...|..cc.cc.cc..|.cc..cc..cc.|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|............|............","🔑":"...yyyy.....|..yy..yy....|..yy..yy....|...yyyy.....|....yy......|....yy......|....yy......|....yyy.....|....yy......|....yyy.....|............|............","💾":"............|.cccccccccc.|.cwwwwwwwwc.|.cwccccccwc.|.cwwwwwwwwc.|.cccccccccc.|.cwwwwwwwwc.|.cwwkkkkwwc.|.cwwwwwwwwc.|.cccccccccc.|............|............","📷":"............|....dddd....|.dddddddddd.|.dddwwwwddd.|.ddwwccwwdd.|.ddwcccccdd.|.ddwwccwwdd.|.dddwwwwddd.|.dddddddddd.|............|............|............","🎒":"....rrrr....|...r....r...|..rrrrrrrr..|.rrrrrrrrrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|............|............","🪥":".........cc.|........cccc|.......cccc.|......cccc..|.....cccc...|....cccc....|...wwww.....|..wwww......|.ww.ww......|.w..w.......|............|............","🙋":".......ww...|...ff..ww...|..ffff.ww...|..fkfkf.w...|..ffffff....|...ffff.....|..cccccc....|.cccccccc...|.cc.cc.cc...|....cc.cc...|...cc...cc..|............","🛏️":"............|............|.ww.........|.ww.wwwwww..|.ww.wwwwww..|.wwwwwwwwww.|.bbbbbbbbbb.|.bbbbbbbbbb.|.ww......ww.|.ww......ww.|............|............","🏀":"............|...oooooo...|..okooooko..|.ooko..okoo.|.ookoooookoo|okkkkkkkkkko|.ooko..okoo.|.ooko..okoo.|..okooooko..|...oooooo...|............|............","🍚":"............|............|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|.wwwwwwwwww.|.cccccccccc.|.ccccccccc..|..ccccccc...|...ccccc....|............|............","🤝":"..ff....ff..|.ffff..ffff.|.fkff..fkff.|.ffff..ffff.|..ff....ff..|.cccc..mmmm.|ccccc..mmmmm|.cccc..mmmm.|.cccc..mmmm.|.c..c..m..m.|.c..c..m..m.|............","🧦":"............|..mmmmm.....|..mwwwm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmmmm...|..mmmmmmmmm.|..mmmmmmmmm.|...mmmmmmm..|............","🐌":"............|..n......n..|...n....n...|....nnnnn...|...nnnnnnn..|..nnn.n.nnn.|..nn.nnn.nn.|..nnn...nnn.|.nnnnnnnnn..|ffffffffffff|............|............","😤":"............|...rrrrrr...|..rrrrrrrr..|.rrkrrrrkrr.|.rrrrrrrrrr.|.rkkkkkkkkr.|.rrrrrrrrrr.|..rr.cc.rr..|...c.cc.c...|..c..c...c..|............|............","📱":"............|..dddddddd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dddddddd..|....dccd....|..dddddddd..|............","📝":".........yy.|.wwwwwww.yy.|.wwkkkww.y..|.wwwwwwwyy..|.wwkkkwyy...|.wwwwwyy....|.wwkkyy.....|.wwwwy......|.wwwww......|.wwwwwwwww..|............|............","🙈":"...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nffffffffn.|.ffffffffff.|.ffffffffff.|.nffkkkkffn.|.nnffffffnn.|..nnnnnnnn..|...nnnnnn...|............|............","✋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👏":"............|..c.....c...|...ff..ff...|..ffff.ffff.|.fffff.fffff|.fffff.fffff|..ffff.ffff.|...fff.fff..|....ff.ff...|..c.....c...|............|............","📺":"............|...c....c...|....c..c....|.dddddddddd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dddddddddd.|..d......d..|............|............","🥤":"............|.wwwwwwwwww.|.w.wwwwww.w.|..rrrrrrrr..|..rrrrrrrr..|..rwwwwwwr..|...rrrrrr...|...rrrrrr...|....rrrr....|....rrrr....|............|............","🌙":"............|....yyyy....|...yyyyyy...|..yyyyyy....|..yyyyy.....|..yyyyy.....|..yyyyy.....|..yyyyyy....|...yyyyyy...|....yyyy....|............|............","🌓":"............|...wwwwdd...|..wwwwwwdd..|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|..wwwwwwdd..|...wwwwdd...|............|............","🍜":"............|...y..y..y..|..y..y..y...|.wwwwwwwwww.|.wwwwwwwwww.|.ycccccccy..|..cccccccc..|..cccccccc..|...cccccc...|....cccc....|............|............","🛼":"............|..mmmmm.....|..mmmmmm....|..mmmmmmm...|..mmmmmmmm..|.mmmmmmmmm..|.wwwwwwwww..|..w.....w...|.ccc...ccc..|.ccc...ccc..|............|............","🗺️":"............|.nnn.nnn.nn.|.nnnnnnnnnn.|.nngnnnnnnn.|.ngggnnrnnn.|.nnggnrrrnn.|.nnnnnnrnnn.|.nntttnnnnn.|.nnttttnnnn.|.nnnnnnnnnn.|............|............","🎴":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywwrrrrwwy.|.ywrrrrrrwy.|.ywrrrrrrwy.|.ywwrrrrwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............|............","🍟":"............|.y..y..y..y.|.yy.yy.yy.yy|.yy.yy.yy.yy|.rrrrrrrrrr.|.rwwrwwrwwr.|.rrrrrrrrrr.|..rrrrrrrr..|..rrrrrrrr..|...rrrrrr...|............|............","📕":"............|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrrrrrrrrr.|.wwwwwwwwww.|............|............","📒":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkwwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............","🎬":"............|.dwdwdwdwdw.|.wdwdwdwdwd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|............|............|............","🎡":".....c......|...cccccc...|..c.c..c.c..|.cc..cc..cc.|.c.cccccc.c.|.cc..cc..cc.|..c.c..c.c..|...cccccc...|.....cc.....|....cccc....|...cc..cc...|............","🧸":".nn......nn.|.nnn....nnn.|..nnnnnnnn..|..nkknnkkn..|..nnnnnnnn..|..nnnkknnn..|...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nn.nnnn.nn.|..n......n..|............","💣":".........oo.|.........o..|........o...|...kkkkk....|..kkkkkkk...|.kkkkkkkkk..|.kkkkkkkkk..|.kkwkkkkkk..|.kkkkkkkkk..|..kkkkkkk...|...kkkkk....|............","💰":".....ss.....|....ssss....|...yyyyyy...|..yyyyyyyy..|.yyyyyyyyyy.|.yyoooooyyy.|.yyoyyyoyyy.|.yyoooooyyy.|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|............","💳":"............|.pppppppppp.|.pppppppppp.|.kkkkkkkkkk.|.pppppppppp.|.pyyyppppppp|.pyyypppppp.|.pppppppppp.|.pppppppppp.|............|............|............","🔗":"............|............|..cccccc....|.cc....cc...|.cc..cccccc.|.cc..cc...cc|..cccc....cc|.....cc...cc|.....cccccc.|............|............|............","👆":".....yy.....|....ffff....|....ffff....|....ffff....|....ffff....|.ff.ffff....|.ffffffff...|.ffffffff...|.ffffffff...|..ffffff....|............|............","🔒":"............|....cccc....|...cc..cc...|...cc..cc...|.yyyyyyyyyy.|.yyyyyyyyyy.|.yyyykkyyyy.|.yyyykkyyyy.|.yyyyyyyyyy.|.yyyyyyyyyy.|............|............","🧹":".........nn.|........nn..|.......nn...|......nn....|.....nn.....|....yyyy....|...yyyyyy...|..yyyyyyyy..|..y.y.y.y.y.|..y.y.y.y.y.|............|............","⏪":"............|.....c....c.|....cc...cc.|...ccc..ccc.|..cccc.cccc.|.ccccccccccc|..cccc.cccc.|...ccc..ccc.|....cc...cc.|.....c....c.|............|............","⏩":"............|.c....c.....|.cc...cc....|.ccc..ccc...|.cccc.cccc..|.ccccccccccc|.cccc.cccc..|.ccc..ccc...|.cc...cc....|.c....c.....|............|............","⏸️":"............|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|............|............|............","★":"............|.....yy.....|....yyyy....|...yyyyyy...|yyyyyyyyyyyy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|..yyy..yyy..|..yy....yy..|............|............"};
@@ -610,7 +622,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:2,
+    schema:2, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,
@@ -692,30 +704,87 @@ let dirty=LS.get(K_DIRTY,false);
 let shaCache=LS.get(K_SHA,{});
 let firstRun=false;
 if(!S||!S.kids){S=seed();firstRun=true;LS.set(K_STATE,S)}
-if(!S.settings)S.settings=seed().settings;
-if(!S.deviceId)S.deviceId=uid('d');
-if(S.settings.ntdPerSmall==null)S.settings.ntdPerSmall=10;
-if(!S.schema||S.schema<2){S.schema=2;S.needsSeedRefresh=true}
-if(!S.routines||!S.routines.length){const f=seed();S.routines=f.routines}
-if(!S.routineLog)S.routineLog=[];
-if(S.settings.routineAllBonus==null)S.settings.routineAllBonus=1;
-if(S.settings.streak3Bonus==null)S.settings.streak3Bonus=1;
-if(S.settings.streak7Bonus==null)S.settings.streak7Bonus=5;
-if(S.settings.dicePerPoints==null)S.settings.dicePerPoints=5;
-if(!S.coupons)S.coupons=[];
-if(S.settings.weeklyBudgetNTD==null)S.settings.weeklyBudgetNTD=150;
-if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
-if(!S.savings)S.savings=[];
-if(!S.settings.plans||!S.settings.plans.length)S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:4}];
-if(S.settings.interestCap==null)S.settings.interestCap=10;
-if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
-if(!S.game.players)S.game.players={};
-if(!S.game.tiles||S.game.tiles.length!==20)S.game.tiles=defaultTiles();
-if(!S.game.cards)S.game.cards=defaultCards();
-if(S.settings.lapBonus==null)S.settings.lapBonus=1;
-if(S.settings.chainCap==null)S.settings.chainCap=3;
-if(!S.settings.archive||typeof S.settings.archive!=='object')S.settings.archive={ts:0,bal:{},earn:{},dice:{},used:{}};
-if(S.schema<7){
+function dupFind(){
+  const usedKid=id=>S.ledger.some(e=>!e.voided&&e.kidId===id)||S.routineLog.some(e=>!e.voided&&e.kidId===id)
+    ||S.coupons.some(c=>!c.voided&&c.kidId===id)||S.savings.some(x=>!x.voided&&x.kidId===id);
+  const ks=live(S.kids);
+  const kids=ks.length>2?ks.filter(k=>/^寶貝.{1,3}號$/.test(k.name)&&!k.avatar&&!usedKid(k.id)):[];
+  const pick=(arr,keyf,usedf)=>{
+    const best={},drop=[];
+    for(const it of arr){
+      const k=keyf(it),a=best[k];
+      if(!a){best[k]=it;continue}
+      const keep=(usedf(a)&&!usedf(it))?a:(usedf(it)&&!usedf(a))?it
+                 :((a.updatedAt||0)<=(it.updatedAt||0)?a:it);
+      drop.push(keep===a?it:a);best[k]=keep;
+    }
+    return drop;
+  };
+  const gone=new Set(kids.map(k=>k.id));
+  return {
+    kids,
+    rules:pick(live(S.rules),r=>r.label+'|'+r.kind+'|'+r.unit+'|'+r.amount,
+               r=>S.ledger.some(e=>!e.voided&&e.ruleId===r.id)),
+    rewards:pick(live(S.rewards),w=>w.name+'|'+w.unit+'|'+w.amount,
+               w=>S.coupons.some(c=>!c.voided&&c.rewardId===w.id)),
+    routines:pick(live(S.routines),r=>r.label,
+               r=>S.routineLog.some(e=>!e.voided&&e.routineId===r.id&&!gone.has(e.kidId)))
+  };
+}
+function dupCount(){const d=dupFind();return d.kids.length+d.rules.length+d.rewards.length+d.routines.length}
+function dupSheet(){
+  const d=dupFind(),n=d.kids.length+d.rules.length+d.rewards.length+d.routines.length;
+  if(!n)return sheet('🧽 整理重複資料',
+    '<div class="f hint" style="margin-top:-6px;line-height:1.85">沒有找到重複的預設資料，很乾淨。</div>'+
+    '<button class="btn pri wide" data-act="close">好</button>');
+  const row=(t,a)=>a.length?'<div class="evt"><span class="e">'+px('🧽')+'</span><b>'+t+'</b>'+
+    '<span style="flex:1;text-align:right;color:var(--muted);font-size:12px">'+
+    a.slice(0,3).map(x=>esc(x.name||x.label)).join('、')+(a.length>3?' …共 '+a.length+' 項':'')+'</span></div>':'';
+  sheet('🧽 整理重複的預設資料',
+    '<div class="f hint" style="margin-top:-6px;line-height:1.85">'+
+      '新裝置第一次連上雲端時，會把自己的<b>預設資料</b>跟雲端的<b>合併</b>，'+
+      '所以可能多出一份沒用過的小孩與規則。<br>'+
+      '下面這些<b>沒有任何紀錄</b>，可以安全清掉；有用過的都會留著。</div>'+
+    '<div class="list">'+row('沒用過的小孩',d.kids)+row('重複的規則',d.rules)+
+      row('重複的獎勵品',d.rewards)+row('重複的日常任務',d.routines)+'</div>'+
+    '<button class="btn pri wide" style="margin-top:12px" data-act="dodup">清掉這 '+n+' 項</button>'+
+    '<button class="btn ghost wide" style="margin-top:8px" data-act="close">先不要</button>');
+}
+function dupClean(){
+  const d=dupFind();
+  const all=[].concat(d.kids,d.rules,d.rewards,d.routines);
+  if(!all.length){closeSheet();return toast('沒有重複資料')}
+  for(const o of all){o.deleted=true;touch(o)}
+  const ks=live(S.kids);
+  if(!ks.some(k=>k.id===selKid))selKid=ks[0]&&ks[0].id;
+  closeSheet();save();
+  toast('🧽 清掉了 '+all.length+' 項重複資料，其他裝置同步後也會跟著清乾淨');
+}
+function migrate(S){
+  if(!S.settings)S.settings=seed().settings;
+  if(!S.deviceId)S.deviceId=uid('d');
+  if(S.settings.ntdPerSmall==null)S.settings.ntdPerSmall=10;
+  if(!S.schema||S.schema<2){S.schema=2;S.needsSeedRefresh=true}
+  if(!S.routines||!S.routines.length){const f=seed();S.routines=f.routines}
+  if(!S.routineLog)S.routineLog=[];
+  if(S.settings.routineAllBonus==null)S.settings.routineAllBonus=1;
+  if(S.settings.streak3Bonus==null)S.settings.streak3Bonus=1;
+  if(S.settings.streak7Bonus==null)S.settings.streak7Bonus=5;
+  if(S.settings.dicePerPoints==null)S.settings.dicePerPoints=5;
+  if(!S.coupons)S.coupons=[];
+  if(S.settings.weeklyBudgetNTD==null)S.settings.weeklyBudgetNTD=150;
+  if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
+  if(!S.savings)S.savings=[];
+  if(!S.settings.plans||!S.settings.plans.length)S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:4}];
+  if(S.settings.interestCap==null)S.settings.interestCap=10;
+  if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
+  if(!S.game.players)S.game.players={};
+  if(!S.game.tiles||S.game.tiles.length!==20)S.game.tiles=defaultTiles();
+  if(!S.game.cards)S.game.cards=defaultCards();
+  if(S.settings.lapBonus==null)S.settings.lapBonus=1;
+  if(S.settings.chainCap==null)S.settings.chainCap=3;
+  if(!S.settings.archive||typeof S.settings.archive!=='object')S.settings.archive={ts:0,bal:{},earn:{},dice:{},used:{}};
+  if(S.schema<7){
   // 銀行格從棋盤移除，改成機會格
   if(S.game&&S.game.tiles)for(const t of S.game.tiles)if(t.type==='bank'){t.type='chance';t.label='機會';t.emoji='❓'}
   // 舊的預設利率 30 天 +4 → +5（只有沒被家長改過才調）
@@ -724,7 +793,10 @@ if(S.schema<7){
     S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:5}];
   S.schema=7;
 }
-if(S.schema<8){S.game.tiles=defaultTiles();S.game.updatedAt=now();S.schema=8}
+  if(S.schema<8){S.game.tiles=defaultTiles();S.game.updatedAt=now();S.schema=8}
+  return S;
+}
+S=migrate(S);
 
 let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null, rwTab='shop', depAmt=10, gPending=null;
 let chartRange='week', chartPick=null, topUpAmt=5, rwRar=0;
@@ -1064,6 +1136,7 @@ function toggleRoutine(kidId,routineId){
 function touch(o){o.updatedAt=now();return o}
 function save(opts){
   opts=opts||{};
+  if(S.seeded){S.seeded=false}          // 使用者動過了，之後合併就正常聯集
   LS.set(K_STATE,S);
   if(opts.media)LS.set(K_MEDIA,M);
   dirty=true;LS.set(K_DIRTY,true);
@@ -1222,6 +1295,15 @@ function mergeLedger(L,R){
 }
 function mergeState(L,R){
   if(!R||!R.kids)return L;
+  // 剛安裝、還沒被動過的裝置：雲端已經有資料就「整份採用」。
+  // 不然本機的預設小孩／規則會跟雲端聯集，變成 4 個小孩、規則兩倍。
+  const liveN=a=>(a||[]).filter(x=>x&&!x.deleted).length;
+  if(L.seeded&&!R.seeded&&liveN(R.kids)){
+    const out=JSON.parse(JSON.stringify(R));
+    out.deviceId=L.deviceId;out.seeded=false;out.needsSeedRefresh=false;
+    return out;
+  }
+  if(R.seeded&&!L.seeded)return L;      // 反過來：雲端那份才是還沒動過的預設資料
   // 「清空紀錄」的時間點取兩邊最大值，不能跟著 settings 一起被後寫贏
   // （剛裝好的新手機 settings 時間最新，會把清空紀錄洗掉，舊紀錄就倒回來了）
   const st=Object.assign({},newer(L.settings,R.settings));
@@ -1286,9 +1368,9 @@ async function push(){
   pushing=true;setSync('busy');
   try{
     const rem=await ghRead(GH.path||'data.json');
-    if(rem.data){S=mergeState(S,rem.data);LS.set(K_STATE,S)}
+    if(rem.data){S=migrate(mergeState(S,rem.data));LS.set(K_STATE,S)}
     await ghWrite(GH.path||'data.json',S,'積分更新 '+new Date().toLocaleString('zh-TW'),
-      rd=>{S=mergeState(S,rd);LS.set(K_STATE,S);return S});
+      rd=>{S=migrate(mergeState(S,rd));LS.set(K_STATE,S);return S});
     if(needMedia){
       const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
       if(rm.data)M=mergeMedia(M,rm.data);
@@ -1306,7 +1388,7 @@ async function pull(quiet){
   setSync('busy');
   try{
     const rs=await ghRead(GH.path||'data.json');
-    if(rs.data){S=mergeState(S,rs.data);LS.set(K_STATE,S)}
+    if(rs.data){S=migrate(mergeState(S,rs.data));LS.set(K_STATE,S)}
     const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
     if(rm.data){M=mergeMedia(M,rm.data);LS.set(K_MEDIA,M)}
     setSync('idle');render();
@@ -1408,7 +1490,10 @@ function render(){
 function vHome(){
   const ks=live(S.kids);
   const today=startOfDay(),week=startOfWeek();
-  let h='<div class="sec"><h2>今天</h2><span class="more" data-act="tab" data-v="score">去計分 →</span></div><div class="kidgrid">';
+  let h='';
+  if(newBuild)h+='<div class="banner"><span style="font-size:20px">🚀</span><div><b>有新版本可以更新</b>目前 '+BUILD+' → '+esc(newBuild)+'<br><button class="btn sm pri" style="margin-top:8px" data-act="doupdate">重新載入更新</button></div></div>';
+  if(dupCount())h+='<div class="banner"><span style="font-size:20px">🧹</span><div><b>發現 '+dupCount()+' 項重複的預設資料</b>新裝置第一次連雲端時多出來的，可以安全清掉。<br><button class="btn sm pri" style="margin-top:8px" data-act="dup">整理一下</button></div></div>';
+  h+='<div class="sec"><h2>今天</h2><span class="more" data-act="tab" data-v="score">去計分 →</span></div><div class="kidgrid">';
   if(!ks.length)h+='<div class="empty">'+px('👶','xl')+'還沒有小孩資料<br><button class="btn sm pri" style="margin-top:10px" data-act="editkid" data-id="">新增小孩</button></div>';
   for(const k of ks){
     const bal=balanceOf(k.id),sp=splitScore(bal),d=sinceOf(k.id,today),w=sinceOf(k.id,week);
@@ -2019,6 +2104,7 @@ function vSet(){
     '</div>';
   h+='<div class="sec"><h2>雲端同步（GitHub）</h2></div><div class="list">'+
     nav('ghsetup','☁️','GitHub 連線設定',ghReady()?GH.owner+'/'+GH.repo+' · '+GH.path:'尚未設定',ghReady()?'已連線':'未設定')+
+    nav('dup','🧹','整理重複的預設資料',dupCount()?'找到 '+dupCount()+' 項沒用過的重複資料':'目前沒有重複資料',dupCount()||'')+
     nav('ghpull','⬇️','立即從雲端取回','以雲端資料為準合併')+
     nav('ghpush','⬆️','立即上傳到雲端',dirty?'有未上傳的變更':'目前已同步')+
     '</div>';
@@ -2028,6 +2114,7 @@ function vSet(){
     sw('tgsound','音效',null,st.sound)+
     sw('tghap','震動回饋',null,st.haptics)+
     nav('theme','🌓','外觀',st.theme==='auto'?'跟隨系統':st.theme==='dark'?'深色':'淺色')+
+    nav('ver','🚀','版本',newBuild?'有新版本 '+newBuild+'，點一下更新':BUILD,newBuild?'更新':'檢查')+
     nav('backup','💾','備份 / 還原','下載或貼入 JSON 檔')+
     nav('reseed','🔄','載入最新預設清單','換成國小版規則與含價格的獎勵（小孩與紀錄保留）')+
     '</div>';
@@ -2555,6 +2642,10 @@ document.addEventListener('click',async ev=>{
     case 'ghsetup':return ghSetup();
     case 'ghtest':return ghTest();
     case 'ghsave':return ghSave();
+    case 'dup':return dupSheet();
+    case 'dodup':return dupClean();
+    case 'ver':return newBuild?location.reload():checkUpdate(false);
+    case 'doupdate':return location.reload();
     case 'ghpull':return pull();
     case 'ghpush':return push().then(()=>toast(syncState==='err'?'上傳失敗：'+syncMsg:'已上傳'));
     case 'backup':return backupSheet();
@@ -2567,7 +2658,7 @@ document.addEventListener('click',async ev=>{
     case 'dobak':{
       try{
         const j=JSON.parse($('#bk').value);
-        if(j.state)S=mergeState(S,j.state);
+        if(j.state)S=migrate(mergeState(S,j.state));
         if(j.media)M=mergeMedia(M,j.media);
         closeSheet();save({media:true});return toast('已還原合併');
       }catch(e){return toast('JSON 格式不正確')}
@@ -2606,6 +2697,8 @@ applyTheme();
 render();
 if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
 if(ghReady())pull(true);
+setTimeout(()=>checkUpdate(true),2500);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate(true)});
 window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,mergeState,mergeLedger,render,
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
@@ -2613,6 +2706,8 @@ window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,merg
   rollDice,gp,tileAt,step,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,PXKEYS,icoField,editRule,editRw,editRt,editKid,toggleRoutine,
+  pull,push,checkUpdate,dupFind,dupCount,dupClean,migrate,BUILD,
+  get newBuild(){return newBuild},set newBuild(v){newBuild=v},
   rarityOf:w=>rarity(toSmall(w.unit,w.amount)),
   set rwRar(v){rwRar=v},get rwRar(){return rwRar},
   set topUpAmt(v){topUpAmt=v},get topUpAmt(){return topUpAmt},
