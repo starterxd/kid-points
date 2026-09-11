@@ -11,27 +11,36 @@
 <title>寶貝積分</title>
 <style>
 :root{
-  --bg:#e9edfa; --bg2:#dfe5f8; --surface:#fff; --surface2:#f5f7ff; --ink:#111a30; --muted:#6a7492; --line:#e0e6f5;
-  --brand:#4353ff; --brand-soft:#e9ebff; --good:#0fa66f; --good-soft:#e3f8ef;
-  --bad:#e8474b; --bad-soft:#ffe9ea; --gold:#e08700; --gold-soft:#fff2da;
-  --shadow:0 1px 2px rgba(16,24,48,.06), 0 10px 26px rgba(16,24,48,.09);
+  --bg:#e6ecfb; --bg2:#dbe3f7; --surface:#ffffff; --surface2:#f1f5ff; --ink:#0c1630; --muted:#5b6a92; --line:#d7e0f5;
+  --brand:#3b52ff; --brand-soft:#e7eaff; --good:#0a9d68; --good-soft:#e0f7ef;
+  --bad:#e33a44; --bad-soft:#ffe8ea; --gold:#c47b00; --gold-soft:#fff1d6;
+  --neon:#0aa7c9; --violet:#8b4dff;
+  --shadow:0 2px 0 rgba(16,24,48,.05), 0 10px 26px rgba(16,24,48,.10);
   --glow:0 0 0 rgba(0,0,0,0);
-  --r:18px; --r-sm:12px; --nav:66px;
-  --c1:#7c879f; --c2:#12a150; --c3:#2f7cf6; --c4:#9b4dff; --c5:#f0a000;
+  --stars:none;
+  --r:14px; --r-sm:10px; --nav:66px;
+  --c1:#7c88a8; --c2:#0a9d68; --c3:#2f7cf6; --c4:#8b4dff; --c5:#c47b00;
+  --pxo:#121d38;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#070a13; --bg2:#0d1220; --surface:#151b2c; --surface2:#1b2235; --ink:#eaf0ff; --muted:#8d99ba; --line:#28304a;
-  --brand:#7f8dff; --brand-soft:#1e2544; --good:#2fd493; --good-soft:#102e26;
-  --bad:#ff7276; --bad-soft:#33191d; --gold:#ffbc4d; --gold-soft:#332612;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
-  --c1:#98a2bd; --c2:#35d98a; --c3:#5b9dff; --c4:#b478ff; --c5:#ffc247;
+  --bg:#060912; --bg2:#0b1120; --surface:#121b30; --surface2:#1a2440; --ink:#e9f1ff; --muted:#8296bd; --line:#25334f;
+  --brand:#5b7cff; --brand-soft:#182449; --good:#3ddc84; --good-soft:#0d2e21;
+  --bad:#ff5f6d; --bad-soft:#331720; --gold:#ffc93c; --gold-soft:#33280f;
+  --neon:#35e0ff; --violet:#b06cff;
+  --shadow:0 2px 0 rgba(0,0,0,.45), 0 12px 30px rgba(0,0,0,.5);
+  --stars:radial-gradient(1.5px 1.5px at 8% 7%,#ffffffcc,transparent),radial-gradient(1px 1px at 23% 17%,#9fd8ffaa,transparent),radial-gradient(1.5px 1.5px at 41% 5%,#ffffff99,transparent),radial-gradient(1px 1px at 62% 13%,#ffd6f5aa,transparent),radial-gradient(1.5px 1.5px at 79% 6%,#ffffffbb,transparent),radial-gradient(1px 1px at 93% 19%,#9fd8ff99,transparent),radial-gradient(1px 1px at 15% 34%,#ffffff88,transparent),radial-gradient(1.5px 1.5px at 34% 44%,#c9b6ff99,transparent),radial-gradient(1px 1px at 55% 31%,#ffffff77,transparent),radial-gradient(1px 1px at 71% 41%,#9fd8ff88,transparent),radial-gradient(1.5px 1.5px at 88% 36%,#ffffff99,transparent),radial-gradient(1px 1px at 6% 58%,#ffd6f588,transparent),radial-gradient(1px 1px at 28% 66%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 48% 73%,#9fd8ff99,transparent),radial-gradient(1px 1px at 67% 61%,#ffffff88,transparent),radial-gradient(1px 1px at 84% 71%,#c9b6ff88,transparent),radial-gradient(1.5px 1.5px at 12% 86%,#ffffff99,transparent),radial-gradient(1px 1px at 37% 92%,#9fd8ff88,transparent),radial-gradient(1px 1px at 59% 84%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 77% 95%,#ffd6f599,transparent),radial-gradient(1px 1px at 95% 88%,#ffffff88,transparent);
+  --c1:#7c88a8; --c2:#3ddc84; --c3:#35e0ff; --c4:#b06cff; --c5:#ffc93c;
+  --pxo:#02050c;
 }}
 :root[data-theme="dark"]{
-  --bg:#070a13; --bg2:#0d1220; --surface:#151b2c; --surface2:#1b2235; --ink:#eaf0ff; --muted:#8d99ba; --line:#28304a;
-  --brand:#7f8dff; --brand-soft:#1e2544; --good:#2fd493; --good-soft:#102e26;
-  --bad:#ff7276; --bad-soft:#33191d; --gold:#ffbc4d; --gold-soft:#332612;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.45);
-  --c1:#98a2bd; --c2:#35d98a; --c3:#5b9dff; --c4:#b478ff; --c5:#ffc247;
+  --bg:#060912; --bg2:#0b1120; --surface:#121b30; --surface2:#1a2440; --ink:#e9f1ff; --muted:#8296bd; --line:#25334f;
+  --brand:#5b7cff; --brand-soft:#182449; --good:#3ddc84; --good-soft:#0d2e21;
+  --bad:#ff5f6d; --bad-soft:#331720; --gold:#ffc93c; --gold-soft:#33280f;
+  --neon:#35e0ff; --violet:#b06cff;
+  --shadow:0 2px 0 rgba(0,0,0,.45), 0 12px 30px rgba(0,0,0,.5);
+  --stars:radial-gradient(1.5px 1.5px at 8% 7%,#ffffffcc,transparent),radial-gradient(1px 1px at 23% 17%,#9fd8ffaa,transparent),radial-gradient(1.5px 1.5px at 41% 5%,#ffffff99,transparent),radial-gradient(1px 1px at 62% 13%,#ffd6f5aa,transparent),radial-gradient(1.5px 1.5px at 79% 6%,#ffffffbb,transparent),radial-gradient(1px 1px at 93% 19%,#9fd8ff99,transparent),radial-gradient(1px 1px at 15% 34%,#ffffff88,transparent),radial-gradient(1.5px 1.5px at 34% 44%,#c9b6ff99,transparent),radial-gradient(1px 1px at 55% 31%,#ffffff77,transparent),radial-gradient(1px 1px at 71% 41%,#9fd8ff88,transparent),radial-gradient(1.5px 1.5px at 88% 36%,#ffffff99,transparent),radial-gradient(1px 1px at 6% 58%,#ffd6f588,transparent),radial-gradient(1px 1px at 28% 66%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 48% 73%,#9fd8ff99,transparent),radial-gradient(1px 1px at 67% 61%,#ffffff88,transparent),radial-gradient(1px 1px at 84% 71%,#c9b6ff88,transparent),radial-gradient(1.5px 1.5px at 12% 86%,#ffffff99,transparent),radial-gradient(1px 1px at 37% 92%,#9fd8ff88,transparent),radial-gradient(1px 1px at 59% 84%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 77% 95%,#ffd6f599,transparent),radial-gradient(1px 1px at 95% 88%,#ffffff88,transparent);
+  --c1:#7c88a8; --c2:#3ddc84; --c3:#35e0ff; --c4:#b06cff; --c5:#ffc93c;
+  --pxo:#02050c;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{touch-action:manipulation}
@@ -40,7 +49,8 @@ html,body{margin:0;padding:0}
 body{
   color:var(--ink); min-height:100vh;
   background:
-    radial-gradient(1100px 480px at 50% -180px, color-mix(in srgb,var(--brand) 16%,transparent), transparent 70%),
+    var(--stars),
+    radial-gradient(1100px 480px at 50% -180px, color-mix(in srgb,var(--brand) 20%,transparent), transparent 70%),
     var(--bg);
   background-attachment:fixed;
   font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
@@ -128,7 +138,21 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .chips::-webkit-scrollbar{display:none}
 .chip{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 13px 6px 6px;border-radius:999px;border:1.5px solid var(--line);
   background:var(--surface);font-weight:750;font-size:14px;white-space:nowrap}
-.chip .av{width:28px;height:28px;border-radius:9px;font-size:12px;box-shadow:none}
+.chip .av{width:28px;height:28px;border-radius:9px;font-size:12px;box-shadow:none;flex:0 0 auto}
+.chip .cn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.chips.even .chip{width:calc(50% - 4px);flex:1 1 0;min-width:0;justify-content:flex-start}
+.chips.even{overflow-x:visible}
+.chip .cx{margin-left:auto;padding-left:6px;font-weight:850;color:var(--kc);font-size:12.5px;white-space:nowrap}
+.chip.plain .cn{text-align:center}
+.rarbar{display:flex;gap:6px;overflow-x:auto;padding:0 0 4px;margin-bottom:10px;scrollbar-width:none}
+.rarbar::-webkit-scrollbar{display:none}
+.rarbar button{flex:0 0 auto;display:flex;align-items:center;gap:5px;min-height:32px;padding:0 11px;border-radius:999px;
+  border:1.5px solid var(--line);background:var(--surface);color:var(--muted);font-weight:800;font-size:12px;letter-spacing:.5px}
+.rarbar button u{text-decoration:none;font-size:10.5px;opacity:.75;font-weight:800}
+.rarbar button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.rarbar button.r1{color:#7c88a8}.rarbar button.r2{color:var(--good)}.rarbar button.r3{color:var(--brand)}
+.rarbar button.r4{color:#b06cff}.rarbar button.r5{color:var(--gold)}
+.rarbar button.on.r1,.rarbar button.on.r2,.rarbar button.on.r3,.rarbar button.on.r4,.rarbar button.on.r5{color:#fff}
 .chip.on{border-color:var(--kc);background:color-mix(in srgb,var(--kc) 13%,var(--surface));box-shadow:0 0 14px color-mix(in srgb,var(--kc) 25%,transparent)}
 .chip.plain{padding:7px 13px;font-size:13px}
 .chip.plain.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
@@ -305,8 +329,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in sr
   border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 .nrow{max-width:600px;margin:0 auto;display:flex;height:var(--nav)}
 .nb{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9.5px;font-weight:750;color:var(--muted);letter-spacing:-.2px}
-.nb em{font-style:normal;font-size:18px;line-height:1;filter:grayscale(1);opacity:.5;transition:.15s}
-.nb.on{color:var(--brand)} .nb.on em{filter:none;opacity:1;transform:translateY(-1px)}
+.nb em{font-style:normal;font-size:18px;line-height:1;opacity:.45;transition:.15s}
+.nb.on{color:var(--brand)} .nb.on em{opacity:1;transform:translateY(-1px)}
 
 /* ---- modal ---- */
 .scrim{position:fixed;inset:0;z-index:90;background:rgba(8,11,20,.58);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
@@ -396,11 +420,56 @@ svg.chart .lv{fill:var(--muted);font-size:9px;font-weight:800}
 .chint{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.6}
 .chint b{color:var(--ink);font-weight:800}
 .banner b.ib{display:inline;font-weight:850;color:inherit;margin:0}
+
+/* ---- 像素圖示 ---- */
+svg.px{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.22em;flex:0 0 auto}
+svg.px.xl{width:46px;height:46px;display:block;margin:0 auto 10px;vertical-align:0;opacity:.92}
+svg.px.big{width:24px;height:24px;vertical-align:-.32em}
+.nb em svg.px{width:23px;height:23px;vertical-align:0}
+.ic svg.px{width:1.3em;height:1.3em}
+.rwc .art svg.px{width:48px;height:48px}
+.tl .e svg.px{width:23px;height:23px}
+.evt .e svg.px{width:21px;height:21px}
+.rtc .e svg.px{width:22px;height:22px}
+span.emo{font-style:normal;display:inline-block}
+svg.px .po{fill:var(--pxo,#121d38);opacity:.92}
+.logo span svg.px{width:19px;height:19px}
+.fab svg.px{width:22px;height:22px}
+.flame svg.px{width:15px;height:15px;vertical-align:-.18em}
+
+/* ---- 太空像素質感 ---- */
+.board{position:relative;background:
+  radial-gradient(1px 1px at 18% 22%,color-mix(in srgb,var(--ink) 55%,transparent),transparent),
+  radial-gradient(1px 1px at 62% 14%,color-mix(in srgb,var(--ink) 40%,transparent),transparent),
+  radial-gradient(1.5px 1.5px at 78% 62%,color-mix(in srgb,var(--ink) 45%,transparent),transparent),
+  radial-gradient(1px 1px at 33% 74%,color-mix(in srgb,var(--ink) 35%,transparent),transparent),
+  radial-gradient(420px 260px at 50% 50%, color-mix(in srgb,var(--violet) 12%,transparent), transparent 72%);
+  border-radius:var(--r);padding:6px}
+.tl{border-width:2px}
+.tl.here{box-shadow:0 0 0 2px var(--gold),0 0 16px color-mix(in srgb,var(--gold) 45%,transparent)}
+nav{border-top:2px solid color-mix(in srgb,var(--brand) 30%,var(--line))}
+.nb.on{text-shadow:0 0 10px color-mix(in srgb,var(--brand) 60%,transparent)}
+.btn.pri{box-shadow:0 3px 0 color-mix(in srgb,var(--brand) 45%,#000), 0 0 18px color-mix(in srgb,var(--brand) 30%,transparent)}
+.btn.pri:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--brand) 45%,#000)}
+.stats .st{border:2px solid var(--line)}
+.sec h2{letter-spacing:.6px}
+
+/* ---- 像素圖示選擇器 ---- */
+.icobox{border:2px solid var(--line);border-radius:var(--r-sm);background:var(--surface2);overflow:hidden}
+.icotop{display:flex;align-items:center;gap:9px;padding:8px 11px;border-bottom:2px solid var(--line);background:var(--surface)}
+.icotop .icocur{display:inline-flex}
+.icotop .icocur svg.px{width:28px;height:28px}
+.icotop u{text-decoration:none;font-size:11.5px;color:var(--muted);font-weight:750}
+.icogrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px;max-height:186px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.icoi{aspect-ratio:1;display:grid;place-items:center;border-radius:9px;background:transparent;border:2px solid transparent}
+.icoi svg.px{width:22px;height:22px}
+.icoi.on{background:var(--brand-soft);border-color:var(--brand)}
+.icoi:active{transform:scale(.9)}
 </style>
 </head>
 <body>
 <header><div class="hrow">
-  <div class="logo"><span>⭐</span>寶貝積分</div>
+  <div class="logo"><span id="lg"></span>寶貝積分</div>
   <button class="sync" data-act="syncpanel"><i class="dot" id="sdot"></i><span id="stxt">載入中</span></button>
 </div></header>
 
@@ -428,30 +497,87 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
+/* ---------------- 像素圖示 ---------------- */
+const PXPAL={"k":"#0b1020","w":"#eaf2ff","l":"#b9c4de","s":"#7c88a8","d":"#38415e","e":"#1a2338","c":"#35e0ff","b":"#4f7bff","p":"#b06cff","m":"#ff5fa8","y":"#ffc93c","o":"#ff8a3d","r":"#ff5a5f","g":"#3ddc84","t":"#17b8a6","n":"#9a6b45","f":"#ffcc9e","h":"#5b3d28"};
+const PXG={"⭐":"............|.....yy.....|.....yy.....|....wyyw....|yy..yyyy..yy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|..yyy..yyy..|..yy....yy..|.y........y.","🌟":".c........c.|..c.wwww.c..|...wwyyww...|..wyyyyyyw..|ccwyyyyyywcc|..wyyyyyyw..|...wyyyyw...|...wyyyyw...|..wyy..yyw..|..ww....ww..|.c........c.|............","🎲":"............|..wwwwwwww..|.wwwwwwwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwkkwwww.|.wwwwkkwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwwwwwww.|..wwwwwwww..|............","🎁":".....mm.....|....mmmm....|..mm.mm.mm..|.mmmmmmmmmm.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|............","🏦":".....c......|....ccc.....|...ccccc....|..ccyyycc...|.cccccccccc.|.cccccccccc.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cccccccccc.|.bbbbbbbbbb.|............","🛡️":".cccccccccc.|cccccccccccc|cccccccccccc|cccccwwccccc|cccccwwccccc|ccwwwwwwwwcc|ccwwwwwwwwcc|cccccwwccccc|.ccccwwcccc.|..cccccccc..|...cccccc...|.....cc.....","🎫":"............|..oooooooo..|.oooooooooo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.oooooooooo.|..oooooooo..|............|............|............","❓":"............|....cccc....|...cc..cc...|...cc..cc...|......cc....|.....cc.....|.....cc.....|.....cc.....|............|.....cc.....|.....cc.....|............","🏁":".ww.........|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........","😈":"............|...pppppp...|..pppppppp..|.pp.pppp.pp.|.pp.pppp.pp.|.pppppppppp.|.pkkkkkkkkp.|.kkwwkkwwkk.|.kkkkkkkkkk.|..kkkkkkkk..|...kkkkkk...|............","💥":"....o..o....|.o..oo.o..o.|..o.ooooo.o.|...oorrooo..|.ooorrrrooo.|oorrryyrrroo|.ooorrrrooo.|..ooorrooo..|.o.ooooo.o..|.o..oo.o..o.|....o..o....|............","🔁":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🔥":"......o.....|.....oyo....|....oyyyo...|...oyyyyo...|..oyyrryyo..|..oyrrrryo..|.ooyrrrryoo.|.oyrrrrrryo.|.oyrryyrryo.|..oyyyyyyo..|...oooooo...|............","✎":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","💡":"....yyyy....|...yyyyyy...|..yyyyyyyy..|..yyyyyyyy..|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|....ssss....|....ssss....|....ssss....|.....ss.....|............","🏠":".....ww.....|....wwww....|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|wwwwwwwwwwww|.cc.cccc.cc.|.cc.cccc.cc.|.cc.cwwc.cc.|.cc.cwwc.cc.|.cccccccccc.|............","➕":"............|.....gg.....|.....gg.....|.....gg.....|..gggggggg..|..gggggggg..|.....gg.....|.....gg.....|.....gg.....|............|............|............","➖":"............|............|............|............|..rrrrrrrr..|..rrrrrrrr..|............|............|............|............|............|............","🧾":"............|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.w.ww.ww.ww.|............","⚙️":"....ssss....|.s..ssss..s.|.ss.ssss.ss.|.ssssssssss.|.sssswwssss.|sssswwwwssss|sssswwwwssss|.sssswwssss.|.ssssssssss.|.ss.ssss.ss.|.s..ssss..s.|....ssss....","💎":"............|..cccccccc..|.cwwccccwwc.|ccwwccccwwcc|.ccccccccccc|..cccccccc..|...cccccc...|....cccc....|.....cc.....|............|............|............","🎮":"............|............|.pppppppppp.|pppwppppwppp|ppwwwppwwwpp|pppwpppppppp|pppppppwppww|.pppppppppp.|............|............|............|............","🕹️":".....rr.....|....rrrr....|....rrrr....|.....rr.....|.....rr.....|.....rr.....|...dddddd...|..dddddddd..|.dddddddddd.|.dddddddddd.|..dddddddd..|............","🍪":"............|...nnnnnn...|..nnnnnnnn..|.nnkknnnnnn.|.nnnnnnkknn.|nnnnkknnnnnn|nnkknnnnkknn|.nnnnnnnnnn.|..nnkknnnn..|...nnnnnn...|............|............","🍭":"............|...mmmmmm...|..mmwwwwmm..|.mmwwmmwwmm.|.mmwmmmmwmm.|.mmwwmmwwmm.|..mmwwwwmm..|...mmmmmm...|.....ww.....|.....ww.....|.....ww.....|.....ww.....","📦":"............|.oooooooooo.|.oo.oooo.oo.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|............|............","📖":"............|.ww......ww.|.wwww..wwww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|..wwwwwwww..|............","✅":"............|..........gg|.........gg.|gg......gg..|.gg....gg...|..gg..gg....|...gggg.....|....gg......|............|............|............|............","🚫":"............|...rrrrrr...|..rr....rr..|.rr.....rrr.|.rr....rrrr.|rr....rr..rr|rr..rr....rr|.rrrr....rr.|.rrr.....rr.|..rr....rr..|...rrrrrr...|............","👶":"............|....ffff....|...ffffff...|..ffffffff..|..fkffffkf..|..ffffffff..|..fffkkfff..|...ffffff...|....ffff....|...cccccc...|..cccccccc..|............","👧":"....hhhh....|...hhhhhh...|..hhffffhh..|..hffffffh..|..hfkffkfhh.|..hffffffh..|..hfffkffh..|...ffffff...|....ffff....|...mmmmmm...|..mmmmmmmm..|............","🏆":"............|.yyyyyyyyyy.|yyyyyyyyyyyy|yy.yyyyyy.yy|yy.yyyyyy.yy|yy.yyyyyy.yy|...yyyyyy...|....yyyy....|....yyyy....|..yyyyyyyy..|.yyyyyyyyyy.|............","💯":"............|.rr.rrr.rrr.|r..r.r.r.r.r|r..r.r.r.r.r|r..r.r.r.r.r|.rr.rrr.rrr.|............|..rrrrrrrr..|..r......r..|..rrrrrrrr..|............|............","🎹":"............|wwwwwwwwwwww|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wwwwwwwwwwww|wwwwwwwwwwww|w.w.w.w.w.w.|wwwwwwwwwwww|............|............","🏃":"....cccc....|....cccc....|............|...cccc..c..|..c.cccccc..|..c.ccccc...|.....cccc...|....cc..cc..|...cc....cc.|..cc......c.|.cc.........|............","🧮":"............|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|............|............","✏️":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","🚀":".....ww.....|....wwww....|....wccw....|...wwccww...|...wwccww...|...wwwwww...|..wwwwwwww..|.rwwwwwwwwr.|.rr.wwww.rr.|....oooo....|....o..o....|.....oo.....","🪐":".....ppp.....|...pppppppp..|..pppppppppp.|.pppppppwppp.|ycccccccccccy|.yyyyyyyyyy..|..pppppppp...|...pppppp....|....pppp.....|.............|.............|.............","🛸":"............|.....cc.....|....cwwc....|...cwwwwc...|..cwwwwwwc..|.pppppppppp.|pppppppppppp|.p.pp.pp.pp.|..c..c..c...|...c..c.....|............|............","☄️":".......nnnn.|......nnnnnn|.....nnnnnnn|....onnnnnn.|...oonnnnn..|..oyyonnn...|.oyyyoo.....|oyyyy.......|ryyy........|rry.........|r...........|............","🌀":"...pppppp...|..pppppppp..|.ppp....ppp.|.pp..cc..pp.|.pp.cccc.pp.|.pp.ccc..pp.|.ppp.....pp.|..pppp..pp..|....ppppp...|......ppp...|............|............","👽":"............|...gggggg...|..gggggggg..|.gggggggggg.|.gkkggggkkg.|.gkkggggkkg.|.gggggggggg.|..gggggggg..|...gggggg...|....gggg....|.....gg.....|............","🔭":".........ww.|........wwww|.......wwcc.|......wwcc..|.....wwcc...|....wwcc....|...wwcc.....|..sscc......|..ss........|.ssss.......|ss..ss......|............","🌌":".w....c....w|...p.....p..|..pppp.ppp..|.ppppppppp..|w.pppcppp..w|..pppppppp..|...ppppp.p..|.c.......c..|....w.......|..w......w..|............|............","⛽":"............|.cccccccc...|.cwwwwwwc.oo|.cwwwwwwc.o.|.cwwwwwwc.o.|.cccccccccc.|.cccccccc.c.|.cccccccc.c.|.cccccccc...|.cccccccc...|............|............","🔄":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🎉":".y....c....m|..y..c..m...|...wwwww....|..wwyywww...|.wwmwwwwww..|.wwwwccwww..|wwyywwwwmww.|wwwwwwwwwww.|.c....m....y|............|............|............","☁️":".............|.............|....llll.....|..lllllllll..|.lllllllllll.|lllllllllllll|.lllllllll...|..lllllll....|.............|.............|.............|.............","⚠️":".....yy.....|.....yy.....|....yyyy....|....yyyy....|...yykyyy...|...yykyyy...|..yyykyyyy..|..yyyyyyyy..|.yyyykyyyyy.|.yyyyyyyyyy.|yyyyyyyyyyyy|............","📚":"............|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rrrgggbbb..|............|............|............","📅":"..w......w..|.wwwwwwwwww.|.wwwwwwwwww.|.wrrrrrrrrw.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","📋":"....wwww....|.wwwwwwwwww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","⬇️":".....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.cc..cc..cc.|..cc.cc.cc..|...cccccc...|....cccc....|.....cc.....|............|............","⬆️":".....cc.....|....cccc....|...cccccc...|..cc.cc.cc..|.cc..cc..cc.|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|............|............","🔑":"...yyyy.....|..yy..yy....|..yy..yy....|...yyyy.....|....yy......|....yy......|....yy......|....yyy.....|....yy......|....yyy.....|............|............","💾":"............|.cccccccccc.|.cwwwwwwwwc.|.cwccccccwc.|.cwwwwwwwwc.|.cccccccccc.|.cwwwwwwwwc.|.cwwkkkkwwc.|.cwwwwwwwwc.|.cccccccccc.|............|............","📷":"............|....dddd....|.dddddddddd.|.dddwwwwddd.|.ddwwccwwdd.|.ddwcccccdd.|.ddwwccwwdd.|.dddwwwwddd.|.dddddddddd.|............|............|............","🎒":"....rrrr....|...r....r...|..rrrrrrrr..|.rrrrrrrrrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|............|............","🪥":".........cc.|........cccc|.......cccc.|......cccc..|.....cccc...|....cccc....|...wwww.....|..wwww......|.ww.ww......|.w..w.......|............|............","🙋":".......ww...|...ff..ww...|..ffff.ww...|..fkfkf.w...|..ffffff....|...ffff.....|..cccccc....|.cccccccc...|.cc.cc.cc...|....cc.cc...|...cc...cc..|............","🛏️":"............|............|.ww.........|.ww.wwwwww..|.ww.wwwwww..|.wwwwwwwwww.|.bbbbbbbbbb.|.bbbbbbbbbb.|.ww......ww.|.ww......ww.|............|............","🏀":"............|...oooooo...|..okooooko..|.ooko..okoo.|.ookoooookoo|okkkkkkkkkko|.ooko..okoo.|.ooko..okoo.|..okooooko..|...oooooo...|............|............","🍚":"............|............|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|.wwwwwwwwww.|.cccccccccc.|.ccccccccc..|..ccccccc...|...ccccc....|............|............","🤝":"..ff....ff..|.ffff..ffff.|.fkff..fkff.|.ffff..ffff.|..ff....ff..|.cccc..mmmm.|ccccc..mmmmm|.cccc..mmmm.|.cccc..mmmm.|.c..c..m..m.|.c..c..m..m.|............","🧦":"............|..mmmmm.....|..mwwwm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmmmm...|..mmmmmmmmm.|..mmmmmmmmm.|...mmmmmmm..|............","🐌":"............|..n......n..|...n....n...|....nnnnn...|...nnnnnnn..|..nnn.n.nnn.|..nn.nnn.nn.|..nnn...nnn.|.nnnnnnnnn..|ffffffffffff|............|............","😤":"............|...rrrrrr...|..rrrrrrrr..|.rrkrrrrkrr.|.rrrrrrrrrr.|.rkkkkkkkkr.|.rrrrrrrrrr.|..rr.cc.rr..|...c.cc.c...|..c..c...c..|............|............","📱":"............|..dddddddd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dddddddd..|....dccd....|..dddddddd..|............","📝":".........yy.|.wwwwwww.yy.|.wwkkkww.y..|.wwwwwwwyy..|.wwkkkwyy...|.wwwwwyy....|.wwkkyy.....|.wwwwy......|.wwwww......|.wwwwwwwww..|............|............","🙈":"...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nffffffffn.|.ffffffffff.|.ffffffffff.|.nffkkkkffn.|.nnffffffnn.|..nnnnnnnn..|...nnnnnn...|............|............","✋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👏":"............|..c.....c...|...ff..ff...|..ffff.ffff.|.fffff.fffff|.fffff.fffff|..ffff.ffff.|...fff.fff..|....ff.ff...|..c.....c...|............|............","📺":"............|...c....c...|....c..c....|.dddddddddd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dddddddddd.|..d......d..|............|............","🥤":"............|.wwwwwwwwww.|.w.wwwwww.w.|..rrrrrrrr..|..rrrrrrrr..|..rwwwwwwr..|...rrrrrr...|...rrrrrr...|....rrrr....|....rrrr....|............|............","🌙":"............|....yyyy....|...yyyyyy...|..yyyyyy....|..yyyyy.....|..yyyyy.....|..yyyyy.....|..yyyyyy....|...yyyyyy...|....yyyy....|............|............","🌓":"............|...wwwwdd...|..wwwwwwdd..|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|..wwwwwwdd..|...wwwwdd...|............|............","🍜":"............|...y..y..y..|..y..y..y...|.wwwwwwwwww.|.wwwwwwwwww.|.ycccccccy..|..cccccccc..|..cccccccc..|...cccccc...|....cccc....|............|............","🛼":"............|..mmmmm.....|..mmmmmm....|..mmmmmmm...|..mmmmmmmm..|.mmmmmmmmm..|.wwwwwwwww..|..w.....w...|.ccc...ccc..|.ccc...ccc..|............|............","🗺️":"............|.nnn.nnn.nn.|.nnnnnnnnnn.|.nngnnnnnnn.|.ngggnnrnnn.|.nnggnrrrnn.|.nnnnnnrnnn.|.nntttnnnnn.|.nnttttnnnn.|.nnnnnnnnnn.|............|............","🎴":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywwrrrrwwy.|.ywrrrrrrwy.|.ywrrrrrrwy.|.ywwrrrrwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............|............","🍟":"............|.y..y..y..y.|.yy.yy.yy.yy|.yy.yy.yy.yy|.rrrrrrrrrr.|.rwwrwwrwwr.|.rrrrrrrrrr.|..rrrrrrrr..|..rrrrrrrr..|...rrrrrr...|............|............","📕":"............|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrrrrrrrrr.|.wwwwwwwwww.|............|............","📒":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkwwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............","🎬":"............|.dwdwdwdwdw.|.wdwdwdwdwd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|............|............|............","🎡":".....c......|...cccccc...|..c.c..c.c..|.cc..cc..cc.|.c.cccccc.c.|.cc..cc..cc.|..c.c..c.c..|...cccccc...|.....cc.....|....cccc....|...cc..cc...|............","🧸":".nn......nn.|.nnn....nnn.|..nnnnnnnn..|..nkknnkkn..|..nnnnnnnn..|..nnnkknnn..|...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nn.nnnn.nn.|..n......n..|............","💣":".........oo.|.........o..|........o...|...kkkkk....|..kkkkkkk...|.kkkkkkkkk..|.kkkkkkkkk..|.kkwkkkkkk..|.kkkkkkkkk..|..kkkkkkk...|...kkkkk....|............","💰":".....ss.....|....ssss....|...yyyyyy...|..yyyyyyyy..|.yyyyyyyyyy.|.yyoooooyyy.|.yyoyyyoyyy.|.yyoooooyyy.|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|............","💳":"............|.pppppppppp.|.pppppppppp.|.kkkkkkkkkk.|.pppppppppp.|.pyyyppppppp|.pyyypppppp.|.pppppppppp.|.pppppppppp.|............|............|............","🔗":"............|............|..cccccc....|.cc....cc...|.cc..cccccc.|.cc..cc...cc|..cccc....cc|.....cc...cc|.....cccccc.|............|............|............","👆":".....yy.....|....ffff....|....ffff....|....ffff....|....ffff....|.ff.ffff....|.ffffffff...|.ffffffff...|.ffffffff...|..ffffff....|............|............","🔒":"............|....cccc....|...cc..cc...|...cc..cc...|.yyyyyyyyyy.|.yyyyyyyyyy.|.yyyykkyyyy.|.yyyykkyyyy.|.yyyyyyyyyy.|.yyyyyyyyyy.|............|............","🧹":".........nn.|........nn..|.......nn...|......nn....|.....nn.....|....yyyy....|...yyyyyy...|..yyyyyyyy..|..y.y.y.y.y.|..y.y.y.y.y.|............|............","⏪":"............|.....c....c.|....cc...cc.|...ccc..ccc.|..cccc.cccc.|.ccccccccccc|..cccc.cccc.|...ccc..ccc.|....cc...cc.|.....c....c.|............|............","⏩":"............|.c....c.....|.cc...cc....|.ccc..ccc...|.cccc.cccc..|.ccccccccccc|.cccc.cccc..|.ccc..ccc...|.cc...cc....|.c....c.....|............|............","⏸️":"............|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|............|............|............","★":"............|.....yy.....|....yyyy....|...yyyyyy...|yyyyyyyyyyyy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|..yyy..yyy..|..yy....yy..|............|............"};
+const _pxc={};
+function px(e,cls){
+  if(!e)return '';
+  const g=PXG[e]||PXG[String(e).replace(/\uFE0F/g,'')];
+  if(!g)return '<span class="emo '+(cls||'')+'">'+esc(e)+'</span>';
+  const key=g+'|'+(cls||'');
+  if(!_pxc[key]){
+    const rows=g.split('|'),h=rows.length,w=rows[0].length;
+    const at=(x,y)=>(x<0||y<0||x>=w||y>=h)?'.':rows[y][x];
+    // 自動描邊：淺色底時白色圖示才不會消失（深色底則是低調的立體感）
+    const edge=(x,y)=>at(x,y)==='.'&&(at(x-1,y)!=='.'||at(x+1,y)!=='.'||at(x,y-1)!=='.'||at(x,y+1)!=='.');
+    let ol='';
+    for(let y=-1;y<=h;y++){let x=-1;
+      while(x<=w){
+        if(!edge(x,y)){x++;continue}
+        let n=1;while(x+n<=w&&edge(x+n,y))n++;
+        ol+='<rect class="po" x="'+x+'" y="'+y+'" width="'+n+'" height="1"/>';
+        x+=n;}}
+    let o='';
+    for(let y=0;y<h;y++){const r=rows[y];let x=0;
+      while(x<w){const ch=r[x];
+        if(ch==='.'){x++;continue}
+        let n=1;while(x+n<w&&r[x+n]===ch)n++;
+        o+='<rect x="'+x+'" y="'+y+'" width="'+n+'" height="1" fill="'+(PXPAL[ch]||'#888')+'"/>';
+        x+=n;}}
+    _pxc[key]='<svg class="px '+(cls||'')+'" viewBox="-1 -1 '+(w+2)+' '+(h+2)+'" shape-rendering="crispEdges" aria-hidden="true">'+ol+o+'</svg>';
+  }
+  return _pxc[key];
+}
+const ICO_ORDER=['⭐','🌟','🎲','🚀','🪐','🛸','👽','☄️','🌀','🌌','💎','🛡️','🎁','🎫','🏦','💰','💳','🏆','💯','🔑','🔒',
+'📖','📕','📒','📚','📝','📋','📅','✏️','✎','🎒','🪥','🛏️','🍚','🍜','🍪','🍭','🍟','🥤','🏀','🏃','🛼','🎹','🎮','🕹️','🎴','🎬','📺','📱','🧸','🎡','🗺️','🧦','🧹','🤝','🙋','✋','👏','👆','🙈','😤','🐌','👶','👧','🔥','💡','⚠️','☁️','🎉','✅','🚫','➕','➖','🔁','🔄','⏪','⏩','⏸️','⬆️','⬇️','🔗','🌙','🌓','💥','💣','🧾','📦','📷','💾','⚙️','🏠','🧮','❓','🏁','😈','🚀'];
+const PXKEYS=(()=>{const seen={},o=[];for(const k of ICO_ORDER)if(PXG[k]&&!seen[k]){seen[k]=1;o.push(k)}
+  for(const k of Object.keys(PXG))if(!seen[k]){seen[k]=1;o.push(k)}return o})();
+function icoField(id,val,label){
+  val=val||'';
+  return '<div class="f"><label>'+(label||'圖示')+'</label>'+
+    '<input type="hidden" id="'+id+'" value="'+esc(val)+'">'+
+    '<div class="icobox" data-ico="'+id+'">'+
+      '<div class="icotop"><span class="icocur">'+px(val||'⭐')+'</span><u>點一下換圖示</u></div>'+
+      '<div class="icogrid">'+PXKEYS.map(k=>'<button type="button" class="icoi'+(k===val?' on':'')+'" data-ico-v="'+esc(k)+'">'+px(k)+'</button>').join('')+'</div>'+
+    '</div></div>';
+}
+document.addEventListener('click',ev=>{
+  const b=ev.target.closest&&ev.target.closest('.icoi');if(!b)return;
+  const box=b.closest('.icobox'),inp=document.getElementById(box.dataset.ico);
+  if(!inp)return;
+  inp.value=b.dataset.icoV;
+  box.querySelector('.icocur').innerHTML=px(inp.value);
+  box.querySelectorAll('.icoi.on').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  if(box.dataset.ico==='we'){const sh=document.getElementById('sheet');if(sh&&sh._setimg===undefined){}}
+  try{buzz(12)}catch(e){}
+},true);
+
 const K_STATE='kp_state_v1', K_MEDIA='kp_media_v1', K_GH='kp_gh_v1', K_DIRTY='kp_dirty_v1', K_SHA='kp_sha_v1';
 
 /* ---------------- 預設資料 ---------------- */
 function defaultTiles(){return [
- {i:0, type:'start',    label:'起點',   emoji:'🏁'},
+ {i:0, type:'start',    label:'基地',   emoji:'🚀'},
  {i:1, type:'point',    label:'+1',    emoji:'⭐', value:1},
- {i:2, type:'coupon',   label:'零食',   emoji:'🍪', reward:'小零食券'},
+ {i:2, type:'coupon',   label:'補給',   emoji:'🍪', reward:'小零食券'},
  {i:3, type:'chance',   label:'機會',   emoji:'❓'},
  {i:4, type:'coupon',   label:'遊戲10', emoji:'🎮', reward:'遊戲時間 10 分券'},
- {i:5, type:'trap',     label:'陷阱',   emoji:'💥', value:1},
- {i:6, type:'treasure', label:'寶箱',   emoji:'💎', value:2},
- {i:7, type:'fate',     label:'命運',   emoji:'😈'},
- {i:8, type:'coupon',   label:'大零食', emoji:'🍭', reward:'零食大獎券'},
- {i:9, type:'lucky',    label:'抽獎',   emoji:'🎁'},
+ {i:5, type:'trap',     label:'隕石',   emoji:'☄️', value:1},
+ {i:6, type:'treasure', label:'水晶',   emoji:'💎', value:2},
+ {i:7, type:'fate',     label:'外星人', emoji:'👽'},
+ {i:8, type:'coupon',   label:'大補給', emoji:'🍭', reward:'零食大獎券'},
+ {i:9, type:'lucky',    label:'幽浮',   emoji:'🛸'},
  {i:10,type:'chance',   label:'機會',   emoji:'❓'},
  {i:11,type:'point',    label:'+1',    emoji:'⭐', value:1},
  {i:12,type:'coupon',   label:'遊戲20', emoji:'🕹️', reward:'遊戲時間 20 分券'},
  {i:13,type:'chance',   label:'機會',   emoji:'❓'},
- {i:14,type:'back',     label:'倒退2',  emoji:'⏪', value:2},
- {i:15,type:'move',     label:'前進3',  emoji:'⏩', value:3},
+ {i:14,type:'back',     label:'引力井', emoji:'⏪', value:2},
+ {i:15,type:'move',     label:'加速',   emoji:'⏩', value:3},
  {i:16,type:'shield',   label:'護盾',   emoji:'🛡️'},
- {i:17,type:'trap',     label:'陷阱',   emoji:'💥', value:1},
- {i:18,type:'fate',     label:'命運',   emoji:'😈'},
- {i:19,type:'reroll',   label:'再骰',   emoji:'🔁'}
+ {i:17,type:'trap',     label:'隕石',   emoji:'☄️', value:1},
+ {i:18,type:'fate',     label:'外星人', emoji:'👽'},
+ {i:19,type:'reroll',   label:'蟲洞',   emoji:'🌀'}
 ]}
 function defaultCards(){return {
  chance:[
@@ -598,9 +724,10 @@ if(S.schema<7){
     S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:5}];
   S.schema=7;
 }
+if(S.schema<8){S.game.tiles=defaultTiles();S.game.updatedAt=now();S.schema=8}
 
 let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null, rwTab='shop', depAmt=10, gPending=null;
-let chartRange='week', chartPick=null, topUpAmt=5;
+let chartRange='week', chartPick=null, topUpAmt=5, rwRar=0;
 
 /* ---------------- 分數計算 ---------------- */
 const BU=()=>Math.max(2,S.settings.bigUnit|0||5);
@@ -1102,9 +1229,10 @@ function mergeState(L,R){
   if(cut)st.ledgerClearedAt=cut;
   // 歸檔（壓縮一年前的紀錄）同理：取 ts 較大的那份，否則底數會被洗掉、分數就跳掉了
   const la=(L.settings&&L.settings.archive)||{ts:0},ra=(R.settings&&R.settings.archive)||{ts:0};
-  const arc=((la.ts|0)>=(ra.ts|0))?la:ra;
-  if(arc&&(arc.ts|0)>0)st.archive=arc;
-  const floor=Math.max(cut,(st.archive&&st.archive.ts)|0);
+  const arc=((+la.ts||0)>=(+ra.ts||0))?la:ra;
+  if(arc&&(+arc.ts||0)>0)st.archive=arc;
+  const floor=Math.max(cut,(st.archive&&+st.archive.ts)||0);
+  const keep=x=>!cut||((x.updatedAt||x.ts||x.startTs||0)>=cut);
   let lg=mergeLedger(L.ledger,R.ledger);
   if(floor)lg=lg.filter(e=>((e.updatedAt||e.ts||0)>=floor));
   return{schema:Math.max(L.schema||1,R.schema||1),deviceId:L.deviceId,needsSeedRefresh:L.needsSeedRefresh,
@@ -1113,18 +1241,22 @@ function mergeState(L,R){
     rules:mergeList(L.rules,R.rules),
     rewards:mergeList(L.rewards,R.rewards),
     routines:mergeList(L.routines,R.routines),
-    routineLog:mergeList(L.routineLog,R.routineLog).slice(-4000),
-    coupons:mergeList(L.coupons,R.coupons).slice(-3000),
-    savings:mergeList(L.savings,R.savings).slice(-800),
-    game:mergeGame(L.game,R.game),
+    routineLog:mergeList(L.routineLog,R.routineLog).filter(keep).slice(-4000),
+    coupons:mergeList(L.coupons,R.coupons).filter(keep).slice(-3000),
+    savings:mergeList(L.savings,R.savings).filter(keep).slice(-800),
+    game:mergeGame(L.game,R.game,cut),
     ledger:lg};
 }
-function mergeGame(L,R){
+function mergeGame(L,R,cut){
   L=L||{players:{},tiles:defaultTiles(),cards:defaultCards()};
   if(!R)return L;
+  cut=+cut||0;
+  const fresh=x=>!cut||((x&&x.updatedAt)||0)>=cut;      // 重置之前的棋子狀態一律丟掉
   const players={};
   for(const id of new Set([...Object.keys(L.players||{}),...Object.keys(R.players||{})])){
-    const a=(L.players||{})[id],b=(R.players||{})[id];
+    let a=(L.players||{})[id],b=(R.players||{})[id];
+    if(!fresh(a))a=null; if(!fresh(b))b=null;
+    if(!a&&!b)continue;
     if(!a){players[id]=b;continue} if(!b){players[id]=a;continue}
     const nw=newer(a,b);
     players[id]=Object.assign({},nw,{rollsUsed:Math.max(a.rollsUsed||0,b.rollsUsed||0),
@@ -1223,7 +1355,7 @@ function putMedia(dataUrl){const k=uid('m');M.items[k]=dataUrl;M.updatedAt=now()
 const TABS=[['home','🏠','首頁'],['score','➕','計分'],['game','🎲','遊戲'],['reward','🎁','獎勵'],['bank','🏦','銀行'],['log','🧾','紀錄'],['set','⚙️','設定']];
 function renderNav(){
   $('#nav').innerHTML=TABS.map(([k,e,l])=>
-    '<button class="nb '+(view===k?'on':'')+'" data-act="tab" data-v="'+k+'"><em>'+e+'</em>'+l+'</button>').join('');
+    '<button class="nb '+(view===k?'on':'')+'" data-act="tab" data-v="'+k+'"><em>'+px(e)+'</em>'+l+'</button>').join('');
 }
 let lpTimer=null;
 function bindBoard(){
@@ -1242,12 +1374,19 @@ function bindBoard(){
     if(tl){e.preventDefault();cancel();tileSheet(parseInt(tl.dataset.i,10)||0)}
   });
 }
+function kidChips(ks,sub,extra){
+  let h='<div class="chips even">'+(extra||'');
+  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+
+    avatarHTML(x)+'<span class="cn">'+esc(x.name)+'</span>'+(sub?'<b class="cx">'+sub(x)+'</b>':'')+'</button>';
+  return h+'</div>';
+}
 function avatarHTML(k,cls){
   const u=mediaUrl(k.avatar);
   return u?'<img class="av '+(cls||'')+'" src="'+u+'" alt="">'
           :'<div class="av '+(cls||'')+'" style="--kc:'+k.color+';background:'+k.color+'">'+esc((k.name||'?').slice(0,1))+'</div>';
 }
 function render(){
+  const lg=$('#lg');if(lg&&!lg.firstChild)lg.innerHTML=px('⭐');
   renderNav();paintSync();
   const v=$('#view');
   if(view==='home')v.innerHTML=vHome();
@@ -1260,7 +1399,7 @@ function render(){
   if(view==='game')bindBoard();
   const fab=$('.fab');if(fab)fab.remove();
   if(view==='home'||view==='score'){
-    const b=document.createElement('button');b.className='fab';b.dataset.act='manual';b.innerHTML='✎';
+    const b=document.createElement('button');b.className='fab';b.dataset.act='manual';b.innerHTML=px('✎');
     document.body.appendChild(b);
   }
 }
@@ -1270,7 +1409,7 @@ function vHome(){
   const ks=live(S.kids);
   const today=startOfDay(),week=startOfWeek();
   let h='<div class="sec"><h2>今天</h2><span class="more" data-act="tab" data-v="score">去計分 →</span></div><div class="kidgrid">';
-  if(!ks.length)h+='<div class="empty"><span class="e">👶</span>還沒有小孩資料<br><button class="btn sm pri" style="margin-top:10px" data-act="editkid" data-id="">新增小孩</button></div>';
+  if(!ks.length)h+='<div class="empty">'+px('👶','xl')+'還沒有小孩資料<br><button class="btn sm pri" style="margin-top:10px" data-act="editkid" data-id="">新增小孩</button></div>';
   for(const k of ks){
     const bal=balanceOf(k.id),sp=splitScore(bal),d=sinceOf(k.id,today),w=sinceOf(k.id,week);
     const pct=Math.round((Math.abs(bal)%BU())/BU()*100);
@@ -1294,12 +1433,12 @@ function vHome(){
       const rs=routinesFor(k.id),dn=doneCount(k.id),stk=streakOf(k.id);
       h+='<div class="rt"><div class="rthead">'+avatarHTML(k)+
         '<div class="nm">'+esc(k.name)+'</div>'+
-        (stk>0?'<span class="flame">🔥 '+stk+' 天</span>':'')+
+        (stk>0?'<span class="flame">'+px('🔥')+' '+stk+' 天</span>':'')+
         '<span class="dicep">🎲 '+diceOf(k.id)+'</span>'+
         '<span class="rtn">'+dn+'/'+rs.length+'</span></div><div class="rtrow">';
       for(const r of rs){
         h+='<button class="rtc '+(routineDone(k.id,r.id)?'on':'')+'" data-act="rt" data-id="'+r.id+'" data-kid="'+k.id+'">'+
-          '<span class="ck">✓</span><span class="e">'+esc(r.emoji||'⭐')+'</span><b>'+esc(r.label)+'</b></button>';
+          '<span class="ck">✓</span><span class="e">'+px(r.emoji||'⭐')+'</span><b>'+esc(r.label)+'</b></button>';
       }
       h+='</div></div>';
     }
@@ -1317,26 +1456,24 @@ function vHome(){
     for(const e of recent)h+=logRow(e,false);
     h+='</div>';
   }
-  if(S.needsSeedRefresh)h+='<div class="banner"><span style="font-size:20px">🔄</span><div><b>有更新的預設清單</b>獎勵品現在會依實際價格定價（1 小分 = NT$'+NTD()+'），規則也改成國小版。<br><button class="btn sm pri" style="margin-top:8px" data-act="reseed">載入新清單</button></div></div>';
-  if(!ghReady())h+='<div class="banner"><span style="font-size:20px">☁️</span><div><b>還沒連結 GitHub</b>分數目前只存在這支手機，清快取就會不見。<br><button class="btn sm pri" style="margin-top:8px" data-act="ghsetup">設定同步</button></div></div>';
+  if(S.needsSeedRefresh)h+='<div class="banner">'+px('🔄','big')+'<div><b>有更新的預設清單</b>獎勵品現在會依實際價格定價（1 小分 = NT$'+NTD()+'），規則也改成國小版。<br><button class="btn sm pri" style="margin-top:8px" data-act="reseed">載入新清單</button></div></div>';
+  if(!ghReady())h+='<div class="banner">'+px('☁️','big')+'<div><b>還沒連結 GitHub</b>分數目前只存在這支手機，清快取就會不見。<br><button class="btn sm pri" style="margin-top:8px" data-act="ghsetup">設定同步</button></div></div>';
   return h;
 }
 function ruleBtn(r,ask){
   const dd=r.kind==='deduct';
   return '<button class="rule '+(dd?'dd':'')+'" data-act="rule" data-id="'+r.id+'"'+(ask?' data-ask="1"':'')+'>'+
-    '<div class="ic">'+esc(r.emoji||(dd?'➖':'➕'))+'</div><div class="tx"><b>'+esc(r.label)+'</b>'+
+    '<div class="ic">'+px(r.emoji||(dd?'➖':'➕'))+'</div><div class="tx"><b>'+esc(r.label)+'</b>'+
     '<u>'+(dd?'−':'+')+fmtCost(r.unit,r.amount)+'</u></div></button>';
 }
 
 /* ---------- 計分 ---------- */
 function vScore(){
   const ks=live(S.kids);
-  if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先到設定新增小孩</div>';
+  if(!ks.length)return '<div class="empty">'+px('👶','xl')+'請先到設定新增小孩</div>';
   if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
   const k=kid(selKid),bal=balanceOf(k.id);
-  let h='<div class="sec"><h2>選擇對象</h2></div><div class="chips">';
-  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+'</button>';
-  h+='</div>';
+  let h='<div class="sec"><h2>選擇對象</h2></div>'+kidChips(ks,x=>balanceOf(x.id));
   h+='<div class="card" style="padding:13px;margin-top:12px;display:flex;align-items:center;gap:12px">'+avatarHTML(k)+
      '<div><div style="font-weight:800">'+esc(k.name)+'</div><div style="font-size:12.5px;color:var(--muted)">目前 '+fmtScore(bal)+'（'+bal+' 小分）</div></div>'+
      '<button class="btn sm" style="margin-left:auto" data-act="manual">自訂</button></div>';
@@ -1353,17 +1490,13 @@ function vReward(){
   if(!selKid||!kid(selKid))selKid=ks[0]&&ks[0].id;
   const open=couponsOf(selKid,'open').length, wait=couponsOf(selKid,'wait').length;
   let h='';
-  if(ks.length){
-    h+='<div class="chips">';
-    for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+' '+balanceOf(x.id)+'</button>';
-    h+='</div>';
-  }
+  if(ks.length)h+=kidChips(ks,x=>balanceOf(x.id));
   if(rwTab!=='shop'&&rwTab!=='cpn')rwTab='shop';
   h+='<div class="tabs" style="margin-top:12px">'+
     '<button class="'+(rwTab==='shop'?'on':'')+'" data-act="rwtab" data-v="shop">🎁 獎勵品</button>'+
     '<button class="'+(rwTab==='cpn'?'on':'')+'" data-act="rwtab" data-v="cpn">🎫 我的券'+
       (open+wait?' <b>'+(open+wait)+'</b>':'')+'</button></div>';
-  if(!selKid)return h+'<div class="empty"><span class="e">👶</span>請先新增小孩</div>';
+  if(!selKid)return h+'<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
   return h+(rwTab==='shop'?vShop(ws):vCoupons());
 }
 function budgetBox(){
@@ -1376,10 +1509,19 @@ function budgetBox(){
 }
 function vShop(ws){
   let h=budgetBox();
-  if(!ws.length)return h+'<div class="empty"><span class="e">🎁</span>還沒有獎勵品<br><button class="btn sm pri" style="margin-top:10px" data-act="editrw" data-id="">新增獎勵</button></div>';
+  if(!ws.length)return h+'<div class="empty">'+px('🎁','xl')+'還沒有獎勵品<br><button class="btn sm pri" style="margin-top:10px" data-act="editrw" data-id="">新增獎勵</button></div>';
+  const cnt=[0,0,0,0,0,0];
+  for(const w of ws)cnt[rarity(toSmall(w.unit,w.amount))]++;
+  if(rwRar&&!cnt[rwRar])rwRar=0;
   h+='<div class="sec"><h2>獎勵品</h2><span class="more" data-act="tab" data-v="set">管理 →</span></div>';
+  h+='<div class="rarbar"><button class="'+(rwRar===0?'on':'')+'" data-act="rwrar" data-v="0">全部 '+ws.length+'</button>';
+  for(let r=1;r<=5;r++)if(cnt[r])
+    h+='<button class="r'+r+' '+(rwRar===r?'on':'')+'" data-act="rwrar" data-v="'+r+'">'+
+      '★'.repeat(r)+'<u>'+cnt[r]+'</u></button>';
+  h+='</div>';
+  const list=rwRar?ws.filter(w=>rarity(toSmall(w.unit,w.amount))===rwRar):ws;
   h+='<div class="rw">';
-  for(const w of ws)h+=rewardCard(w);
+  for(const w of list)h+=rewardCard(w);
   return h+'</div><div style="height:20px"></div>';
 }
 function cpnRow(c,mode){
@@ -1389,7 +1531,7 @@ function cpnRow(c,mode){
     : c.kind==='item'?'<span class="badge wait">還沒買</span>'
     : '<span class="badge ok">可使用</span>';
   return '<button class="cpn '+(mode==='done'?'done':'')+'" data-act="cpn" data-id="'+c.id+'">'+
-    '<div class="ic">'+esc(c.emoji||'🎫')+'</div>'+
+    '<div class="ic">'+px(c.emoji||'🎫')+'</div>'+
     '<div class="tx"><b>'+esc(c.name)+'</b><u>'+when+' ・ '+esc(k?k.name:'')+
       (c.priceNTD?' ・ NT$'+c.priceNTD:'')+'</u></div>'+badge+'</button>';
 }
@@ -1397,7 +1539,7 @@ function vCoupons(){
   const open=couponsOf(selKid,'open'),wait=couponsOf(selKid,'wait'),done=couponsOf(selKid,'done');
   let h=budgetBox();
   if(!open.length&&!wait.length&&!done.length)
-    return h+'<div class="empty"><span class="e">🎫</span>還沒有券<br>到「獎勵品」兌換，或玩大富翁踩到格子就會拿到</div>';
+    return h+'<div class="empty">'+px('🎫','xl')+'還沒有券<br>到「獎勵品」兌換，或玩大富翁踩到格子就會拿到</div>';
   if(wait.length){
     h+='<div class="sec"><h2>待爸媽處理 ('+wait.length+')</h2></div><div class="list">';
     for(const c of wait)h+=cpnRow(c,'wait');h+='</div>';
@@ -1429,7 +1571,7 @@ function calcSheet(){
     '<div class="f hint" style="margin-top:-6px;line-height:1.8">數字是<b>到期那天可以領回的小分</b>，綠色小字是多賺的利息。<br>'+
     '利息用「每滿 <b>10 小分</b>」算，零頭不計息；每一筆最多 +'+capInt()+' 小分。</div>'+
     t+
-    '<div class="banner" style="margin-top:12px"><span style="font-size:20px">💡</span><div style="line-height:1.75">'+
+    '<div class="banner" style="margin-top:12px">'+px('💡','big')+'<div style="line-height:1.75">'+
     '同樣 20 小分：現在花掉就是 20 小分；<b class="ib" style="color:var(--gold)">存 '+best.days+' 天再領，變成 '+(20+interestFor(20,best.days))+' 小分</b>。<br>'+
     '利息還會<b class="ib">額外加獎勵額度</b>（每 1 小分 = NT$'+NTD()+'），不佔每週的 NT$'+weeklyNTD()+'。</div></div>'+
     '<button class="btn pri wide" style="margin-top:12px" data-act="close">知道了</button>');
@@ -1443,7 +1585,7 @@ function topUpSheet(id){
   sheet('🏦 加存到這筆存款',
     '<div class="f hint" style="margin-top:-6px;line-height:1.8">現在這筆有 <b>'+sv.amount+' 小分</b>，'+
       (isMature(sv)?'已經到期':'還要 '+daysLeft(sv)+' 天')+'到期。加存不會改到期日。</div>'+
-    (need&&need<=bal?'<div class="banner"><span style="font-size:20px">💡</span><div>再加 <b class="ib" style="color:var(--gold)">'+need+' 小分</b> 就滿 '+(sv.amount+need)+'，利息會多 +'+(interestFor(sv.amount+need,sv.days)-now0)+'。</div></div>':'')+
+    (need&&need<=bal?'<div class="banner">'+px('💡','big')+'<div>再加 <b class="ib" style="color:var(--gold)">'+need+' 小分</b> 就滿 '+(sv.amount+need)+'，利息會多 +'+(interestFor(sv.amount+need,sv.days)-now0)+'。</div></div>':'')+
     '<div class="card" style="padding:16px;margin-top:10px"><div class="stepper">'+
       '<button class="sb" data-act="tu-" data-id="'+sv.id+'">−</button>'+
       '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;letter-spacing:-1.5px;color:var(--gold)">'+add+'</div>'+
@@ -1456,12 +1598,9 @@ function topUpSheet(id){
 }
 function vBank(){
   const ks=live(S.kids);
-  if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先新增小孩</div>';
+  if(!ks.length)return '<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
   if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
-  let h='<div class="chips">';
-  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+
-    avatarHTML(x)+esc(x.name)+' 🏦'+bankedOf(x.id)+(matureCount(x.id)?' <b>'+matureCount(x.id)+'</b>':'')+'</button>';
-  h+='</div>';
+  let h=kidChips(ks,x=>px('🏦')+bankedOf(x.id)+(matureCount(x.id)?' ✓':''));
 
   const bal=balanceOf(selKid),banked=bankedOf(selKid);
   const amt=clamp(depAmt,0,Math.max(0,bal));
@@ -1470,7 +1609,7 @@ function vBank(){
     '<div class="st"><b style="color:var(--brand)">'+banked+'</b><u>銀行裡</u></div>'+
     '<div class="st"><b style="color:var(--gold)">'+matureCount(selKid)+'</b><u>可以領了</u></div></div>';
 
-  h+='<button class="btn wide" style="margin-top:10px;background:var(--gold-soft);color:var(--gold);font-weight:850" data-act="calc">🧮 存越久領越多 — 看試算表</button>';
+  h+='<button class="btn wide" style="margin-top:10px;background:var(--gold-soft);color:var(--gold);font-weight:850" data-act="calc">'+px('🧮')+' 存越久領越多 — 看試算表</button>';
 
   h+='<div class="sec"><h2>要存多少小分？</h2></div>';
   h+='<div class="card" style="padding:16px"><div class="stepper">'+
@@ -1481,7 +1620,7 @@ function vBank(){
 
   if(amt>0&&amt<10){
     const need=10-amt;
-    h+='<div class="banner"><span style="font-size:20px">💡</span><div style="line-height:1.75">'+
+    h+='<div class="banner">'+px('💡','big')+'<div style="line-height:1.75">'+
       '利息是「每滿 <b class="ib">10 小分</b>」才算一次，現在 '+amt+' 小分利息是 <b class="ib">+0</b>。<br>'+
       (need<=bal-amt
         ? '再存 <b class="ib" style="color:var(--gold)">'+need+' 小分</b>（湊到 10）就開始有利息了。'
@@ -1507,7 +1646,7 @@ function vBank(){
         '<button class="btn pri wide sm" style="margin-top:11px" data-act="dodep" data-d="'+pl.days+'">存 '+pl.days+' 天</button></div>';
     }
     const em='style="font-weight:850;color:var(--gold)"';
-    h+='<div class="banner"><span style="font-size:20px">⚠️</span><div style="line-height:1.75">'+
+    h+='<div class="banner">'+px('⚠️','big')+'<div style="line-height:1.75">'+
       '存進去的小分會<span '+em+'>先扣掉</span>，時間到才領得回來。<br>'+
       '存款期間還可以<span '+em+'>加存</span>，到期日不變。<br>'+
       '提早解約只退本金、沒有利息。<br>'+
@@ -1524,7 +1663,7 @@ function vBank(){
       const dd=new Date(dueTs(sv)).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
       const need=(10-(sv.amount%10))%10;
       h+='<div class="dep"><div class="r1">'+
-        '<div class="ic" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--surface2)">🏦</div>'+
+        '<div class="ic" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--surface2)">'+px('🏦')+'</div>'+
         '<div class="tx"><b>'+sv.amount+' 小分 ・ 存 '+sv.days+' 天</b>'+
         '<u>'+dd+' 到期 ・ '+(m?'已經可以領了':'還要 '+daysLeft(sv)+' 天')+'</u></div>'+
         '<div style="text-align:right"><div style="font-size:18px;font-weight:850;color:'+(m?'var(--good)':'var(--gold)')+'">'+(sv.amount+it)+'</div>'+
@@ -1563,32 +1702,32 @@ function dieHTML(n,anim){
 function tileDesc(t){
   const v=t.value||0;
   switch(t.type){
-    case 'start':    return '起點。停在這裡不會有事，但每次<b>經過或繞完一圈</b>可以拿 +'+lapBonus()+' 小分。';
+    case 'start':    return '太空基地。停在這裡不會有事，但每次<b>經過或繞完一圈</b>可以拿 +'+lapBonus()+' 小分。';
     case 'point':    return '直接拿到 <b>+'+(v||1)+' 小分</b>。';
-    case 'treasure': return '寶箱！直接拿到 <b>+'+(v||2)+' 小分</b>。';
-    case 'trap':     return '會<b class="danger">扣 '+(v||1)+' 小分</b>。手上有<b>護盾券</b>的話，會先問你要不要擋掉。';
+    case 'treasure': return '挖到能量水晶！直接拿到 <b>+'+(v||2)+' 小分</b>。';
+    case 'trap':     return '撞到隕石，會<b class="danger">扣 '+(v||1)+' 小分</b>。手上有<b>護盾券</b>的話，會先問你要不要擋掉。';
     case 'coupon':   return '拿到一張「<b>'+esc(t.reward||'神秘券')+'</b>」，之後到「獎勵 → 我的券」使用。';
-    case 'lucky':    return '抽一張獎勵券，抽到什麼看運氣（零食、遊戲時間、護盾…）。';
+    case 'lucky':    return '幽浮掉了一張獎勵券下來，抽到什麼看運氣（零食、遊戲時間、護盾…）。';
     case 'shield':   return '拿到一張<b>免扣分護盾券</b>，可以擋掉一次壞事（扣分、倒退、暫停）。';
     case 'chance':   return '抽一張<b>機會卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
-    case 'fate':     return '抽一張<b>命運卡</b>。可能要做一件小任務才有分，也可能倒退或暫停一次。';
-    case 'move':     return '往前走 <b>'+(v||3)+' 格</b>，走到的那一格效果照算。';
-    case 'back':     return '<b class="danger">倒退 '+(v||2)+' 格</b>，退到的那一格效果照算。有護盾券可以擋掉。';
-    case 'reroll':   return '<b>再骰一次</b>，而且不扣骰子。';
+    case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務才有分，也可能被拉走或暫停一次。';
+    case 'move':     return '推進器加速，往前走 <b>'+(v||3)+' 格</b>，走到的那一格效果照算。';
+    case 'back':     return '被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>，退到的那一格效果照算。有護盾券可以擋掉。';
+    case 'reroll':   return '穿過蟲洞，<b>再骰一次</b>，而且不扣骰子。';
     default:         return '';
   }
 }
 function tileSheet(i){
   const t=tileAt(i),ks=live(S.kids).filter(k=>gp(k.id).pos===((i%TN)+TN)%TN);
-  sheet(esc(t.emoji)+' 第 '+((i<10?'0':'')+i)+' 格 ・ '+esc(t.label),
+  sheet(px(t.emoji)+' 第 '+((i<10?'0':'')+i)+' 格 ・ '+esc(t.label),
     '<div class="f" style="line-height:1.9;font-size:14px">'+tileDesc(t)+'</div>'+
     (ks.length?'<div class="f hint">現在站在這格：'+ks.map(k=>esc(k.name)).join('、')+'</div>':'')+
-    '<button class="btn wide" style="margin-top:4px" data-act="ghelp">📖 看完整玩法</button>'+
+    '<button class="btn wide" style="margin-top:4px" data-act="ghelp">'+px('📖')+' 看完整玩法</button>'+
     '<button class="btn pri wide" style="margin-top:8px" data-act="close">知道了</button>');
 }
 function gameHelpSheet(){
   const per=Math.max(1,S.settings.dicePerPoints|0||5);
-  const li=(e,b,d)=>'<div class="evt"><span class="e">'+e+'</span><b>'+b+'</b><span style="flex:1;text-align:right;color:var(--muted);font-size:12px">'+d+'</span></div>';
+  const li=(e,b,d)=>'<div class="evt"><span class="e">'+px(e)+'</span><b>'+b+'</b><span style="flex:1;text-align:right;color:var(--muted);font-size:12px">'+d+'</span></div>';
   sheet('📖 大富翁玩法',
     '<div class="list">'+
       li('🏁','繞完一圈','+'+lapBonus()+' 小分')+
@@ -1601,18 +1740,16 @@ function gameHelpSheet(){
       '棋盤只會影響遊戲裡的分數，<b class="ib">爸媽的扣分護盾擋不掉</b>。<br>'+
       '長按任何一格，就會跳出那一格的說明。</div>'+
     '<div class="sec"><h2>每一格是什麼</h2></div><div class="list">'+
-      S.game.tiles.map(t=>'<div class="evt"><span class="e">'+esc(t.emoji)+'</span><b>'+esc(t.label)+'</b>'+
+      S.game.tiles.map(t=>'<div class="evt"><span class="e">'+px(t.emoji)+'</span><b>'+esc(t.label)+'</b>'+
         '<span style="flex:1;text-align:right;color:var(--muted);font-size:11.5px">'+tileDesc(t).replace(/<[^>]+>/g,'').slice(0,22)+'…</span></div>').join('')+
     '</div><button class="btn pri wide" style="margin-top:12px" data-act="close">好</button>');
 }
 function vGame(){
   const ks=live(S.kids);
-  if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先新增小孩</div>';
+  if(!ks.length)return '<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
   if(!selKid||!kid(selKid))selKid=ks[0].id;
   const me=kid(selKid),p=gp(selKid),dc=diceOf(selKid);
-  let h='<div class="chips">';
-  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+' 🎲'+diceOf(x.id)+'</button>';
-  h+='</div>';
+  let h=kidChips(ks,x=>px('🎲')+diceOf(x.id));
 
   h+='<div class="board">';
   for(let i=0;i<TN;i++){
@@ -1622,20 +1759,20 @@ function vGame(){
     for(const k of ks)if(gp(k.id).pos===i){toks+=tokenHTML(k,n?'t2':'');n++}
     h+='<div class="tl '+(corner?'corner':'')+(p.pos===i?' here':'')+'" data-i="'+i+'" style="grid-row:'+r+';grid-column:'+c+'">'+
       '<span class="n">'+(i<10?'0':'')+i+'</span>'+
-      '<span class="e">'+esc(t.emoji)+'</span><span class="l">'+esc(t.label)+'</span>'+toks+'</div>';
+      '<span class="e">'+px(t.emoji)+'</span><span class="l">'+esc(t.label)+'</span>'+toks+'</div>';
   }
   h+='<div class="mid">'+
     '<div style="font-size:10.5px;color:var(--muted);font-weight:750;letter-spacing:1px">剩下 '+dc+' 顆骰子</div>'+
     dieHTML(S.game.lastRoll||1)+
     '<button class="btn pri" style="min-height:44px;padding:0 20px" data-act="roll">'+
-      (p.pause>0?'⏸ 暫停中':'🎲 擲骰子')+'</button>'+
+      (p.pause>0?px('⏸️')+' 暫停中':px('🎲')+' 擲骰子')+'</button>'+
     '<div style="font-size:9.5px;color:var(--muted)">第 '+(p.laps+1)+' 圈 ・ 第 '+((p.pos<10?'0':'')+p.pos)+' 格</div>'+
     '</div></div>';
 
   h+='<div class="gbar">'+
-    '<span>🏁 繞完一圈 <b>+'+lapBonus()+' 小分</b></span>'+
-    '<span>・</span><span>👆 長按格子看說明</span>'+
-    '<button class="btn sm" data-act="ghelp">📖 玩法</button></div>';
+    '<span>'+px('🚀')+' 繞完一圈 <b>+'+lapBonus()+' 小分</b></span>'+
+    '<span>・</span><span>'+px('👆')+' 長按格子看說明</span>'+
+    '<button class="btn sm" data-act="ghelp">'+px('📖')+' 玩法</button></div>';
 
   const sh=shieldsOf(selKid).length;
   h+='<div class="stats" style="margin-top:14px">'+
@@ -1643,7 +1780,7 @@ function vGame(){
     '<div class="st"><b style="color:var(--brand)">'+dc+'</b><u>骰子</u></div>'+
     '<div class="st"><b style="color:var(--gold)">'+sh+'</b><u>護盾</u></div></div>';
 
-  if(dc<=0)h+='<div class="banner"><span style="font-size:20px">🎲</span><div><b>骰子用完了</b>回首頁完成今天的任務就會有新的骰子（每項 +1）。</div></div>';
+  if(dc<=0)h+='<div class="banner">'+px('🎲','big')+'<div><b>骰子用完了</b>回首頁完成今天的任務就會有新的骰子（每項 +1）。</div></div>';
   const recent=S.ledger.filter(e=>!e.voided&&e.kidId===selKid&&e.type==='game').slice(-5).reverse();
   if(recent.length){
     h+='<div class="sec"><h2>棋盤上拿到的</h2></div><div class="list">';
@@ -1656,19 +1793,19 @@ function rollResult(kidId,d,ctx){
   S.game.lastRoll=d;
   gPending={kidId,ctx};
   const p=gp(kidId),k=kid(kidId);
-  const evts=ctx.log.map(e=>'<div class="evt"><span class="e">'+esc(e.emoji||'・')+'</span><b>'+esc(e.label)+'</b>'+
+  const evts=ctx.log.map(e=>'<div class="evt"><span class="e">'+px(e.emoji||'⭐')+'</span><b>'+esc(e.label)+'</b>'+
     (e.delta?'<span class="delta '+(e.delta>0?'p':'n')+'">'+(e.delta>0?'+':'−')+fmtScore(Math.abs(e.delta))+'</span>':'')+
     '</div>').join('')||'<div class="evt"><b>這格沒事發生</b></div>';
   let act='';
   if(ctx.pendingBad){
     const b=ctx.pendingBad, n=shieldsOf(kidId).length;
-    act='<div class="banner" style="margin-top:14px"><span style="font-size:20px">🛡️</span><div>'+
+    act='<div class="banner" style="margin-top:14px">'+px('🛡️','big')+'<div>'+
         '<b>要用護盾擋掉嗎？</b>'+esc(b.label)+'　你手上還有 <b class="ib">'+n+'</b> 張護盾券，用掉一張就沒事。</div></div>'+
       '<div class="row" style="margin-top:10px">'+
       '<button class="btn good" data-act="useshield">🛡️ 用護盾擋掉</button>'+
       '<button class="btn bad" data-act="takehit">'+(b.kind==='trap'?'認了，扣 '+b.value+' 小分':'不用，照做')+'</button></div>';
   }else if(ctx.task){
-    act='<div class="banner" style="margin-top:14px"><span style="font-size:20px">😈</span><div><b>'+esc(ctx.task.label)+'</b>做完了就按下面領分數。</div></div>'+
+    act='<div class="banner" style="margin-top:14px">'+px('😈','big')+'<div><b>'+esc(ctx.task.label)+'</b>做完了就按下面領分數。</div></div>'+
       '<div class="row" style="margin-top:10px">'+
       '<button class="btn good" data-act="taskdone">做完了 +'+ctx.task.value+'</button>'+
       '<button class="btn ghost" data-act="close">下次再說</button></div>';
@@ -1684,7 +1821,7 @@ function rollResult(kidId,d,ctx){
 function cpnSheet(id){
   const c=S.coupons.find(x=>x.id===id);if(!c)return;
   const k=kid(c.kidId),fin=c.usedTs||c.doneTs;
-  sheet(esc(c.emoji||'🎫')+' '+esc(c.name),
+  sheet(px(c.emoji||'🎫')+' '+esc(c.name),
     '<div class="f hint" style="margin-top:-6px">'+
       esc(k?k.name:'')+' ・ '+new Date(c.ts).toLocaleString('zh-TW')+
       (c.priceNTD?'<br>價值 NT$'+c.priceNTD+'（已佔用獎勵額度）':'<br>特權型，不佔額度')+
@@ -1700,7 +1837,7 @@ function rewardCard(w){
   return '<button class="tcg rwc r'+r+(r>=4?' holo':'')+'" data-act="redeem" data-id="'+w.id+'" '+(out?'disabled':'')+'>'+
     '<div class="tcg-in">'+
     '<div class="hd">'+stars(r)+'<span class="ntd">'+priceTag(w)+'</span></div>'+
-    '<div class="art">'+(img?'<img src="'+img+'" alt="">':esc(w.emoji||'🎁'))+'</div>'+
+    '<div class="art">'+(img?'<img src="'+img+'" alt="">':px(w.emoji||'🎁'))+'</div>'+
     '<div class="bd"><b>'+esc(w.name)+'</b><span class="cost">'+fmtCost(w.unit,w.amount)+'</span>'+
     (w.note?'<div class="stock">'+esc(w.note)+'</div>':'')+
     (w.stock!=null?'<div class="stock">剩 '+w.stock+' 個'+(out?'（已兌完）':'')+'</div>':'')+
@@ -1810,7 +1947,7 @@ function logRow(e,allowTap){
   const d=new Date(e.ts);
   const tm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
   return '<button class="li '+(e.voided?'void':'')+'" '+(allowTap?'data-act="entry" data-id="'+e.id+'"':'')+'>'+
-    '<div class="ic">'+esc(ic)+'</div><div class="tx"><b>'+esc(e.label||'調整')+'</b>'+
+    '<div class="ic">'+px(ic)+'</div><div class="tx"><b>'+esc(e.label||'調整')+'</b>'+
     '<u>'+tm+' ・ '+esc(k?k.name:'已刪除')+(e.voided?' ・ 已撤銷':'')+'</u></div>'+
     '<span class="delta '+(p?'p':'n')+'">'+(p?'+':'−')+fmtScore(Math.abs(e.small))+'</span></button>';
 }
@@ -1836,9 +1973,7 @@ function compactOld(){
 }
 function vLog(){
   const ks=live(S.kids);
-  let h='<div class="chips"><button class="chip plain '+(!selKid?'on':'')+'" data-act="sel" data-id="">全部</button>';
-  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+'</button>';
-  h+='</div>';
+  let h=kidChips(ks,null,'<button class="chip plain '+(!selKid?'on':'')+'" data-act="sel" data-id="">全部</button>');
   const tgt=selKid?[kid(selKid)].filter(Boolean):ks;
   const week=startOfWeek(),month=new Date();month.setDate(1);month.setHours(0,0,0,0);
   let wg=0,mg=0,bal=0;
@@ -1848,7 +1983,7 @@ function vLog(){
      '<div class="st"><b style="color:var(--brand)">+'+mg+'</b><u>本月獲得</u></div></div>';
   if(tgt.length)h+=chartBox(tgt.map(k=>k.id));
   const es=S.ledger.filter(e=>!selKid||e.kidId===selKid).slice().reverse();
-  if(!es.length)return h+'<div class="empty"><span class="e">🧾</span>還沒有任何紀錄</div>';
+  if(!es.length)return h+'<div class="empty">'+px('🧾','xl')+'還沒有任何紀錄</div>';
   let last='';
   for(const e of es.slice(0,200)){
     const day=new Date(e.ts).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'});
@@ -1860,11 +1995,11 @@ function vLog(){
 
 /* ---------- 設定 ---------- */
 function vSet(){
-  if(!unlocked())return '<div class="empty" style="padding-top:60px"><span class="e">🔒</span>設定已上鎖<br>'+
+  if(!unlocked())return '<div class="empty" style="padding-top:60px">'+px('🔒','xl')+'設定已上鎖<br>'+
     '<button class="btn pri" style="margin-top:14px" data-act="unlock">輸入家長密碼</button></div>';
   const st=S.settings;
   const sw=(act,label,desc,on)=>'<button class="sw" data-act="'+act+'"><div class="tx"><b>'+label+'</b>'+(desc?'<u>'+desc+'</u>':'')+'</div><div class="tg '+(on?'on':'')+'"></div></button>';
-  const nav=(act,icon,label,desc,extra)=>'<button class="li" data-act="'+act+'"><div class="ic">'+icon+'</div><div class="tx"><b>'+label+'</b><u>'+desc+'</u></div><span style="color:var(--muted)">'+(extra||'')+' ›</span></button>';
+  const nav=(act,icon,label,desc,extra)=>'<button class="li" data-act="'+act+'"><div class="ic">'+px(icon)+'</div><div class="tx"><b>'+label+'</b><u>'+desc+'</u></div><span style="color:var(--muted)">'+(extra||'')+' ›</span></button>';
   let h='';
   h+='<div class="sec"><h2>資料</h2></div><div class="list">'+
     nav('mkids','👧','小孩','名稱、照片、顏色',live(S.kids).length+' 位')+
@@ -1887,7 +2022,7 @@ function vSet(){
     nav('ghpull','⬇️','立即從雲端取回','以雲端資料為準合併')+
     nav('ghpush','⬆️','立即上傳到雲端',dirty?'有未上傳的變更':'目前已同步')+
     '</div>';
-  if(syncState==='err'&&syncMsg)h+='<div class="banner"><span style="font-size:20px">⚠️</span><div><b>同步失敗</b><span class="mono">'+esc(syncMsg)+'</span></div></div>';
+  if(syncState==='err'&&syncMsg)h+='<div class="banner">'+px('⚠️','big')+'<div><b>同步失敗</b><span class="mono">'+esc(syncMsg)+'</span></div></div>';
   h+='<div class="sec"><h2>其他</h2></div><div class="list">'+
     nav('setpin','🔑','家長密碼',pinSet()?'已設定（鎖住設定頁）':'未設定')+
     sw('tgsound','音效',null,st.sound)+
@@ -1947,7 +2082,7 @@ function doRedeem(wid){
   const cost=toSmall(w.unit,w.amount);
   const ks=live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id));
   const body='<div class="f" style="display:flex;gap:12px;align-items:center">'+
-    (mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:64px;height:64px;border-radius:14px;object-fit:cover">':'<div style="font-size:40px">'+esc(w.emoji||'🎁')+'</div>')+
+    (mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:64px;height:64px;border-radius:14px;object-fit:cover">':'<div style="font-size:40px">'+px(w.emoji||'🎁')+'</div>')+
     '<div><b style="font-size:16px">'+esc(w.name)+'</b><div style="color:var(--gold);font-weight:850">需要 '+fmtCost(w.unit,w.amount)+'（'+cost+' 小分）</div>'+
     '<div style="font-size:12px;color:var(--muted)">'+stars(rarity(cost))+' ・ 參考價值 NT$'+valueOf(w)+'</div></div></div>'+
     '<div class="f"><label>誰要兌換？</label>'+ks.map(k=>{
@@ -2059,7 +2194,7 @@ function manageRt(){
   sheet('📅 日常任務',
     '<div class="f hint" style="margin-top:-6px">每天可以各打勾一次。完成一項給 1 顆骰子；當天全部完成再加分數與連續天數。</div>'+
     '<div class="list">'+(live(S.routines).map(r=>
-      '<button class="li" data-act="editrt" data-id="'+r.id+'"><div class="ic">'+esc(r.emoji||'⭐')+'</div>'+
+      '<button class="li" data-act="editrt" data-id="'+r.id+'"><div class="ic">'+px(r.emoji||'⭐')+'</div>'+
       '<div class="tx"><b>'+esc(r.label)+'</b><u>完成給 '+(r.dice||1)+' 顆骰子'+
       (r.kidIds&&r.kidIds.length?' ・ 限定 '+r.kidIds.map(i=>{const k=kid(i);return k?esc(k.name):''}).join('、'):'')+
       '</u></div><span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無任務</div>')+'</div>'+
@@ -2069,7 +2204,7 @@ function editRt(id){
   const r=id?S.routines.find(x=>x.id===id):{id:'',label:'',emoji:'⭐',dice:1,kidIds:[]};
   let kidIds=(r.kidIds||[]).slice();
   sheet(id?'編輯任務':'新增任務',
-    '<div class="f2"><div class="f"><label>圖示</label><input id="te" value="'+esc(r.emoji||'')+'" maxlength="4"></div>'+
+    icoField('te',r.emoji||'⭐')+'<div class="f2">'+
     '<div class="f"><label>完成給幾顆骰子</label><input id="td" type="number" inputmode="numeric" min="0" max="9" value="'+(r.dice==null?1:r.dice)+'"></div></div>'+
     '<div class="f"><label>任務名稱</label><input id="tl" value="'+esc(r.label)+'" placeholder="例如：念英文 15 分鐘" maxlength="24"></div>'+
     '<div class="f"><label>限定誰要做（都不選＝全部）</label><div class="chips" id="tk">'+
@@ -2106,7 +2241,7 @@ function manageRules(){
 function editRule(id,kind){
   const r=id?S.rules.find(x=>x.id===id):{id:'',label:'',emoji:'',kind:kind||'earn',unit:'small',amount:1};
   sheet(id?'編輯規則':'新增規則',
-    '<div class="f2"><div class="f"><label>圖示（emoji）</label><input id="re" value="'+esc(r.emoji||'')+'" placeholder="🧸" maxlength="4"></div>'+
+    icoField('re',r.emoji||'⭐')+'<div class="f2">'+
     '<div class="f"><label>類型</label><select id="rk"><option value="earn" '+(r.kind==='earn'?'selected':'')+'>加分</option><option value="deduct" '+(r.kind==='deduct'?'selected':'')+'>扣分</option></select></div></div>'+
     '<div class="f"><label>規則名稱</label><input id="rl" value="'+esc(r.label)+'" placeholder="例如：自己收玩具" maxlength="24"></div>'+
     '<div class="f2"><div class="f"><label>分數類型</label><select id="ru"><option value="small" '+(r.unit==='small'?'selected':'')+'>小分</option><option value="big" '+(r.unit==='big'?'selected':'')+'>大分</option></select></div>'+
@@ -2117,7 +2252,7 @@ function editRule(id,kind){
 function manageRw(){
   sheet('🎁 獎勵品管理',
     '<div class="list">'+(live(S.rewards).map(w=>'<button class="li" data-act="editrw" data-id="'+w.id+'">'+
-      '<div class="ic">'+(mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:34px;height:34px;border-radius:10px;object-fit:cover">':esc(w.emoji||'🎁'))+'</div>'+
+      '<div class="ic">'+(mediaUrl(w.image)?'<img src="'+mediaUrl(w.image)+'" style="width:34px;height:34px;border-radius:10px;object-fit:cover">':px(w.emoji||'🎁'))+'</div>'+
       '<div class="tx"><b>'+esc(w.name)+'</b><u>'+fmtCost(w.unit,w.amount)+' ・ '+priceTag(w)+(w.stock!=null?' ・ 剩 '+w.stock:'')+'</u></div>'+
       '<span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無獎勵品</div>')+'</div>'+
     '<button class="btn pri wide" style="margin-top:13px" data-act="editrw" data-id="">＋ 新增獎勵品</button>');
@@ -2126,10 +2261,10 @@ function editRw(id){
   const w=id?S.rewards.find(x=>x.id===id):{id:'',name:'',emoji:'🎁',image:null,unit:'small',amount:2,price:null,stock:null,kidIds:[],note:''};
   let img=w.image,kidIds=(w.kidIds||[]).slice();
   sheet(id?'編輯獎勵品':'新增獎勵品',
-    '<div class="avpick"><span id="avbox">'+(img?'<img class="av" style="width:64px;height:64px;border-radius:18px;object-fit:cover" src="'+img+'">':'<div class="av" style="width:64px;height:64px;border-radius:18px;background:var(--surface2);color:var(--ink);font-size:28px">'+esc(w.emoji||'🎁')+'</div>')+'</span>'+
+    '<div class="avpick"><span id="avbox">'+(img?'<img class="av" style="width:64px;height:64px;border-radius:18px;object-fit:cover" src="'+img+'">':'<div class="av" style="width:64px;height:64px;border-radius:18px;background:var(--surface2);color:var(--ink);font-size:28px">'+px(w.emoji||'🎁')+'</div>')+'</span>'+
     '<div><button class="btn sm" data-act="pickrw">📷 上傳圖片</button>'+(img?' <button class="btn sm ghost" data-act="rmrw">移除</button>':'')+
     '<div class="hint" style="margin-top:6px">沒有圖片就用下面的 emoji 顯示</div></div></div>'+
-    '<div class="f2"><div class="f"><label>emoji</label><input id="we" value="'+esc(w.emoji||'')+'" maxlength="4"></div>'+
+    icoField('we',w.emoji||'🎁')+'<div class="f2">'+
     '<div class="f"><label>庫存（空白=不限）</label><input id="ws" type="number" inputmode="numeric" min="0" value="'+(w.stock==null?'':w.stock)+'"></div></div>'+
     '<div class="f"><label>獎勵名稱</label><input id="wn" value="'+esc(w.name)+'" placeholder="例如：遊戲時間 30 分鐘" maxlength="24"></div>'+
     '<div class="f"><label>參考價格（元・留空＝特權型獎勵）</label>'+
@@ -2240,7 +2375,8 @@ document.addEventListener('click',async ev=>{
     case 'taskdone':{const g=gPending;if(!g||!g.ctx.task)return closeSheet();
       gPts(g.kidId,g.ctx.task.value,'命運任務：'+g.ctx.task.label,'😈',[]);
       gPending=null;closeSheet();buzz(40);beep('big');save();return toast('👏 完成任務 +'+g.ctx.task.value)}
-    case 'rwtab':rwTab=t.dataset.v;return render();
+    case 'rwtab':rwTab=t.dataset.v;rwRar=0;return render();
+    case 'rwrar':rwRar=parseInt(t.dataset.v,10)||0;return render();
     case 'calc':return calcSheet();
     case 'ghelp':return gameHelpSheet();
     case 'crange':chartRange=t.dataset.v;chartPick=null;return render();
@@ -2436,10 +2572,22 @@ document.addEventListener('click',async ev=>{
         closeSheet();save({media:true});return toast('已還原合併');
       }catch(e){return toast('JSON 格式不正確')}
     }
-    case 'clearlog':{
-      if(!confirm('清空所有加減分紀錄？分數會全部歸零。'))return;
+    case 'clearlog':return sheet('🧹 重新開始',
+      '<div class="f hint" style="margin-top:-6px;line-height:1.9">下面這些會<b>全部歸零</b>：<br>'+
+      '・分數與所有加減分紀錄<br>・累積總分（骰子的來源）<br>・日常任務的打勾與連續天數<br>'+
+      '・所有券、銀行存款<br>・大富翁棋子位置、圈數、已用骰子<br>・本週獎勵額度（重新從這週算）</div>'+
+      '<div class="f hint" style="line-height:1.9">會<b>保留</b>：小孩、加減分規則、獎勵品、日常任務項目、所有設定。</div>'+
+      '<button class="btn bad wide" data-act="doclear">確定，全部歸零</button>'+
+      '<button class="btn ghost wide" style="margin-top:8px" data-act="close">取消</button>');
+    case 'doclear':{
+      const t=now();
       S.ledger=[];S.routineLog=[];S.coupons=[];S.savings=[];
-      S.game.players={};S.game.updatedAt=now();S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
+      S.game.players={};S.game.lastRoll=1;S.game.updatedAt=t;
+      S.settings.ledgerClearedAt=t;
+      S.settings.archive={ts:0,bal:{},earn:{}};        // 歸檔底數也要清，不然分數會留著
+      S.settings.budgetStartTs=startOfWeek();
+      touch(S.settings);closeSheet();save();
+      return toast('✨ 全部歸零了，可以重新開始');
     }
     case 'reset':{
       if(!confirm('回復成預設資料？現有小孩、規則、獎勵、紀錄都會不見。'))return;
@@ -2464,6 +2612,9 @@ window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,merg
   deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
   rollDice,gp,tileAt,step,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
+  px,PXKEYS,icoField,editRule,editRw,editRt,editKid,toggleRoutine,
+  rarityOf:w=>rarity(toSmall(w.unit,w.amount)),
+  set rwRar(v){rwRar=v},get rwRar(){return rwRar},
   set topUpAmt(v){topUpAmt=v},get topUpAmt(){return topUpAmt},
   set chartRange(v){chartRange=v},get chartRange(){return chartRange},
   set chartPick(v){chartPick=v},get chartPick(){return chartPick},
