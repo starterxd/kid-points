@@ -182,6 +182,78 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .empty{text-align:center;color:var(--muted);padding:36px 16px;font-size:14px}
 .empty .e{font-size:42px;display:block;margin-bottom:8px;opacity:.55}
 
+/* 大富翁 */
+.board{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(7,1fr);gap:5px;
+  aspect-ratio:5/7;margin-top:12px}
+.tl{position:relative;background:var(--surface2);border:1.5px solid var(--line);border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:3px;overflow:visible}
+.tl.corner{background:var(--surface);border-width:2px}
+.tl .n{position:absolute;top:2px;left:4px;font-size:8px;color:var(--muted);opacity:.7;font-weight:700}
+.tl .e{font-size:17px;line-height:1}
+.tl .l{font-size:8.5px;font-weight:750;line-height:1;text-align:center}
+.tl.here{outline:2.5px solid var(--gold);outline-offset:-2px}
+.tok{position:absolute;bottom:-6px;right:-4px;width:26px;height:26px;border-radius:9px;object-fit:cover;
+  border:2px solid var(--bg);display:grid;place-items:center;font-size:11px;font-weight:850;color:#fff;z-index:2}
+.tok.t2{right:auto;left:-4px;bottom:-6px}
+.mid{grid-row:2/7;grid-column:2/5;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:10px}
+.die{width:66px;height:66px;border-radius:14px;background:var(--ink);display:grid;
+  grid-template-columns:repeat(3,1fr);place-items:center;padding:8px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.die i{width:11px;height:11px;border-radius:50%;background:transparent}
+.die i.on{background:var(--bg)}
+.die.roll{animation:shake .45s ease}
+@keyframes shake{25%{transform:rotate(-14deg) scale(1.06)}50%{transform:rotate(12deg) scale(.96)}75%{transform:rotate(-7deg)}}
+.evt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.evt:last-child{border-bottom:0}
+.evt .e{font-size:19px;flex:0 0 auto}
+.evt b{flex:1;font-size:13.5px;font-weight:700;line-height:1.35}
+/* 銀行 */
+.tier{padding:12px 13px;border-radius:var(--r-sm);background:var(--surface);border:2px solid var(--line);box-shadow:var(--shadow)}
+.tier.best{border-color:var(--gold)}
+.tier .hd{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.tier .hd b{font-size:14px;font-weight:800}
+.tier .hd span{font-size:11px;color:var(--muted);margin-left:auto;font-weight:650}
+.tier .val{display:flex;align-items:baseline;gap:6px}
+.tier .val b{font-size:22px;font-weight:850;letter-spacing:-.5px}
+.tier .val u{text-decoration:none;font-size:11.5px;color:var(--muted)}
+.tier .val i{font-style:normal;margin-left:auto;font-size:13px;font-weight:850;color:var(--good)}
+.best-tag{font-size:9.5px;font-weight:850;color:#fff;background:var(--gold);padding:2px 7px;border-radius:999px}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper .sb{width:54px;height:54px;border-radius:14px;background:var(--surface2);border:1.5px solid var(--line);
+  font-size:22px;font-weight:800;display:grid;place-items:center;flex:0 0 auto}
+.dep{padding:12px 13px;border-bottom:1px solid var(--line)}
+.dep:last-child{border-bottom:0}
+.dep .r1{display:flex;align-items:center;gap:10px}
+.dep .r1 .tx{flex:1;min-width:0}
+.dep .r1 .tx b{display:block;font-size:14px;font-weight:750}
+.dep .r1 .tx u{text-decoration:none;font-size:11px;color:var(--muted);display:block;margin-top:3px}
+.dep .pg{height:9px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:10px}
+.dep .pg i{display:block;height:100%;background:var(--pinkbar,var(--brand));border-radius:99px}
+/* 券與額度 */
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px 6px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);
+  font-size:13px;font-weight:750;color:var(--muted);min-height:42px}
+.tabs button.on{background:var(--brand);border-color:transparent;color:#fff;box-shadow:0 3px 12px color-mix(in srgb,var(--brand) 40%,transparent)}
+.tabs button b{font-weight:850}
+.bud{padding:12px 13px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.bud .top{display:flex;align-items:baseline;gap:7px;margin-bottom:9px}
+.bud .top b{font-size:19px;font-weight:850;letter-spacing:-.5px;color:var(--good)}
+.bud .top u{text-decoration:none;font-size:11.5px;color:var(--muted);font-weight:650}
+.bud .bar{height:9px;border-radius:99px;background:var(--line);overflow:hidden}
+.bud .bar i{display:block;height:100%;background:var(--gold);border-radius:99px}
+.bud .lg{font-size:11px;color:var(--muted);margin-top:7px;font-weight:600}
+.cpn{display:flex;align-items:center;gap:11px;padding:12px 13px;border-bottom:1px solid var(--line)}
+.cpn:last-child{border-bottom:0}
+.cpn .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-size:19px;flex:0 0 auto;background:var(--surface2)}
+.cpn .tx{flex:1;min-width:0}
+.cpn .tx b{display:block;font-size:14px;font-weight:750;line-height:1.3}
+.cpn .tx u{text-decoration:none;font-size:11px;color:var(--muted);display:block;margin-top:3px}
+.cpn.done{opacity:.5}
+.cpn.done .tx b{text-decoration:line-through}
+.badge{font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;flex:0 0 auto}
+.badge.ok{background:var(--good-soft);color:var(--good)}
+.badge.wait{background:var(--gold-soft);color:var(--gold)}
+.badge.gray{background:var(--surface2);color:var(--muted)}
 /* 日常任務 */
 .rt{padding:11px 12px;border-bottom:1px solid var(--line)}
 .rt:last-child{border-bottom:0}
@@ -319,6 +391,52 @@ const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8',
 const K_STATE='kp_state_v1', K_MEDIA='kp_media_v1', K_GH='kp_gh_v1', K_DIRTY='kp_dirty_v1', K_SHA='kp_sha_v1';
 
 /* ---------------- 預設資料 ---------------- */
+function defaultTiles(){return [
+ {i:0, type:'start',    label:'起點',   emoji:'🏁'},
+ {i:1, type:'point',    label:'+1',    emoji:'⭐', value:1},
+ {i:2, type:'coupon',   label:'零食',   emoji:'🍪', reward:'小零食券'},
+ {i:3, type:'chance',   label:'機會',   emoji:'❓'},
+ {i:4, type:'coupon',   label:'遊戲10', emoji:'🎮', reward:'遊戲時間 10 分券'},
+ {i:5, type:'trap',     label:'陷阱',   emoji:'💥', value:1},
+ {i:6, type:'treasure', label:'寶箱',   emoji:'💎', value:2},
+ {i:7, type:'fate',     label:'命運',   emoji:'😈'},
+ {i:8, type:'coupon',   label:'大零食', emoji:'🍭', reward:'零食大獎券'},
+ {i:9, type:'lucky',    label:'抽獎',   emoji:'🎁'},
+ {i:10,type:'bank',     label:'銀行',   emoji:'🏦'},
+ {i:11,type:'point',    label:'+1',    emoji:'⭐', value:1},
+ {i:12,type:'coupon',   label:'遊戲20', emoji:'🕹️', reward:'遊戲時間 20 分券'},
+ {i:13,type:'chance',   label:'機會',   emoji:'❓'},
+ {i:14,type:'back',     label:'倒退2',  emoji:'⏪', value:2},
+ {i:15,type:'move',     label:'前進3',  emoji:'⏩', value:3},
+ {i:16,type:'shield',   label:'護盾',   emoji:'🛡️'},
+ {i:17,type:'trap',     label:'陷阱',   emoji:'💥', value:1},
+ {i:18,type:'fate',     label:'命運',   emoji:'😈'},
+ {i:19,type:'reroll',   label:'再骰',   emoji:'🔁'}
+]}
+function defaultCards(){return {
+ chance:[
+  {t:'reroll',              label:'再骰一次，這次不扣骰子'},
+  {t:'goto',   v:6,         label:'直接前進到寶箱'},
+  {t:'point',  v:2,         label:'立刻 +2 小分'},
+  {t:'shield',              label:'獲得一張護盾券'},
+  {t:'coupon', v:'遊戲時間 10 分券', label:'獲得遊戲時間 10 分券'},
+  {t:'swap',                label:'跟兄弟姊妹交換位置'},
+  {t:'coupon', v:'免做一次家事券',   label:'獲得免做一次家事券'},
+  {t:'coupon', v:'今天晚餐我決定券', label:'獲得選晚餐券'}
+ ],
+ fate:[
+  {t:'task', v:1, label:'做 10 下開合跳'},
+  {t:'task', v:1, label:'幫忙擦一次桌子'},
+  {t:'task', v:1, label:'唱一首歌給大家聽'},
+  {t:'task', v:1, label:'跟家人說三件感謝的事'},
+  {t:'task', v:2, label:'把自己的房間收好'},
+  {t:'back', v:2, label:'退後 2 格'},
+  {t:'pause',     label:'暫停一次骰子'},
+  {t:'nocoupon',  label:'這回合不能領券'}
+ ],
+ lucky:['小零食券','零食大獎券','遊戲時間 10 分券','遊戲時間 20 分券','免做一次家事券',
+        '晚睡 15 分券','今天晚餐我決定券','免扣分護盾券','挑一集卡通券']
+}}
 function seed(){
   const t=now();
   const R=(label,emoji,kind,unit,amount)=>({id:uid('r'),label,emoji,kind,unit,amount,sort:0,updatedAt:t});
@@ -329,7 +447,10 @@ function seed(){
     schema:2,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
-              routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5},
+              routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,
+              weeklyBudgetNTD:150,budgetStartTs:0,interestCap:10,
+              plans:[{days:7,per10:1},{days:15,per10:2},{days:30,per10:4}],
+              lapBonus:1,chainCap:3},
     kids:[
       {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
       {id:uid('k'),name:'寶貝二號',color:KC[1],avatar:null,sort:1,updatedAt:t}
@@ -389,6 +510,9 @@ function seed(){
       {id:uid('t'),label:'運動 15 分鐘',emoji:'🏃',dice:1,kidIds:[],sort:2,updatedAt:t}
     ],
     routineLog:[],
+    coupons:[],
+    game:{updatedAt:t,players:{},tiles:defaultTiles(),cards:defaultCards()},
+    savings:[],
     ledger:[],
     deviceId:uid('d')
   };
@@ -412,9 +536,21 @@ if(S.settings.routineAllBonus==null)S.settings.routineAllBonus=1;
 if(S.settings.streak3Bonus==null)S.settings.streak3Bonus=1;
 if(S.settings.streak7Bonus==null)S.settings.streak7Bonus=5;
 if(S.settings.dicePerPoints==null)S.settings.dicePerPoints=5;
-if(S.schema<3)S.schema=3;
+if(!S.coupons)S.coupons=[];
+if(S.settings.weeklyBudgetNTD==null)S.settings.weeklyBudgetNTD=150;
+if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
+if(!S.savings)S.savings=[];
+if(!S.settings.plans||!S.settings.plans.length)S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:4}];
+if(S.settings.interestCap==null)S.settings.interestCap=10;
+if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
+if(!S.game.players)S.game.players={};
+if(!S.game.tiles||S.game.tiles.length!==20)S.game.tiles=defaultTiles();
+if(!S.game.cards)S.game.cards=defaultCards();
+if(S.settings.lapBonus==null)S.settings.lapBonus=1;
+if(S.settings.chainCap==null)S.settings.chainCap=3;
+if(S.schema<6)S.schema=6;
 
-let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null;
+let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null, rwTab='shop', depAmt=10, gPending=null;
 
 /* ---------------- 分數計算 ---------------- */
 const BU=()=>Math.max(2,S.settings.bigUnit|0||5);
@@ -439,6 +575,215 @@ function rarity(costSmall){return costSmall<5?1:costSmall<15?2:costSmall<30?3:co
 function stars(n){return '<span class="rarity">'+'★'.repeat(n)+'</span>'}
 
 /* ---------------- 儲存 ---------------- */
+/* ---------------- 每週實體獎勵額度 ---------------- */
+const WEEKMS=7*86400000;
+const weeklyNTD=()=>Math.max(0,S.settings.weeklyBudgetNTD|0);
+function budgetStartTs(){if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();return S.settings.budgetStartTs}
+function budgetWeeks(){return Math.floor((now()-budgetStartTs())/WEEKMS)+1}
+function budgetAllowance(){return budgetWeeks()*weeklyNTD()}
+function budgetUsed(kidId){let n=0;for(const c of S.coupons)if(!c.voided&&c.kidId===kidId)n+=c.priceNTD||0;return n}
+// 銀行利息額外加額度（第三階段會用到）
+function budgetBonus(kidId){let n=0;for(const e of S.ledger)
+  if(!e.voided&&e.kidId===kidId&&e.type==='bank-out')n+=(e.interest||0)*NTD();return n}
+function budgetAvail(kidId){return Math.max(0,budgetAllowance()+budgetBonus(kidId)-budgetUsed(kidId))}
+function usedThisWeek(kidId){const w=startOfWeek();let n=0;
+  for(const c of S.coupons)if(!c.voided&&c.kidId===kidId&&c.ts>=w)n+=c.priceNTD||0;return n}
+
+/* ---------------- 券 ---------------- */
+const isItemReward=w=>w.price!=null&&w.price>0;
+function couponsOf(kidId,state){
+  return S.coupons.filter(c=>!c.voided&&(!kidId||c.kidId===kidId)&&(
+    state==='open'?(!c.usedTs&&!c.doneTs&&c.kind!=='item'):
+    state==='wait'?(c.kind==='item'&&!c.doneTs):
+    state==='done'?(c.usedTs||c.doneTs):true)).sort((a,b)=>b.ts-a.ts);
+}
+function issueCoupon(kidId,o){
+  const c=Object.assign({id:uid('c'),kidId,ts:now(),usedTs:null,doneTs:null,voided:false,
+    kind:'privilege',source:'manual',priceNTD:0,emoji:'🎫',updatedAt:now()},o);
+  S.coupons.push(c);
+  if(S.coupons.length>600)S.coupons=S.coupons.slice(-600);
+  return c;
+}
+function useCoupon(id){
+  const c=S.coupons.find(x=>x.id===id);if(!c)return;
+  if(c.kind==='item'){c.doneTs=now()}else{c.usedTs=now()}
+  touch(c);buzz(35);beep('good');save();
+  toast(c.kind==='item'?'已標記為「爸媽給了」':'✅ 已使用：'+c.name);
+}
+function cancelCoupon(id){
+  const c=S.coupons.find(x=>x.id===id);if(!c)return;
+  const go=()=>{
+    c.voided=true;touch(c);
+    if(c.ledgerId){const e=S.ledger.find(x=>x.id===c.ledgerId);if(e&&!e.voided){e.voided=true;touch(e)}}
+    closeSheet();save();toast('已取消，分數退回');
+  };
+  (pinSet()&&!unlocked())?askPin('取消兌換需要家長密碼',go):go();
+}
+
+/* ---------------- 大富翁 ---------------- */
+const TN=20;
+const lapBonus=()=>Math.max(0,S.settings.lapBonus|0);
+const chainCap=()=>Math.max(1,S.settings.chainCap|0||3);
+function gp(kidId){
+  if(!S.game.players[kidId])S.game.players[kidId]={pos:0,laps:0,rollsUsed:0,pause:0,updatedAt:now()};
+  const p=S.game.players[kidId];
+  if(p.pos==null)p.pos=0; if(p.laps==null)p.laps=0; if(p.rollsUsed==null)p.rollsUsed=0; if(p.pause==null)p.pause=0;
+  return p;
+}
+function tileAt(i){return S.game.tiles[((i%TN)+TN)%TN]}
+function gLog(ev,list){list.push(ev)}
+function gPts(kidId,small,label,emoji,list){
+  let d=small;
+  if(small<0&&!S.settings.allowNegative){const bal=balanceOf(kidId);d=-Math.min(Math.abs(small),Math.max(0,bal))}
+  if(d)commit({kidId,small:d,label,type:'game',emoji});
+  gLog({emoji,label,delta:d},list);
+}
+function gCoupon(kidId,name,list,noCoupon){
+  if(noCoupon){gLog({emoji:'🚫',label:'這回合不能領券：'+name,delta:0},list);return}
+  const shield=/護盾/.test(name);
+  issueCoupon(kidId,{name,emoji:shield?'🛡️':'🎫',kind:shield?'shield':'privilege',source:'tile'});
+  gLog({emoji:shield?'🛡️':'🎫',label:'獲得「'+name+'」',delta:0,coupon:true},list);
+}
+function shieldsOf(kidId){return S.coupons.filter(c=>!c.voided&&!c.usedTs&&c.kidId===kidId&&c.kind==='shield')}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+
+function landOn(kidId,idx,ctx){
+  const t=tileAt(idx),p=gp(kidId),L=ctx.log;
+  switch(t.type){
+    case 'start': gLog({emoji:'🏁',label:'回到起點',delta:0},L); break;
+    case 'point': gPts(kidId,t.value||1,'棋盤 '+t.label,'⭐',L); break;
+    case 'treasure': gPts(kidId,t.value||2,'踩到寶箱','💎',L); break;
+    case 'trap': {
+      const sh=shieldsOf(kidId);
+      if(sh.length){ctx.pendingTrap={idx,value:t.value||1,shieldId:sh[0].id};
+        gLog({emoji:'💥',label:'踩到陷阱！可以用護盾擋掉',delta:0},L)}
+      else gPts(kidId,-(t.value||1),'踩到陷阱','💥',L);
+      break;
+    }
+    case 'coupon': gCoupon(kidId,t.reward||'神秘券',L,ctx.noCoupon); break;
+    case 'lucky': gCoupon(kidId,pick(S.game.cards.lucky),L,ctx.noCoupon); break;
+    case 'shield': gCoupon(kidId,'免扣分護盾券',L,ctx.noCoupon); break;
+    case 'bank': gLog({emoji:'🏦',label:'到銀行了，可以存分或領錢',delta:0,bank:true},L); break;
+    case 'reroll': if(ctx.chain<chainCap()){ctx.chain++;ctx.reroll=true;
+        gLog({emoji:'🔁',label:'再骰一次（不扣骰子）',delta:0},L)}
+      else gLog({emoji:'🔁',label:'再骰（連鎖上限，這次跳過）',delta:0},L); break;
+    case 'move': if(ctx.chain<chainCap()){ctx.chain++;
+        gLog({emoji:'⏩',label:'前進 '+(t.value||3)+' 格',delta:0},L);
+        return step(kidId,t.value||3,ctx)}
+      else gLog({emoji:'⏩',label:'前進（連鎖上限，這次跳過）',delta:0},L); break;
+    case 'back': if(ctx.chain<chainCap()){ctx.chain++;
+        gLog({emoji:'⏪',label:'倒退 '+(t.value||2)+' 格',delta:0},L);
+        return step(kidId,-(t.value||2),ctx)}
+      else gLog({emoji:'⏪',label:'倒退（連鎖上限，這次跳過）',delta:0},L); break;
+    case 'chance': {
+      const c=pick(S.game.cards.chance);
+      gLog({emoji:'❓',label:'機會：'+c.label,delta:0,card:'chance'},L);
+      return applyCard(kidId,c,ctx);
+    }
+    case 'fate': {
+      const c=pick(S.game.cards.fate);
+      gLog({emoji:'😈',label:'命運：'+c.label,delta:0,card:'fate'},L);
+      return applyCard(kidId,c,ctx);
+    }
+  }
+}
+function applyCard(kidId,c,ctx){
+  const L=ctx.log,p=gp(kidId);
+  switch(c.t){
+    case 'reroll': if(ctx.chain<chainCap()){ctx.chain++;ctx.reroll=true} break;
+    case 'point': gPts(kidId,c.v||1,'機會卡','❓',L); break;
+    case 'shield': gCoupon(kidId,'免扣分護盾券',L,ctx.noCoupon); break;
+    case 'coupon': gCoupon(kidId,c.v,L,ctx.noCoupon); break;
+    case 'goto': if(ctx.chain<chainCap()){ctx.chain++;
+        const diff=(((c.v-p.pos)%TN)+TN)%TN; return step(kidId,diff||TN,ctx)} break;
+    case 'swap': {
+      const others=live(S.kids).filter(k=>k.id!==kidId);
+      if(others.length){const o=others[0],op=gp(o.id),tmp=p.pos;p.pos=op.pos;op.pos=tmp;
+        touch(op);gLog({emoji:'🔄',label:'跟 '+o.name+' 交換位置',delta:0},L);
+        if(ctx.chain<chainCap()){ctx.chain++;return landOn(kidId,p.pos,ctx)}}
+      break;
+    }
+    case 'task': ctx.task={label:c.label,value:c.v||1}; break;
+    case 'back': if(ctx.chain<chainCap()){ctx.chain++;return step(kidId,-(c.v||2),ctx)} break;
+    case 'pause': p.pause=(p.pause||0)+1;gLog({emoji:'⏸',label:'下次骰子暫停一輪',delta:0},L); break;
+    case 'nocoupon': ctx.noCoupon=true; break;
+  }
+}
+function step(kidId,steps,ctx){
+  const p=gp(kidId),old=p.pos;
+  let np=old+steps;
+  if(steps>0&&np>=TN){                       // 通過起點 = 完成一圈
+    const laps=Math.floor(np/TN);
+    p.laps+=laps;
+    if(lapBonus()>0)gPts(kidId,lapBonus()*laps,'繞完一圈','🏁',ctx.log);
+  }
+  p.pos=((np%TN)+TN)%TN; touch(p);
+  return landOn(kidId,p.pos,ctx);
+}
+function rollDice(kidId){
+  const k=kid(kidId);if(!k)return;
+  if(diceOf(kidId)<=0){toast('骰子用完了，先去完成今天的任務');buzz(120);return}
+  const p=gp(kidId);
+  if(p.pause>0){p.pause--;p.rollsUsed++;touch(p);S.game.updatedAt=now();save();
+    toast('⏸ 這次暫停一輪，骰子扣掉了');return}
+  const d=1+Math.floor(Math.random()*6);
+  p.rollsUsed++;touch(p);
+  const ctx={log:[],chain:0,reroll:false,noCoupon:false,task:null,pendingTrap:null};
+  step(kidId,d,ctx);
+  S.game.updatedAt=now();
+  buzz(35);beep(ctx.log.some(e=>e.delta<0)?'bad':'good');
+  save();
+  rollResult(kidId,d,ctx);
+}
+const DAYMS=86400000;
+const plans=()=>S.settings.plans||[];
+const capInt=()=>Math.max(0,S.settings.interestCap|0);
+function interestFor(amount,days){
+  const pl=plans().find(x=>x.days===days);if(!pl)return 0;
+  return Math.min(Math.floor(amount/10)*(pl.per10||0),capInt());   // 每滿 10 小分，零頭不計息；上限封頂
+}
+function liveSavings(kidId){return S.savings.filter(s=>!s.voided&&!s.claimedTs&&(!kidId||s.kidId===kidId))}
+function bankedOf(kidId){let n=0;for(const s of liveSavings(kidId))n+=s.amount;return n}
+function dueTs(s){return s.startTs+s.days*DAYMS}
+function isMature(s){return now()>=dueTs(s)}
+function daysLeft(s){return Math.max(0,Math.ceil((dueTs(s)-now())/DAYMS))}
+function matureCount(kidId){return liveSavings(kidId).filter(isMature).length}
+function deposit(kidId,amount,days){
+  amount=Math.floor(amount)||0;
+  if(amount<=0){toast('要存的分數要大於 0');return}
+  if(amount>balanceOf(kidId)){toast('分數不夠，目前只有 '+balanceOf(kidId)+' 小分');buzz(120);return}
+  if(!plans().some(x=>x.days===days)){toast('沒有這個期別');return}
+  const e=commit({kidId,small:-amount,label:'存入銀行 '+amount+' 小分（'+days+' 天）',type:'bank-in',emoji:'🏦'});
+  const sv={id:uid('s'),kidId,amount,days,startTs:now(),claimedTs:null,broke:false,
+            ledgerId:e.id,voided:false,updatedAt:now()};
+  S.savings.push(sv);
+  if(S.savings.length>400)S.savings=S.savings.slice(-400);
+  closeSheet();buzz(40);beep('good');save();
+  toast('🏦 存了 '+amount+' 小分，'+days+' 天後可以領 '+(amount+interestFor(amount,days))+' 小分');
+}
+function claimSaving(id){
+  const sv=S.savings.find(x=>x.id===id);
+  if(!sv||sv.claimedTs||sv.voided)return;
+  if(!isMature(sv)){toast('還沒到期，還要 '+daysLeft(sv)+' 天');buzz(120);return}
+  const it=interestFor(sv.amount,sv.days);
+  commit({kidId:sv.kidId,small:sv.amount+it,interest:it,type:'bank-out',emoji:'🏦',
+          label:'領回存款 '+sv.amount+' 小分'+(it?'（利息 +'+it+'）':'')});
+  sv.claimedTs=now();touch(sv);
+  closeSheet();buzz(50);beep('big');save();
+  toast('🎉 領回 '+(sv.amount+it)+' 小分'+(it?'　利息 +'+it+'，額度也加 NT$'+(it*NTD()):''));
+}
+function breakSaving(id){
+  const sv=S.savings.find(x=>x.id===id);
+  if(!sv||sv.claimedTs||sv.voided)return;
+  const go=()=>{
+    commit({kidId:sv.kidId,small:sv.amount,interest:0,type:'bank-out',emoji:'🏦',
+            label:'提早解約，退回本金 '+sv.amount+' 小分'});
+    sv.claimedTs=now();sv.broke=true;touch(sv);
+    closeSheet();save();toast('已解約，本金退回（沒有利息）');
+  };
+  (pinSet()&&!unlocked())?askPin('提早解約需要家長密碼',go):go();
+}
+
 /* ---------------- 日常任務 ---------------- */
 function dayKey(ts){const d=new Date(ts||now());
   return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
@@ -669,7 +1014,26 @@ function mergeState(L,R){
     rewards:mergeList(L.rewards,R.rewards),
     routines:mergeList(L.routines,R.routines),
     routineLog:mergeList(L.routineLog,R.routineLog).slice(-800),
+    coupons:mergeList(L.coupons,R.coupons).slice(-600),
+    savings:mergeList(L.savings,R.savings).slice(-400),
+    game:mergeGame(L.game,R.game),
     ledger:lg};
+}
+function mergeGame(L,R){
+  L=L||{players:{},tiles:defaultTiles(),cards:defaultCards()};
+  if(!R)return L;
+  const players={};
+  for(const id of new Set([...Object.keys(L.players||{}),...Object.keys(R.players||{})])){
+    const a=(L.players||{})[id],b=(R.players||{})[id];
+    if(!a){players[id]=b;continue} if(!b){players[id]=a;continue}
+    const nw=newer(a,b);
+    players[id]=Object.assign({},nw,{rollsUsed:Math.max(a.rollsUsed||0,b.rollsUsed||0),
+                                     laps:Math.max(a.laps||0,b.laps||0)});   // 已用骰子取大值，不會憑空多出
+  }
+  const nw=newer(L,R);
+  return {updatedAt:Math.max(L.updatedAt||0,R.updatedAt||0),players,
+          tiles:(nw.tiles&&nw.tiles.length===20)?nw.tiles:defaultTiles(),
+          cards:nw.cards||defaultCards(),lastRoll:nw.lastRoll};
 }
 function mergeMedia(L,R){
   if(!R||!R.items)return L;
@@ -756,7 +1120,7 @@ function putMedia(dataUrl){const k=uid('m');M.items[k]=dataUrl;M.updatedAt=now()
 /* ============================================================
    畫面
    ============================================================ */
-const TABS=[['home','🏠','首頁'],['score','➕','計分'],['reward','🎁','獎勵'],['log','🧾','紀錄'],['set','⚙️','設定']];
+const TABS=[['home','🏠','首頁'],['score','➕','計分'],['game','🎲','遊戲'],['reward','🎁','獎勵'],['log','🧾','紀錄'],['set','⚙️','設定']];
 function renderNav(){
   $('#nav').innerHTML=TABS.map(([k,e,l])=>
     '<button class="nb '+(view===k?'on':'')+'" data-act="tab" data-v="'+k+'"><em>'+e+'</em>'+l+'</button>').join('');
@@ -772,6 +1136,7 @@ function render(){
   if(view==='home')v.innerHTML=vHome();
   else if(view==='score')v.innerHTML=vScore();
   else if(view==='reward')v.innerHTML=vReward();
+  else if(view==='game')v.innerHTML=vGame();
   else if(view==='log')v.innerHTML=vLog();
   else v.innerHTML=vSet();
   const fab=$('.fab');if(fab)fab.remove();
@@ -866,16 +1231,229 @@ function vScore(){
 /* ---------- 獎勵 ---------- */
 function vReward(){
   const ks=live(S.kids),ws=live(S.rewards);
-  let h='<div class="sec"><h2>獎勵品</h2><span class="more" data-act="tab" data-v="set">管理 →</span></div>';
+  if(!selKid||!kid(selKid))selKid=ks[0]&&ks[0].id;
+  const open=couponsOf(selKid,'open').length, wait=couponsOf(selKid,'wait').length;
+  const mc=matureCount(selKid);
+  let h='<div class="tabs">'+
+    '<button class="'+(rwTab==='shop'?'on':'')+'" data-act="rwtab" data-v="shop">🎁 獎勵品</button>'+
+    '<button class="'+(rwTab==='cpn'?'on':'')+'" data-act="rwtab" data-v="cpn">🎫 我的券'+
+      (open+wait?' <b>'+(open+wait)+'</b>':'')+'</button>'+
+    '<button class="'+(rwTab==='bank'?'on':'')+'" data-act="rwtab" data-v="bank">🏦 銀行'+
+      (mc?' <b>'+mc+'</b>':'')+'</button></div>';
   if(ks.length){
     h+='<div class="chips">';
     for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+' '+balanceOf(x.id)+'</button>';
     h+='</div>';
   }
+  if(!selKid)return h+'<div class="empty"><span class="e">👶</span>請先新增小孩</div>';
+  return h+(rwTab==='shop'?vShop(ws):rwTab==='cpn'?vCoupons():vBank());
+}
+function budgetBox(){
+  const av=budgetAvail(selKid),wk=weeklyNTD(),used=usedThisWeek(selKid);
+  const pct=wk?clamp(Math.round(used/wk*100),0,100):0;
+  return '<div class="bud" style="margin-top:12px">'+
+    '<div class="top"><b>NT$'+av+'</b><u>可用的獎勵額度</u></div>'+
+    '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
+    '<div class="lg">本週已用 NT$'+used+' / 每週 NT$'+wk+'　・　沒用完會累積，可以存著換大獎</div></div>';
+}
+function vShop(ws){
+  let h=budgetBox();
   if(!ws.length)return h+'<div class="empty"><span class="e">🎁</span>還沒有獎勵品<br><button class="btn sm pri" style="margin-top:10px" data-act="editrw" data-id="">新增獎勵</button></div>';
-  h+='<div class="rw" style="margin-top:12px">';
+  h+='<div class="sec"><h2>獎勵品</h2><span class="more" data-act="tab" data-v="set">管理 →</span></div>';
+  h+='<div class="rw">';
   for(const w of ws)h+=rewardCard(w);
   return h+'</div><div style="height:20px"></div>';
+}
+function cpnRow(c,mode){
+  const k=kid(c.kidId);
+  const when=new Date(c.ts).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
+  const badge = mode==='done'?'<span class="badge gray">已完成</span>'
+    : c.kind==='item'?'<span class="badge wait">還沒買</span>'
+    : '<span class="badge ok">可使用</span>';
+  return '<button class="cpn '+(mode==='done'?'done':'')+'" data-act="cpn" data-id="'+c.id+'">'+
+    '<div class="ic">'+esc(c.emoji||'🎫')+'</div>'+
+    '<div class="tx"><b>'+esc(c.name)+'</b><u>'+when+' ・ '+esc(k?k.name:'')+
+      (c.priceNTD?' ・ NT$'+c.priceNTD:'')+'</u></div>'+badge+'</button>';
+}
+function vCoupons(){
+  const open=couponsOf(selKid,'open'),wait=couponsOf(selKid,'wait'),done=couponsOf(selKid,'done');
+  let h=budgetBox();
+  if(!open.length&&!wait.length&&!done.length)
+    return h+'<div class="empty"><span class="e">🎫</span>還沒有券<br>到「獎勵品」兌換，或玩大富翁踩到格子就會拿到</div>';
+  if(wait.length){
+    h+='<div class="sec"><h2>待爸媽處理 ('+wait.length+')</h2></div><div class="list">';
+    for(const c of wait)h+=cpnRow(c,'wait');h+='</div>';
+  }
+  if(open.length){
+    h+='<div class="sec"><h2>可以使用 ('+open.length+')</h2></div><div class="list">';
+    for(const c of open)h+=cpnRow(c,'open');h+='</div>';
+  }
+  if(done.length){
+    h+='<div class="sec"><h2>已完成 ('+done.length+')</h2></div><div class="list">';
+    for(const c of done.slice(0,30))h+=cpnRow(c,'done');h+='</div>';
+  }
+  return h+'<div style="height:20px"></div>';
+}
+function vBank(){
+  const bal=balanceOf(selKid),banked=bankedOf(selKid);
+  const amt=clamp(depAmt,0,Math.max(0,bal));
+  let h='<div class="stats" style="margin-top:12px">'+
+    '<div class="st"><b style="color:var(--good)">'+bal+'</b><u>可用小分</u></div>'+
+    '<div class="st"><b style="color:var(--brand)">'+banked+'</b><u>銀行裡</u></div>'+
+    '<div class="st"><b style="color:var(--gold)">'+matureCount(selKid)+'</b><u>可以領了</u></div></div>';
+
+  h+='<div class="sec"><h2>要存多少小分？</h2></div>';
+  h+='<div class="card" style="padding:16px"><div class="stepper">'+
+    '<button class="sb" data-act="dep-">−</button>'+
+    '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;letter-spacing:-1.5px;color:var(--gold)">'+amt+'</div>'+
+    '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">目前可用 '+bal+' 小分</div></div>'+
+    '<button class="sb" data-act="dep+">＋</button></div></div>';
+
+  if(amt>0){
+    h+='<div class="sec"><h2>存 '+amt+' 小分可以領回</h2></div>';
+    const ps=plans().slice().sort((a,b)=>a.days-b.days);
+    const best=ps[ps.length-1];
+    for(const pl of ps){
+      const it=interestFor(amt,pl.days),cap=it>=capInt()&&Math.floor(amt/10)*pl.per10>capInt();
+      const isBest=pl===best;
+      h+='<div class="tier '+(isBest?'best':'')+'" style="margin-bottom:10px">'+
+        '<div class="hd"><b>存 '+pl.days+' 天</b>'+(isBest?'<span class="best-tag">最划算</span>':'')+
+        '<span>每 10 小分 +'+pl.per10+(cap?'（已封頂）':'')+'</span></div>'+
+        '<div class="val"><u>領回</u><b style="color:'+(isBest?'var(--gold)':'var(--brand)')+'">'+(amt+it)+'</b><u>小分</u>'+
+        '<i>+'+it+'</i></div>'+
+        '<button class="btn pri wide sm" style="margin-top:11px" data-act="dodep" data-d="'+pl.days+'">存 '+pl.days+' 天</button></div>';
+    }
+    const em='style="font-weight:850;color:var(--gold)"';
+    h+='<div class="banner"><span style="font-size:20px">⚠️</span><div style="line-height:1.75">'+
+      '存進去的小分會<span '+em+'>先扣掉</span>，時間到才領得回來。<br>'+
+      '提早解約只退本金、沒有利息。<br>'+
+      '<span '+em+'>到期後就停止計息</span>，記得回來領。<br>'+
+      '利息不佔每週額度，反而會多給等值額度。</div></div>';
+  }
+
+  const svs=liveSavings(selKid).sort((a,b)=>dueTs(a)-dueTs(b));
+  if(svs.length){
+    h+='<div class="sec"><h2>存款中 ('+svs.length+')</h2></div><div class="list">';
+    for(const sv of svs){
+      const it=interestFor(sv.amount,sv.days),m=isMature(sv);
+      const pct=clamp(Math.round((now()-sv.startTs)/(sv.days*DAYMS)*100),0,100);
+      h+='<div class="dep"><div class="r1">'+
+        '<div class="ic" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--surface2)">🏦</div>'+
+        '<div class="tx"><b>'+sv.amount+' 小分 ・ 存 '+sv.days+' 天</b>'+
+        '<u>'+new Date(sv.startTs).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'})+' 存入 ・ '+
+        (m?'已到期':'還要 '+daysLeft(sv)+' 天')+'</u></div>'+
+        '<div style="text-align:right"><div style="font-size:16px;font-weight:850;color:'+(m?'var(--good)':'var(--muted)')+'">'+(sv.amount+it)+'</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px">到期領</div></div></div>'+
+        '<div class="pg"><i style="width:'+pct+'%;background:'+(m?'var(--good)':'var(--brand)')+'"></i></div>'+
+        '<div class="row" style="margin-top:10px">'+
+        (m?'<button class="btn good sm" data-act="claim" data-id="'+sv.id+'">領回 '+(sv.amount+it)+' 小分</button>'
+          :'<button class="btn sm" disabled>還要 '+daysLeft(sv)+' 天</button>')+
+        '<button class="btn ghost sm" data-act="breaksv" data-id="'+sv.id+'">提早解約</button>'+
+        '</div></div>';
+    }
+    h+='</div>';
+  }
+  const hist=S.ledger.filter(e=>!e.voided&&e.kidId===selKid&&e.type==='bank-out').slice(-5).reverse();
+  if(hist.length){
+    h+='<div class="sec"><h2>領過的</h2></div><div class="list">';
+    for(const e of hist)h+=logRow(e,false);
+    h+='</div>';
+  }
+  return h+'<div style="height:20px"></div>';
+}
+const BPOS=[[7,1],[6,1],[5,1],[4,1],[3,1],[2,1],[1,1],[1,2],[1,3],[1,4],[1,5],
+            [2,5],[3,5],[4,5],[5,5],[6,5],[7,5],[7,4],[7,3],[7,2]];
+function tokenHTML(k,cls){
+  const u=mediaUrl(k.avatar);
+  return u?'<img class="tok '+cls+'" src="'+u+'" alt="">'
+          :'<div class="tok '+cls+'" style="background:'+k.color+'">'+esc((k.name||'?').slice(0,1))+'</div>';
+}
+function dieHTML(n,anim){
+  const on={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]}[n]||[4];
+  let c='';for(let i=0;i<9;i++)c+='<i class="'+(on.indexOf(i)>=0?'on':'')+'"></i>';
+  return '<div class="die '+(anim?'roll':'')+'">'+c+'</div>';
+}
+function vGame(){
+  const ks=live(S.kids);
+  if(!ks.length)return '<div class="empty"><span class="e">👶</span>請先新增小孩</div>';
+  if(!selKid||!kid(selKid))selKid=ks[0].id;
+  const me=kid(selKid),p=gp(selKid),dc=diceOf(selKid);
+  let h='<div class="chips">';
+  for(const x of ks)h+='<button class="chip '+(x.id===selKid?'on':'')+'" style="--kc:'+x.color+'" data-act="sel" data-id="'+x.id+'">'+avatarHTML(x)+esc(x.name)+' 🎲'+diceOf(x.id)+'</button>';
+  h+='</div>';
+
+  h+='<div class="board">';
+  for(let i=0;i<TN;i++){
+    const t=tileAt(i),[r,c]=BPOS[i];
+    const corner=(i===0||i===6||i===10||i===16);
+    let toks='';let n=0;
+    for(const k of ks)if(gp(k.id).pos===i){toks+=tokenHTML(k,n?'t2':'');n++}
+    h+='<div class="tl '+(corner?'corner':'')+(p.pos===i?' here':'')+'" style="grid-row:'+r+';grid-column:'+c+'">'+
+      '<span class="n">'+(i<10?'0':'')+i+'</span>'+
+      '<span class="e">'+esc(t.emoji)+'</span><span class="l">'+esc(t.label)+'</span>'+toks+'</div>';
+  }
+  h+='<div class="mid">'+
+    '<div style="font-size:10.5px;color:var(--muted);font-weight:750;letter-spacing:1px">剩下 '+dc+' 顆骰子</div>'+
+    dieHTML(S.game.lastRoll||1)+
+    '<button class="btn pri" style="min-height:44px;padding:0 20px" data-act="roll">'+
+      (p.pause>0?'⏸ 暫停中':'🎲 擲骰子')+'</button>'+
+    '<div style="font-size:9.5px;color:var(--muted)">第 '+(p.laps+1)+' 圈 ・ 第 '+((p.pos<10?'0':'')+p.pos)+' 格</div>'+
+    '</div></div>';
+
+  const sh=shieldsOf(selKid).length;
+  h+='<div class="stats" style="margin-top:14px">'+
+    '<div class="st"><b style="color:var(--good)">'+balanceOf(selKid)+'</b><u>可用小分</u></div>'+
+    '<div class="st"><b style="color:var(--brand)">'+dc+'</b><u>骰子</u></div>'+
+    '<div class="st"><b style="color:var(--gold)">'+sh+'</b><u>護盾</u></div></div>';
+
+  if(dc<=0)h+='<div class="banner"><span style="font-size:20px">🎲</span><div><b>骰子用完了</b>回首頁完成今天的任務就會有新的骰子（每項 +1）。</div></div>';
+  const recent=S.ledger.filter(e=>!e.voided&&e.kidId===selKid&&e.type==='game').slice(-5).reverse();
+  if(recent.length){
+    h+='<div class="sec"><h2>棋盤上拿到的</h2></div><div class="list">';
+    for(const e of recent)h+=logRow(e,false);
+    h+='</div>';
+  }
+  return h+'<div style="height:20px"></div>';
+}
+function rollResult(kidId,d,ctx){
+  S.game.lastRoll=d;
+  gPending={kidId,ctx};
+  const p=gp(kidId),k=kid(kidId);
+  const evts=ctx.log.map(e=>'<div class="evt"><span class="e">'+esc(e.emoji||'・')+'</span><b>'+esc(e.label)+'</b>'+
+    (e.delta?'<span class="delta '+(e.delta>0?'p':'n')+'">'+(e.delta>0?'+':'−')+fmtScore(Math.abs(e.delta))+'</span>':'')+
+    '</div>').join('')||'<div class="evt"><b>這格沒事發生</b></div>';
+  let act='';
+  if(ctx.pendingTrap){
+    act='<div class="row" style="margin-top:14px">'+
+      '<button class="btn good" data-act="useshield">🛡️ 用護盾擋掉</button>'+
+      '<button class="btn bad" data-act="takehit">認了，扣 '+ctx.pendingTrap.value+' 小分</button></div>';
+  }else if(ctx.task){
+    act='<div class="banner" style="margin-top:14px"><span style="font-size:20px">😈</span><div><b>'+esc(ctx.task.label)+'</b>做完了就按下面領分數。</div></div>'+
+      '<div class="row" style="margin-top:10px">'+
+      '<button class="btn good" data-act="taskdone">做完了 +'+ctx.task.value+'</button>'+
+      '<button class="btn ghost" data-act="close">下次再說</button></div>';
+  }else if(ctx.reroll){
+    act='<button class="btn pri wide" style="margin-top:14px" data-act="freeroll">🔁 免費再骰一次</button>';
+  }else if(ctx.log.some(e=>e.bank)){
+    act='<button class="btn pri wide" style="margin-top:14px" data-act="gobank">🏦 去銀行看看</button>';
+  }else{
+    act='<button class="btn pri wide" style="margin-top:14px" data-act="close">好</button>';
+  }
+  sheet('🎲 擲出 '+d+' 點',
+    '<div style="display:flex;justify-content:center;margin:-4px 0 14px">'+dieHTML(d,true)+'</div>'+
+    '<div class="list">'+evts+'</div>'+act);
+}
+function cpnSheet(id){
+  const c=S.coupons.find(x=>x.id===id);if(!c)return;
+  const k=kid(c.kidId),fin=c.usedTs||c.doneTs;
+  sheet(esc(c.emoji||'🎫')+' '+esc(c.name),
+    '<div class="f hint" style="margin-top:-6px">'+
+      esc(k?k.name:'')+' ・ '+new Date(c.ts).toLocaleString('zh-TW')+
+      (c.priceNTD?'<br>價值 NT$'+c.priceNTD+'（已佔用獎勵額度）':'<br>特權型，不佔額度')+
+      (fin?'<br><b style="color:var(--good)">已於 '+new Date(fin).toLocaleString('zh-TW')+' 完成</b>':'')+'</div>'+
+    (fin?'':'<button class="btn pri wide" data-act="usecpn" data-id="'+c.id+'">'+
+        (c.kind==='item'?'爸媽已經給了':'現在使用')+'</button>')+
+    '<button class="btn ghost wide danger" style="margin-top:9px" data-act="cancelcpn" data-id="'+c.id+'">取消這張券，退回分數</button>');
 }
 
 function rewardCard(w){
@@ -888,6 +1466,8 @@ function rewardCard(w){
     '<div class="bd"><b>'+esc(w.name)+'</b><span class="cost">'+fmtCost(w.unit,w.amount)+'</span>'+
     (w.note?'<div class="stock">'+esc(w.note)+'</div>':'')+
     (w.stock!=null?'<div class="stock">剩 '+w.stock+' 個'+(out?'（已兌完）':'')+'</div>':'')+
+    (isItemReward(w)&&selKid&&w.price>budgetAvail(selKid)
+      ?'<div class="stock" style="color:var(--gold);font-weight:800">額度不足（剩 NT$'+budgetAvail(selKid)+'）</div>':'')+
     '<div class="who">'+live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id))
       .map(k=>'<span class="pill '+(balanceOf(k.id)>=cost?'yes':'')+'">'+esc(k.name.slice(0,4))+'</span>').join('')+'</div>'+
     '</div></div></button>';
@@ -945,6 +1525,8 @@ function vSet(){
     nav('bigunit','⭐','1 大分 = ? 小分','目前 '+BU()+' 小分換 1 大分',BU())+
     nav('ntdrate','💰','1 小分 = ? 元','獎勵品換算基準，1 大分 = NT$'+(NTD()*BU()),'NT$'+NTD())+
     nav('rtbonus','🔥','任務獎勵','全完成 +'+st.routineAllBonus+'、連續 3 天 +'+st.streak3Bonus+'、連續 7 天 +'+st.streak7Bonus,'調整')+
+    nav('budget','💳','每週實體獎勵額度','只有標價格的獎勵會扣，沒用完會累積','NT$'+weeklyNTD())+
+    nav('rates','🏦','銀行利率',plans().map(x=>x.days+'天+'+x.per10).join(' ・ ')+'　每筆上限 +'+capInt(),'調整')+
     sw('tgneg','允許出現負分','關閉時扣分最多扣到 0',st.allowNegative)+
     sw('tgundo','撤銷紀錄需密碼','避免小孩自己撤銷扣分',st.pinForUndo)+
     sw('tgredeem','兌換獎勵需密碼','兌換時要家長輸入密碼',st.pinForRedeem)+
@@ -1027,11 +1609,22 @@ function finishRedeem(wid,kidId){
   const w=S.rewards.find(x=>x.id===wid),k=kid(kidId);if(!w||!k)return;
   const cost=toSmall(w.unit,w.amount);
   if(balanceOf(kidId)<cost){toast('分數不足');return}
+  const item=isItemReward(w);
+  if(item){
+    const av=budgetAvail(kidId);
+    if(w.price>av){
+      toast('獎勵額度只剩 NT$'+av+'，這項要 NT$'+w.price+'　先換特權型的吧');buzz(120);return;
+    }
+  }
   const go=()=>{
     const e=commit({kidId,small:-cost,label:'兌換：'+w.name,type:'redeem',rewardId:w.id,emoji:w.emoji});
+    const c=issueCoupon(kidId,{name:w.name,emoji:w.emoji,kind:item?'item':'privilege',
+      source:'redeem',rewardId:w.id,priceNTD:item?w.price:0,ledgerId:e.id});
     if(w.stock!=null){w.stock=Math.max(0,w.stock-1);touch(w)}
     closeSheet();buzz(40);beep('big');save();revealCard(w,k);
-    toast('🎉 '+k.name+' 兌換了「'+w.name+'」',()=>{e.voided=true;touch(e);if(w.stock!=null){w.stock++;touch(w)}save();toast('已復原')});
+    toast('🎉 '+k.name+' 換到「'+w.name+'」'+(item?'　已放進待爸媽處理':'　券已放進「我的券」'),
+      ()=>{e.voided=true;touch(e);c.voided=true;touch(c);
+           if(w.stock!=null){w.stock++;touch(w)}save();toast('已復原')});
   };
   S.settings.pinForRedeem&&!unlocked()?askPin('兌換需要家長密碼',go):go();
 }
@@ -1067,7 +1660,13 @@ function entrySheet(id){
 }
 function toggleVoid(id){
   const e=S.ledger.find(x=>x.id===id);if(!e)return;
-  const go=()=>{e.voided=!e.voided;touch(e);closeSheet();save();toast(e.voided?'已撤銷':'已恢復')};
+  const go=()=>{
+    e.voided=!e.voided;touch(e);
+    if(e.type==='bank-in'){                        // 存入被撤銷 → 存款單一併作廢，不留孤兒
+      const sv=S.savings.find(x=>x.ledgerId===e.id);
+      if(sv&&!sv.claimedTs){sv.voided=e.voided;touch(sv)}
+    }
+    closeSheet();save();toast(e.voided?'已撤銷':'已恢復')};
   (S.settings.pinForUndo&&!unlocked())?askPin('撤銷需要家長密碼',go):go();
 }
 
@@ -1265,6 +1864,30 @@ document.addEventListener('click',async ev=>{
     case 'unlock':return askPin('請輸入家長密碼',()=>render());
     case 'sel':selKid=id||null;return render();
     case 'kid':selKid=id;view='score';return render();
+    case 'roll':return rollDice(selKid);
+    case 'freeroll':{const g=gPending;closeSheet();if(!g)return;
+      const pp=gp(g.kidId);pp.rollsUsed=Math.max(0,pp.rollsUsed-1);return rollDice(g.kidId)}
+    case 'useshield':{const g=gPending;if(!g||!g.ctx.pendingTrap)return closeSheet();
+      const c=S.coupons.find(x=>x.id===g.ctx.pendingTrap.shieldId);
+      if(c){c.usedTs=now();touch(c)}
+      commit({kidId:g.kidId,small:0,label:'用護盾擋掉陷阱',type:'game',emoji:'🛡️'});
+      gPending=null;closeSheet();buzz(40);beep('good');save();return toast('🛡️ 護盾擋掉了，沒有扣分')}
+    case 'takehit':{const g=gPending;if(!g||!g.ctx.pendingTrap)return closeSheet();
+      const v=g.ctx.pendingTrap.value;gPts(g.kidId,-v,'踩到陷阱','💥',[]);
+      gPending=null;closeSheet();buzz(120);beep('bad');save();return toast('踩到陷阱，扣了分數')}
+    case 'taskdone':{const g=gPending;if(!g||!g.ctx.task)return closeSheet();
+      gPts(g.kidId,g.ctx.task.value,'命運任務：'+g.ctx.task.label,'😈',[]);
+      gPending=null;closeSheet();buzz(40);beep('big');save();return toast('👏 完成任務 +'+g.ctx.task.value)}
+    case 'gobank':closeSheet();view='reward';rwTab='bank';return render();
+    case 'rwtab':rwTab=t.dataset.v;return render();
+    case 'dep+':depAmt=clamp(depAmt+(depAmt>=20?10:5),0,999);return render();
+    case 'dep-':depAmt=clamp(depAmt-(depAmt>20?10:5),0,999);return render();
+    case 'dodep':return deposit(selKid,clamp(depAmt,0,balanceOf(selKid)),parseInt(t.dataset.d));
+    case 'claim':return claimSaving(id);
+    case 'breaksv':return breakSaving(id);
+    case 'cpn':return cpnSheet(id);
+    case 'usecpn':closeSheet();return useCoupon(id);
+    case 'cancelcpn':return cancelCoupon(id);
     case 'rt':return toggleRoutine(t.dataset.kid,id);
     case 'rule':return applyRule(id,t.dataset.ask==='1');
     case 'ruleFor':{closeSheet();selKid=t.dataset.kid;return applyRule(id,false)}
@@ -1351,6 +1974,34 @@ document.addEventListener('click',async ev=>{
     }
     case 'delrw':{const w=S.rewards.find(x=>x.id===id);w.deleted=true;touch(w);closeSheet();save();return toast('已刪除')}
 
+    case 'rates':{
+      const ps=plans().slice().sort((a,b)=>a.days-b.days);
+      sheet('🏦 銀行利率',
+        '<div class="f hint" style="margin-top:-6px">利息以「每滿 10 小分」計算，零頭不計息。到期後停止計息。</div>'+
+        ps.map((pl,i)=>'<div class="f2"><div class="f"><label>第 '+(i+1)+' 檔：天數</label>'+
+          '<input id="pd'+i+'" type="number" inputmode="numeric" min="1" value="'+pl.days+'"></div>'+
+          '<div class="f"><label>每 10 小分 +</label><input id="pp'+i+'" type="number" inputmode="numeric" min="0" value="'+pl.per10+'"></div></div>').join('')+
+        '<div class="f"><label>單筆利息上限（小分）</label><input id="pcap" type="number" inputmode="numeric" min="0" value="'+capInt()+'"></div>'+
+        '<button class="btn pri wide" data-act="saverates">儲存</button>');
+      return;
+    }
+    case 'saverates':{
+      const out=[];
+      for(let i=0;i<3;i++){
+        const d=parseInt($('#pd'+i).value),v=parseInt($('#pp'+i).value);
+        if(d>0)out.push({days:d,per10:Math.max(0,v||0)});
+      }
+      if(!out.length)return toast('至少要有一檔');
+      S.settings.plans=out.sort((a,b)=>a.days-b.days);
+      S.settings.interestCap=Math.max(0,parseInt($('#pcap').value)||0);
+      touch(S.settings);closeSheet();save();return toast('利率已更新');
+    }
+    case 'budget':{
+      const v=prompt('每人每週的實體獎勵額度是多少元？\n（只有標價格的獎勵會扣額度，特權型不扣；沒用完會累積）',weeklyNTD());
+      if(v==null)return;
+      S.settings.weeklyBudgetNTD=Math.max(0,parseInt(v)||0);touch(S.settings);save();
+      return toast('每週額度 NT$'+weeklyNTD());
+    }
     case 'ntdrate':{
       const v=prompt('1 小分 = 幾元？（獎勵品價格換算用）',NTD());if(v==null)return;
       const n=clamp(parseInt(v)||10,1,1000);S.settings.ntdPerSmall=n;touch(S.settings);save();
@@ -1407,7 +2058,8 @@ document.addEventListener('click',async ev=>{
     }
     case 'clearlog':{
       if(!confirm('清空所有加減分紀錄？分數會全部歸零。'))return;
-      S.ledger=[];S.routineLog=[];S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
+      S.ledger=[];S.routineLog=[];S.coupons=[];S.savings=[];
+      S.game.players={};S.game.updatedAt=now();S.settings.ledgerClearedAt=now();touch(S.settings);save();return toast('紀錄已清空');
     }
     case 'reset':{
       if(!confirm('回復成預設資料？現有小孩、規則、獎勵、紀錄都會不見。'))return;
@@ -1428,6 +2080,12 @@ if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋
 if(ghReady())pull(true);
 window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,mergeState,mergeLedger,render,
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
+  budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
+  deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
+  rollDice,gp,tileAt,step,shieldsOf,landOn,lapBonus,chainCap,mergeGame,
+  get gPending(){return gPending},set gPending(v){gPending=v},
+  set depAmt(v){depAmt=v},get depAmt(){return depAmt},
+  set rwTab(v){rwTab=v;render()},get rwTab(){return rwTab},
   set view(v){view=v;render()},get view(){return view},set selKid(v){selKid=v},get selKid(){return selKid}};
 </script>
 </body>
