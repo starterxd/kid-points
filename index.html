@@ -11,36 +11,39 @@
 <title>寶貝積分</title>
 <style>
 :root{
-  --bg:#e6ecfb; --bg2:#dbe3f7; --surface:#ffffff; --surface2:#f1f5ff; --ink:#0c1630; --muted:#5b6a92; --line:#d7e0f5;
-  --brand:#3b52ff; --brand-soft:#e7eaff; --good:#0a9d68; --good-soft:#e0f7ef;
-  --bad:#e33a44; --bad-soft:#ffe8ea; --gold:#c47b00; --gold-soft:#fff1d6;
-  --neon:#0aa7c9; --violet:#8b4dff;
-  --shadow:0 2px 0 rgba(16,24,48,.05), 0 10px 26px rgba(16,24,48,.10);
+  --bg:#f5efe3; --bg2:#efe7d8; --surface:#fffdf9; --surface2:#faf5ea; --ink:#2b231a; --muted:#847a6a; --line:#e6dccb;
+  --brand:#e8622c; --brand-soft:#fdeae0; --good:#2f8f6b; --good-soft:#e4f3ec;
+  --bad:#cc4b3c; --bad-soft:#fbe7e3; --gold:#d9950f; --gold-soft:#fdefd4;
+  --neon:#3f7bd8; --violet:#7d5bd6;
+  --shadow:0 2px 0 rgba(43,35,26,.05), 0 10px 20px rgba(43,35,26,.07);
   --glow:0 0 0 rgba(0,0,0,0);
-  --stars:none;
-  --r:14px; --r-sm:10px; --nav:66px;
-  --c1:#7c88a8; --c2:#0a9d68; --c3:#2f7cf6; --c4:#8b4dff; --c5:#c47b00;
-  --pxo:#121d38;
+  --stars:radial-gradient(#e3d9c6 1px,transparent 1px);
+  --bezel:linear-gradient(160deg,#cdbfa6,#a08c6d);
+  --pxo:#02050c;
+  --r:22px; --r-sm:16px; --nav:68px;
+  --c1:#8b8272; --c2:#2f8f6b; --c3:#3f7bd8; --c4:#7d5bd6; --c5:#d9950f;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#060912; --bg2:#0b1120; --surface:#121b30; --surface2:#1a2440; --ink:#e9f1ff; --muted:#8296bd; --line:#25334f;
-  --brand:#5b7cff; --brand-soft:#182449; --good:#3ddc84; --good-soft:#0d2e21;
-  --bad:#ff5f6d; --bad-soft:#331720; --gold:#ffc93c; --gold-soft:#33280f;
-  --neon:#35e0ff; --violet:#b06cff;
-  --shadow:0 2px 0 rgba(0,0,0,.45), 0 12px 30px rgba(0,0,0,.5);
-  --stars:radial-gradient(1.5px 1.5px at 8% 7%,#ffffffcc,transparent),radial-gradient(1px 1px at 23% 17%,#9fd8ffaa,transparent),radial-gradient(1.5px 1.5px at 41% 5%,#ffffff99,transparent),radial-gradient(1px 1px at 62% 13%,#ffd6f5aa,transparent),radial-gradient(1.5px 1.5px at 79% 6%,#ffffffbb,transparent),radial-gradient(1px 1px at 93% 19%,#9fd8ff99,transparent),radial-gradient(1px 1px at 15% 34%,#ffffff88,transparent),radial-gradient(1.5px 1.5px at 34% 44%,#c9b6ff99,transparent),radial-gradient(1px 1px at 55% 31%,#ffffff77,transparent),radial-gradient(1px 1px at 71% 41%,#9fd8ff88,transparent),radial-gradient(1.5px 1.5px at 88% 36%,#ffffff99,transparent),radial-gradient(1px 1px at 6% 58%,#ffd6f588,transparent),radial-gradient(1px 1px at 28% 66%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 48% 73%,#9fd8ff99,transparent),radial-gradient(1px 1px at 67% 61%,#ffffff88,transparent),radial-gradient(1px 1px at 84% 71%,#c9b6ff88,transparent),radial-gradient(1.5px 1.5px at 12% 86%,#ffffff99,transparent),radial-gradient(1px 1px at 37% 92%,#9fd8ff88,transparent),radial-gradient(1px 1px at 59% 84%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 77% 95%,#ffd6f599,transparent),radial-gradient(1px 1px at 95% 88%,#ffffff88,transparent);
-  --c1:#7c88a8; --c2:#3ddc84; --c3:#35e0ff; --c4:#b06cff; --c5:#ffc93c;
+  --bg:#17130e; --bg2:#1e1913; --surface:#221c15; --surface2:#2b241b; --ink:#f2ece1; --muted:#a3978a; --line:#392f24;
+  --brand:#ff7a45; --brand-soft:#3a2116; --good:#4cc194; --good-soft:#12301f;
+  --bad:#ff6f5e; --bad-soft:#3a1c18; --gold:#f0b429; --gold-soft:#3a2c10;
+  --neon:#6b9be8; --violet:#a488ee;
+  --shadow:0 2px 0 rgba(0,0,0,.35), 0 10px 24px rgba(0,0,0,.42);
+  --stars:radial-gradient(#332a20 1px,transparent 1px);
+  --bezel:linear-gradient(160deg,#6d5c45,#42372a);
   --pxo:#02050c;
+  --c1:#a3978a; --c2:#4cc194; --c3:#6b9be8; --c4:#a488ee; --c5:#f0b429;
 }}
 :root[data-theme="dark"]{
-  --bg:#060912; --bg2:#0b1120; --surface:#121b30; --surface2:#1a2440; --ink:#e9f1ff; --muted:#8296bd; --line:#25334f;
-  --brand:#5b7cff; --brand-soft:#182449; --good:#3ddc84; --good-soft:#0d2e21;
-  --bad:#ff5f6d; --bad-soft:#331720; --gold:#ffc93c; --gold-soft:#33280f;
-  --neon:#35e0ff; --violet:#b06cff;
-  --shadow:0 2px 0 rgba(0,0,0,.45), 0 12px 30px rgba(0,0,0,.5);
-  --stars:radial-gradient(1.5px 1.5px at 8% 7%,#ffffffcc,transparent),radial-gradient(1px 1px at 23% 17%,#9fd8ffaa,transparent),radial-gradient(1.5px 1.5px at 41% 5%,#ffffff99,transparent),radial-gradient(1px 1px at 62% 13%,#ffd6f5aa,transparent),radial-gradient(1.5px 1.5px at 79% 6%,#ffffffbb,transparent),radial-gradient(1px 1px at 93% 19%,#9fd8ff99,transparent),radial-gradient(1px 1px at 15% 34%,#ffffff88,transparent),radial-gradient(1.5px 1.5px at 34% 44%,#c9b6ff99,transparent),radial-gradient(1px 1px at 55% 31%,#ffffff77,transparent),radial-gradient(1px 1px at 71% 41%,#9fd8ff88,transparent),radial-gradient(1.5px 1.5px at 88% 36%,#ffffff99,transparent),radial-gradient(1px 1px at 6% 58%,#ffd6f588,transparent),radial-gradient(1px 1px at 28% 66%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 48% 73%,#9fd8ff99,transparent),radial-gradient(1px 1px at 67% 61%,#ffffff88,transparent),radial-gradient(1px 1px at 84% 71%,#c9b6ff88,transparent),radial-gradient(1.5px 1.5px at 12% 86%,#ffffff99,transparent),radial-gradient(1px 1px at 37% 92%,#9fd8ff88,transparent),radial-gradient(1px 1px at 59% 84%,#ffffff77,transparent),radial-gradient(1.5px 1.5px at 77% 95%,#ffd6f599,transparent),radial-gradient(1px 1px at 95% 88%,#ffffff88,transparent);
-  --c1:#7c88a8; --c2:#3ddc84; --c3:#35e0ff; --c4:#b06cff; --c5:#ffc93c;
+  --bg:#17130e; --bg2:#1e1913; --surface:#221c15; --surface2:#2b241b; --ink:#f2ece1; --muted:#a3978a; --line:#392f24;
+  --brand:#ff7a45; --brand-soft:#3a2116; --good:#4cc194; --good-soft:#12301f;
+  --bad:#ff6f5e; --bad-soft:#3a1c18; --gold:#f0b429; --gold-soft:#3a2c10;
+  --neon:#6b9be8; --violet:#a488ee;
+  --shadow:0 2px 0 rgba(0,0,0,.35), 0 10px 24px rgba(0,0,0,.42);
+  --stars:radial-gradient(#332a20 1px,transparent 1px);
+  --bezel:linear-gradient(160deg,#6d5c45,#42372a);
   --pxo:#02050c;
+  --c1:#a3978a; --c2:#4cc194; --c3:#6b9be8; --c4:#a488ee; --c5:#f0b429;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{touch-action:manipulation}
@@ -48,10 +51,8 @@ button,.li,.rule,.kid,.chip,.rwc,.sw,.nb,.tg,.pad button{touch-action:manipulati
 html,body{margin:0;padding:0}
 body{
   color:var(--ink); min-height:100vh;
-  background:
-    var(--stars),
-    radial-gradient(1100px 480px at 50% -180px, color-mix(in srgb,var(--brand) 20%,transparent), transparent 70%),
-    var(--bg);
+  background:var(--stars), var(--bg);
+  background-size:14px 14px, auto;
   background-attachment:fixed;
   font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
   padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 12px);
@@ -123,8 +124,8 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:0 16px;border-radius:var(--r-sm);
   font-weight:750;font-size:15px;background:var(--surface);border:1px solid var(--line);color:var(--ink);box-shadow:var(--shadow)}
 .btn:active{transform:scale(.97)}
-.btn.pri{background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--c4) 55%,var(--brand)));color:#fff;border-color:transparent;
-  box-shadow:0 4px 16px color-mix(in srgb,var(--brand) 45%,transparent)}
+.btn.pri{background:var(--brand);color:#fff;border-color:transparent;
+  box-shadow:0 4px 16px color-mix(in srgb,var(--brand) 35%,transparent)}
 .btn.good{background:var(--good);color:#fff;border-color:transparent}
 .btn.bad{background:var(--bad);color:#fff;border-color:transparent}
 .btn.ghost{box-shadow:none;background:transparent}
@@ -186,7 +187,8 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .cost{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:850;color:#fff;
   background:linear-gradient(150deg,var(--rc),color-mix(in srgb,var(--rc) 60%,#000));padding:3px 9px;border-radius:999px;align-self:flex-start}
 .rwc .who{margin-top:auto;padding-top:8px;display:flex;gap:5px;flex-wrap:wrap}
-.pill{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill{font-size:10px;font-weight:800;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);
+  max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pill.yes{background:var(--good-soft);border-color:transparent;color:var(--good)}
 .stock{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:600}
 .rwc[disabled]{opacity:.45}
@@ -259,6 +261,7 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
   font-size:13px;font-weight:750;color:var(--muted);min-height:42px}
 .tabs button.on{background:var(--brand);border-color:transparent;color:#fff;box-shadow:0 3px 12px color-mix(in srgb,var(--brand) 40%,transparent)}
 .tabs button b{font-weight:850}
+.tabs button.on svg.fx,.rarbar button.on svg.fx{filter:brightness(0) invert(1)}
 .bud{padding:12px 13px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
 .bud .top{display:flex;align-items:baseline;gap:7px;margin-bottom:9px}
 .bud .top b{font-size:19px;font-weight:850;letter-spacing:-.5px;color:var(--good)}
@@ -283,6 +286,8 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .rt:last-child{border-bottom:0}
 .rthead{display:flex;align-items:center;gap:8px;margin-bottom:9px}
 .rthead .nm{font-weight:800;font-size:14px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flame,.dicep{display:inline-flex;align-items:center;gap:4px}
+.flame svg,.dicep svg{width:14px;height:14px}
 .flame{font-size:11px;font-weight:850;color:var(--gold);background:var(--gold-soft);padding:3px 8px;border-radius:999px;white-space:nowrap}
 .dicep{font-size:11px;font-weight:850;color:var(--brand);background:var(--brand-soft);padding:3px 8px;border-radius:999px;white-space:nowrap}
 .rtn{font-size:11.5px;color:var(--muted);font-weight:800}
@@ -294,6 +299,10 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .rtc .ck{position:absolute;top:8px;right:8px;width:19px;height:19px;border-radius:6px;
   border:2px solid var(--line);display:grid;place-items:center;font-size:11px;color:transparent;font-weight:900}
 .rtc .e{font-size:19px;line-height:1}
+.rtc{padding:9px 8px 10px;min-height:74px}
+.rtc b{font-size:10.5px}
+.rtc .e{width:30px;height:30px}
+.rtc .ck{width:17px;height:17px;border-radius:50%}
 .rtc b{font-size:11.5px;font-weight:750;line-height:1.35;width:100%;word-break:break-word}
 .rtc.on{border-color:var(--good);background:var(--good-soft)}
 .rtc.on b{color:var(--good)}
@@ -365,8 +374,8 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in sr
 .banner b{display:block;font-weight:800;margin-bottom:2px}
 .danger{color:var(--bad)}
 .fab{position:fixed;right:16px;bottom:calc(var(--nav) + env(safe-area-inset-bottom) + 14px);z-index:45;width:54px;height:54px;border-radius:18px;
-  background:linear-gradient(150deg,var(--brand),color-mix(in srgb,var(--c4) 55%,var(--brand)));color:#fff;font-size:24px;display:grid;place-items:center;
-  box-shadow:0 10px 26px color-mix(in srgb,var(--brand) 50%,transparent)}
+  background:var(--brand);color:#fff;font-size:24px;display:grid;place-items:center;
+  box-shadow:0 2px 0 rgba(43,35,26,.14), 0 10px 22px color-mix(in srgb,var(--brand) 38%,transparent)}
 .hide{display:none!important}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;word-break:break-all}
 
@@ -423,6 +432,20 @@ svg.chart .lv{fill:var(--muted);font-size:9px;font-weight:800}
 
 /* ---- 像素圖示 ---- */
 svg.px{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.22em;flex:0 0 auto}
+svg.fx{box-sizing:border-box;width:1.15em;height:1.15em;display:inline-block;vertical-align:-.22em;flex:0 0 auto}
+svg.fx.xl{width:52px;height:52px;display:block;margin:0 auto 10px;vertical-align:0}
+svg.fx.big{width:24px;height:24px;vertical-align:-.32em}
+.ic svg.fx,.rtc .e svg.fx,.rwc .art svg.fx,.nb em svg.fx,.icoi svg.fx{
+  width:100%;height:100%;padding:13%;border-radius:28%;
+  background:color-mix(in srgb,var(--t) 15%,var(--surface))}
+.ic{background:transparent!important;box-shadow:none!important;padding:0}
+.rtc .e{width:34px;height:34px;display:block}
+.rwc .art svg.fx{padding:16%;border-radius:22%}
+.nb em{width:30px;height:30px;display:block}
+.nb em svg.fx{background:transparent;padding:0}
+.nb.on em svg.fx{background:color-mix(in srgb,var(--brand) 14%,var(--surface))}
+.icoi svg.fx{width:30px;height:30px;padding:6px;border-radius:9px}
+.icotop .icocur svg.fx{width:28px;height:28px;padding:5px;border-radius:8px}
 svg.px.xl{width:46px;height:46px;display:block;margin:0 auto 10px;vertical-align:0;opacity:.92}
 svg.px.big{width:24px;height:24px;vertical-align:-.32em}
 .nb em svg.px{width:23px;height:23px;vertical-align:0}
@@ -438,21 +461,39 @@ svg.px .po{fill:var(--pxo,#121d38);opacity:.92}
 .flame svg.px{width:15px;height:15px;vertical-align:-.18em}
 
 /* ---- 太空像素質感 ---- */
-.board{position:relative;background:
-  radial-gradient(1px 1px at 18% 22%,color-mix(in srgb,var(--ink) 55%,transparent),transparent),
-  radial-gradient(1px 1px at 62% 14%,color-mix(in srgb,var(--ink) 40%,transparent),transparent),
-  radial-gradient(1.5px 1.5px at 78% 62%,color-mix(in srgb,var(--ink) 45%,transparent),transparent),
-  radial-gradient(1px 1px at 33% 74%,color-mix(in srgb,var(--ink) 35%,transparent),transparent),
-  radial-gradient(420px 260px at 50% 50%, color-mix(in srgb,var(--violet) 12%,transparent), transparent 72%);
-  border-radius:var(--r);padding:6px}
+.console{margin-top:12px;border-radius:22px;padding:8px;background:var(--bezel);
+  box-shadow:var(--shadow),inset 0 2px 0 rgba(255,255,255,.32)}
+.screen{border-radius:15px;padding:8px;background:#070b16;border:2px solid #1d2947;background-image:
+  radial-gradient(1px 1px at 18% 12%,#6f83b8,transparent),
+  radial-gradient(1px 1px at 62% 26%,#4f5f8d,transparent),
+  radial-gradient(1.5px 1.5px at 82% 64%,#7d92c9,transparent),
+  radial-gradient(1px 1px at 30% 78%,#55689a,transparent),
+  radial-gradient(300px 220px at 50% 50%,rgba(176,108,255,.16),transparent 70%)}
+.board{position:relative;background:none;border-radius:0;padding:0;gap:4px}
+.tl{background:#121b2f;border-color:#2b3a5c;border-radius:4px;color:#c3d2ee}
+.tl .n{color:#6a7ea8;opacity:1}
+.tl.here{background:#17213c}
+.tl .tok{border-color:#070b16}
+.mid{background:#0c1324;border:2px solid #24314f;border-radius:8px}
+.mid .dcnt{font-size:10.5px;color:#8399c4;font-weight:750;letter-spacing:.6px}
+.mid .dcnt b{color:#eaf1ff}
+.mid .dpos{font-size:9.5px;color:#6a7ea8;font-weight:700}
+.mid .btn.pri{background:#4d8dff;border:2px solid #3d5bd0;border-radius:5px;
+  box-shadow:0 3px 0 #1f3f96;color:#fff}
+.mid .btn.pri:active{transform:translateY(2px);box-shadow:0 1px 0 #1f3f96}
+.mid .die{width:62px;height:62px;border-radius:6px;background:#eef4ff;padding:9px;box-shadow:0 4px 0 #8a9cc4}
+.mid .die i{width:10px;height:10px;border-radius:2px}
+.mid .die i.on{background:#141c2e}
 .tl{border-width:2px}
 .tl.here{box-shadow:0 0 0 2px var(--gold),0 0 16px color-mix(in srgb,var(--gold) 45%,transparent)}
-nav{border-top:2px solid color-mix(in srgb,var(--brand) 30%,var(--line))}
-.nb.on{text-shadow:0 0 10px color-mix(in srgb,var(--brand) 60%,transparent)}
-.btn.pri{box-shadow:0 3px 0 color-mix(in srgb,var(--brand) 45%,#000), 0 0 18px color-mix(in srgb,var(--brand) 30%,transparent)}
-.btn.pri:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--brand) 45%,#000)}
+nav{border-top:2px solid var(--line)}
+.btn.pri{box-shadow:0 2px 0 rgba(43,35,26,.12), 0 8px 18px color-mix(in srgb,var(--brand) 30%,transparent)}
+.btn.pri:active{transform:translateY(1px)}
 .stats .st{border:2px solid var(--line)}
-.sec h2{letter-spacing:.6px}
+.sec h2{letter-spacing:.5px;text-transform:none;font-size:13px;color:#5d5346}
+.card,.list,.rule,.rt,.dep,.tier,.rwc,.kid,.rtc{border-width:2px}
+.rtc{border-radius:16px}
+.rl,.rule{border-radius:18px}
 
 /* ---- 像素圖示選擇器 ---- */
 .icobox{border:2px solid var(--line);border-radius:var(--r-sm);background:var(--surface2);overflow:hidden}
@@ -460,7 +501,9 @@ nav{border-top:2px solid color-mix(in srgb,var(--brand) 30%,var(--line))}
 .icotop .icocur{display:inline-flex}
 .icotop .icocur svg.px{width:28px;height:28px}
 .icotop u{text-decoration:none;font-size:11.5px;color:var(--muted);font-weight:750}
-.icogrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:8px;max-height:186px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.icogrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;padding:8px;max-height:210px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.icog{grid-column:1/-1;font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.5px;margin:4px 0 0}
+.icog:first-child{margin-top:0}
 .icoi{aspect-ratio:1;display:grid;place-items:center;border-radius:9px;background:transparent;border:2px solid transparent}
 .icoi svg.px{width:22px;height:22px}
 .icoi.on{background:var(--brand-soft);border-color:var(--brand)}
@@ -497,7 +540,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v9.1・2026-09-11';
+const BUILD='v10・2026-09-11';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -513,7 +556,7 @@ async function checkUpdate(auto){
 const PXPAL={"k":"#0b1020","w":"#eaf2ff","l":"#b9c4de","s":"#7c88a8","d":"#38415e","e":"#1a2338","c":"#35e0ff","b":"#4f7bff","p":"#b06cff","m":"#ff5fa8","y":"#ffc93c","o":"#ff8a3d","r":"#ff5a5f","g":"#3ddc84","t":"#17b8a6","n":"#9a6b45","f":"#ffcc9e","h":"#5b3d28"};
 const PXG={"⭐":"............|.....yy.....|.....yy.....|....wyyw....|yy..yyyy..yy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|..yyy..yyy..|..yy....yy..|.y........y.","🌟":".c........c.|..c.wwww.c..|...wwyyww...|..wyyyyyyw..|ccwyyyyyywcc|..wyyyyyyw..|...wyyyyw...|...wyyyyw...|..wyy..yyw..|..ww....ww..|.c........c.|............","🎲":"............|..wwwwwwww..|.wwwwwwwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwkkwwww.|.wwwwkkwwww.|.wkkwwwwkkw.|.wkkwwwwkkw.|.wwwwwwwwww.|..wwwwwwww..|............","🎁":".....mm.....|....mmmm....|..mm.mm.mm..|.mmmmmmmmmm.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|.pppp..pppp.|............","🏦":".....c......|....ccc.....|...ccccc....|..ccyyycc...|.cccccccccc.|.cccccccccc.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cc.cc.cc.c.|.cccccccccc.|.bbbbbbbbbb.|............","🛡️":".cccccccccc.|cccccccccccc|cccccccccccc|cccccwwccccc|cccccwwccccc|ccwwwwwwwwcc|ccwwwwwwwwcc|cccccwwccccc|.ccccwwcccc.|..cccccccc..|...cccccc...|.....cc.....","🎫":"............|..oooooooo..|.oooooooooo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.ooo.oyyyoo.|.oooooooooo.|..oooooooo..|............|............|............","❓":"............|....cccc....|...cc..cc...|...cc..cc...|......cc....|.....cc.....|.....cc.....|.....cc.....|............|.....cc.....|.....cc.....|............","🏁":".ww.........|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.wwwwkkwwkk.|.wwkkwwkkww.|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........|.ww.........","😈":"............|...pppppp...|..pppppppp..|.pp.pppp.pp.|.pp.pppp.pp.|.pppppppppp.|.pkkkkkkkkp.|.kkwwkkwwkk.|.kkkkkkkkkk.|..kkkkkkkk..|...kkkkkk...|............","💥":"....o..o....|.o..oo.o..o.|..o.ooooo.o.|...oorrooo..|.ooorrrrooo.|oorrryyrrroo|.ooorrrrooo.|..ooorrooo..|.o.ooooo.o..|.o..oo.o..o.|....o..o....|............","🔁":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🔥":"......o.....|.....oyo....|....oyyyo...|...oyyyyo...|..oyyrryyo..|..oyrrrryo..|.ooyrrrryoo.|.oyrrrrrryo.|.oyrryyrryo.|..oyyyyyyo..|...oooooo...|............","✎":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","💡":"....yyyy....|...yyyyyy...|..yyyyyyyy..|..yyyyyyyy..|..yyyyyyyy..|...yyyyyy...|...yyyyyy...|....ssss....|....ssss....|....ssss....|.....ss.....|............","🏠":".....ww.....|....wwww....|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|wwwwwwwwwwww|.cc.cccc.cc.|.cc.cccc.cc.|.cc.cwwc.cc.|.cc.cwwc.cc.|.cccccccccc.|............","➕":"............|.....gg.....|.....gg.....|.....gg.....|..gggggggg..|..gggggggg..|.....gg.....|.....gg.....|.....gg.....|............|............|............","➖":"............|............|............|............|..rrrrrrrr..|..rrrrrrrr..|............|............|............|............|............|............","🧾":"............|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.w.ww.ww.ww.|............","⚙️":"....ssss....|.s..ssss..s.|.ss.ssss.ss.|.ssssssssss.|.sssswwssss.|sssswwwwssss|sssswwwwssss|.sssswwssss.|.ssssssssss.|.ss.ssss.ss.|.s..ssss..s.|....ssss....","💎":"............|..cccccccc..|.cwwccccwwc.|ccwwccccwwcc|.ccccccccccc|..cccccccc..|...cccccc...|....cccc....|.....cc.....|............|............|............","🎮":"............|............|.pppppppppp.|pppwppppwppp|ppwwwppwwwpp|pppwpppppppp|pppppppwppww|.pppppppppp.|............|............|............|............","🕹️":".....rr.....|....rrrr....|....rrrr....|.....rr.....|.....rr.....|.....rr.....|...dddddd...|..dddddddd..|.dddddddddd.|.dddddddddd.|..dddddddd..|............","🍪":"............|...nnnnnn...|..nnnnnnnn..|.nnkknnnnnn.|.nnnnnnkknn.|nnnnkknnnnnn|nnkknnnnkknn|.nnnnnnnnnn.|..nnkknnnn..|...nnnnnn...|............|............","🍭":"............|...mmmmmm...|..mmwwwwmm..|.mmwwmmwwmm.|.mmwmmmmwmm.|.mmwwmmwwmm.|..mmwwwwmm..|...mmmmmm...|.....ww.....|.....ww.....|.....ww.....|.....ww.....","📦":"............|.oooooooooo.|.oo.oooo.oo.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|.nn.nnnn.nn.|.nn.nnnn.nn.|.nnnnnnnnnn.|............|............","📖":"............|.ww......ww.|.wwww..wwww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|.wwkkwwkkww.|.wwwwwwwwww.|..wwwwwwww..|............","✅":"............|..........gg|.........gg.|gg......gg..|.gg....gg...|..gg..gg....|...gggg.....|....gg......|............|............|............|............","🚫":"............|...rrrrrr...|..rr....rr..|.rr.....rrr.|.rr....rrrr.|rr....rr..rr|rr..rr....rr|.rrrr....rr.|.rrr.....rr.|..rr....rr..|...rrrrrr...|............","👶":"............|....ffff....|...ffffff...|..ffffffff..|..fkffffkf..|..ffffffff..|..fffkkfff..|...ffffff...|....ffff....|...cccccc...|..cccccccc..|............","👧":"....hhhh....|...hhhhhh...|..hhffffhh..|..hffffffh..|..hfkffkfhh.|..hffffffh..|..hfffkffh..|...ffffff...|....ffff....|...mmmmmm...|..mmmmmmmm..|............","🏆":"............|.yyyyyyyyyy.|yyyyyyyyyyyy|yy.yyyyyy.yy|yy.yyyyyy.yy|yy.yyyyyy.yy|...yyyyyy...|....yyyy....|....yyyy....|..yyyyyyyy..|.yyyyyyyyyy.|............","💯":"............|.rr.rrr.rrr.|r..r.r.r.r.r|r..r.r.r.r.r|r..r.r.r.r.r|.rr.rrr.rrr.|............|..rrrrrrrr..|..r......r..|..rrrrrrrr..|............|............","🎹":"............|wwwwwwwwwwww|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wkwkwwkwkwkw|wwwwwwwwwwww|wwwwwwwwwwww|w.w.w.w.w.w.|wwwwwwwwwwww|............|............","🏃":"....cccc....|....cccc....|............|...cccc..c..|..c.cccccc..|..c.ccccc...|.....cccc...|....cc..cc..|...cc....cc.|..cc......c.|.cc.........|............","🧮":"............|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|.dyydyydyyd.|.dddddddddd.|............|............","✏️":".........yy.|........yyyy|.......yyyy.|......yyyy..|.....yyyy...|....yyyy....|...yyyy.....|..lyyy......|..lly.......|.kll........|.k..........|............","🚀":".....ww.....|....wwww....|....wccw....|...wwccww...|...wwccww...|...wwwwww...|..wwwwwwww..|.rwwwwwwwwr.|.rr.wwww.rr.|....oooo....|....o..o....|.....oo.....","🪐":".....ppp.....|...pppppppp..|..pppppppppp.|.pppppppwppp.|ycccccccccccy|.yyyyyyyyyy..|..pppppppp...|...pppppp....|....pppp.....|.............|.............|.............","🛸":"............|.....cc.....|....cwwc....|...cwwwwc...|..cwwwwwwc..|.pppppppppp.|pppppppppppp|.p.pp.pp.pp.|..c..c..c...|...c..c.....|............|............","☄️":".......nnnn.|......nnnnnn|.....nnnnnnn|....onnnnnn.|...oonnnnn..|..oyyonnn...|.oyyyoo.....|oyyyy.......|ryyy........|rry.........|r...........|............","🌀":"...pppppp...|..pppppppp..|.ppp....ppp.|.pp..cc..pp.|.pp.cccc.pp.|.pp.ccc..pp.|.ppp.....pp.|..pppp..pp..|....ppppp...|......ppp...|............|............","👽":"............|...gggggg...|..gggggggg..|.gggggggggg.|.gkkggggkkg.|.gkkggggkkg.|.gggggggggg.|..gggggggg..|...gggggg...|....gggg....|.....gg.....|............","🔭":".........ww.|........wwww|.......wwcc.|......wwcc..|.....wwcc...|....wwcc....|...wwcc.....|..sscc......|..ss........|.ssss.......|ss..ss......|............","🌌":".w....c....w|...p.....p..|..pppp.ppp..|.ppppppppp..|w.pppcppp..w|..pppppppp..|...ppppp.p..|.c.......c..|....w.......|..w......w..|............|............","⛽":"............|.cccccccc...|.cwwwwwwc.oo|.cwwwwwwc.o.|.cwwwwwwc.o.|.cccccccccc.|.cccccccc.c.|.cccccccc.c.|.cccccccc...|.cccccccc...|............|............","🔄":".........g..|...gggg..gg.|..gg..gg.ggg|.gg....ggggg|.gg......gg.|.gg.........|.gg.........|.gg......gg.|..gg....gg..|...gggggg...|............|............","🎉":".y....c....m|..y..c..m...|...wwwww....|..wwyywww...|.wwmwwwwww..|.wwwwccwww..|wwyywwwwmww.|wwwwwwwwwww.|.c....m....y|............|............|............","☁️":".............|.............|....llll.....|..lllllllll..|.lllllllllll.|lllllllllllll|.lllllllll...|..lllllll....|.............|.............|.............|.............","⚠️":".....yy.....|.....yy.....|....yyyy....|....yyyy....|...yykyyy...|...yykyyy...|..yyykyyyy..|..yyyyyyyy..|.yyyykyyyyy.|.yyyyyyyyyy.|yyyyyyyyyyyy|............","📚":"............|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rr.gg.bb...|.rrrgggbbb..|............|............|............","📅":"..w......w..|.wwwwwwwwww.|.wwwwwwwwww.|.wrrrrrrrrw.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwkwkwkwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","📋":"....wwww....|.wwwwwwwwww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkkkww.|.wwwwwwwwww.|.wwkkkkwwww.|.wwwwwwwwww.|.wwwwwwwwww.|............|............","⬇️":".....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.cc..cc..cc.|..cc.cc.cc..|...cccccc...|....cccc....|.....cc.....|............|............","⬆️":".....cc.....|....cccc....|...cccccc...|..cc.cc.cc..|.cc..cc..cc.|.....cc.....|.....cc.....|.....cc.....|.....cc.....|.....cc.....|............|............","🔑":"...yyyy.....|..yy..yy....|..yy..yy....|...yyyy.....|....yy......|....yy......|....yy......|....yyy.....|....yy......|....yyy.....|............|............","💾":"............|.cccccccccc.|.cwwwwwwwwc.|.cwccccccwc.|.cwwwwwwwwc.|.cccccccccc.|.cwwwwwwwwc.|.cwwkkkkwwc.|.cwwwwwwwwc.|.cccccccccc.|............|............","📷":"............|....dddd....|.dddddddddd.|.dddwwwwddd.|.ddwwccwwdd.|.ddwcccccdd.|.ddwwccwwdd.|.dddwwwwddd.|.dddddddddd.|............|............|............","🎒":"....rrrr....|...r....r...|..rrrrrrrr..|.rrrrrrrrrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|............|............","🪥":".........cc.|........cccc|.......cccc.|......cccc..|.....cccc...|....cccc....|...wwww.....|..wwww......|.ww.ww......|.w..w.......|............|............","🙋":".......ww...|...ff..ww...|..ffff.ww...|..fkfkf.w...|..ffffff....|...ffff.....|..cccccc....|.cccccccc...|.cc.cc.cc...|....cc.cc...|...cc...cc..|............","🛏️":"............|............|.ww.........|.ww.wwwwww..|.ww.wwwwww..|.wwwwwwwwww.|.bbbbbbbbbb.|.bbbbbbbbbb.|.ww......ww.|.ww......ww.|............|............","🏀":"............|...oooooo...|..okooooko..|.ooko..okoo.|.ookoooookoo|okkkkkkkkkko|.ooko..okoo.|.ooko..okoo.|..okooooko..|...oooooo...|............|............","🍚":"............|............|...wwwwww...|..wwwwwwww..|.wwwwwwwwww.|.wwwwwwwwww.|.cccccccccc.|.ccccccccc..|..ccccccc...|...ccccc....|............|............","🤝":"..ff....ff..|.ffff..ffff.|.fkff..fkff.|.ffff..ffff.|..ff....ff..|.cccc..mmmm.|ccccc..mmmmm|.cccc..mmmm.|.cccc..mmmm.|.c..c..m..m.|.c..c..m..m.|............","🧦":"............|..mmmmm.....|..mwwwm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmm.....|..mmmmmmm...|..mmmmmmmmm.|..mmmmmmmmm.|...mmmmmmm..|............","🐌":"............|..n......n..|...n....n...|....nnnnn...|...nnnnnnn..|..nnn.n.nnn.|..nn.nnn.nn.|..nnn...nnn.|.nnnnnnnnn..|ffffffffffff|............|............","😤":"............|...rrrrrr...|..rrrrrrrr..|.rrkrrrrkrr.|.rrrrrrrrrr.|.rkkkkkkkkr.|.rrrrrrrrrr.|..rr.cc.rr..|...c.cc.c...|..c..c...c..|............|............","📱":"............|..dddddddd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dwwwwwwd..|..dddddddd..|....dccd....|..dddddddd..|............","📝":".........yy.|.wwwwwww.yy.|.wwkkkww.y..|.wwwwwwwyy..|.wwkkkwyy...|.wwwwwyy....|.wwkkyy.....|.wwwwy......|.wwwww......|.wwwwwwwww..|............|............","🙈":"...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nffffffffn.|.ffffffffff.|.ffffffffff.|.nffkkkkffn.|.nnffffffnn.|..nnnnnnnn..|...nnnnnn...|............|............","✋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👋":"............|..f.f.f.....|.ffffff.....|.ffffff.f...|.fffffffff..|.ffffffffff.|.ffffffffff.|..ffffffff..|...ffffff...|....ffff....|............|............","👏":"............|..c.....c...|...ff..ff...|..ffff.ffff.|.fffff.fffff|.fffff.fffff|..ffff.ffff.|...fff.fff..|....ff.ff...|..c.....c...|............|............","📺":"............|...c....c...|....c..c....|.dddddddddd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dwwwwwwwwd.|.dddddddddd.|..d......d..|............|............","🥤":"............|.wwwwwwwwww.|.w.wwwwww.w.|..rrrrrrrr..|..rrrrrrrr..|..rwwwwwwr..|...rrrrrr...|...rrrrrr...|....rrrr....|....rrrr....|............|............","🌙":"............|....yyyy....|...yyyyyy...|..yyyyyy....|..yyyyy.....|..yyyyy.....|..yyyyy.....|..yyyyyy....|...yyyyyy...|....yyyy....|............|............","🌓":"............|...wwwwdd...|..wwwwwwdd..|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|.wwwwwwwddd.|..wwwwwwdd..|...wwwwdd...|............|............","🍜":"............|...y..y..y..|..y..y..y...|.wwwwwwwwww.|.wwwwwwwwww.|.ycccccccy..|..cccccccc..|..cccccccc..|...cccccc...|....cccc....|............|............","🛼":"............|..mmmmm.....|..mmmmmm....|..mmmmmmm...|..mmmmmmmm..|.mmmmmmmmm..|.wwwwwwwww..|..w.....w...|.ccc...ccc..|.ccc...ccc..|............|............","🗺️":"............|.nnn.nnn.nn.|.nnnnnnnnnn.|.nngnnnnnnn.|.ngggnnrnnn.|.nnggnrrrnn.|.nnnnnnrnnn.|.nntttnnnnn.|.nnttttnnnn.|.nnnnnnnnnn.|............|............","🎴":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywwrrrrwwy.|.ywrrrrrrwy.|.ywrrrrrrwy.|.ywwrrrrwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............|............","🍟":"............|.y..y..y..y.|.yy.yy.yy.yy|.yy.yy.yy.yy|.rrrrrrrrrr.|.rwwrwwrwwr.|.rrrrrrrrrr.|..rrrrrrrr..|..rrrrrrrr..|...rrrrrr...|............|............","📕":"............|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrwwwwwwrr.|.rrrrrrrrrr.|.rrrrrrrrrr.|.wwwwwwwwww.|............|............","📒":"............|.yyyyyyyyyy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkkkwy.|.ywwwwwwwwy.|.ywkkkkwwwy.|.ywwwwwwwwy.|.yyyyyyyyyy.|............|............","🎬":"............|.dwdwdwdwdw.|.wdwdwdwdwd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|.dddddddddd.|............|............|............","🎡":".....c......|...cccccc...|..c.c..c.c..|.cc..cc..cc.|.c.cccccc.c.|.cc..cc..cc.|..c.c..c.c..|...cccccc...|.....cc.....|....cccc....|...cc..cc...|............","🧸":".nn......nn.|.nnn....nnn.|..nnnnnnnn..|..nkknnkkn..|..nnnnnnnn..|..nnnkknnn..|...nnnnnn...|..nnnnnnnn..|.nnnnnnnnnn.|.nn.nnnn.nn.|..n......n..|............","💣":".........oo.|.........o..|........o...|...kkkkk....|..kkkkkkk...|.kkkkkkkkk..|.kkkkkkkkk..|.kkwkkkkkk..|.kkkkkkkkk..|..kkkkkkk...|...kkkkk....|............","💰":".....ss.....|....ssss....|...yyyyyy...|..yyyyyyyy..|.yyyyyyyyyy.|.yyoooooyyy.|.yyoyyyoyyy.|.yyoooooyyy.|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|............","💳":"............|.pppppppppp.|.pppppppppp.|.kkkkkkkkkk.|.pppppppppp.|.pyyyppppppp|.pyyypppppp.|.pppppppppp.|.pppppppppp.|............|............|............","🔗":"............|............|..cccccc....|.cc....cc...|.cc..cccccc.|.cc..cc...cc|..cccc....cc|.....cc...cc|.....cccccc.|............|............|............","👆":".....yy.....|....ffff....|....ffff....|....ffff....|....ffff....|.ff.ffff....|.ffffffff...|.ffffffff...|.ffffffff...|..ffffff....|............|............","🔒":"............|....cccc....|...cc..cc...|...cc..cc...|.yyyyyyyyyy.|.yyyyyyyyyy.|.yyyykkyyyy.|.yyyykkyyyy.|.yyyyyyyyyy.|.yyyyyyyyyy.|............|............","🧹":".........nn.|........nn..|.......nn...|......nn....|.....nn.....|....yyyy....|...yyyyyy...|..yyyyyyyy..|..y.y.y.y.y.|..y.y.y.y.y.|............|............","⏪":"............|.....c....c.|....cc...cc.|...ccc..ccc.|..cccc.cccc.|.ccccccccccc|..cccc.cccc.|...ccc..ccc.|....cc...cc.|.....c....c.|............|............","⏩":"............|.c....c.....|.cc...cc....|.ccc..ccc...|.cccc.cccc..|.ccccccccccc|.cccc.cccc..|.ccc..ccc...|.cc...cc....|.c....c.....|............|............","⏸️":"............|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|..yyy..yyy..|............|............|............","★":"............|.....yy.....|....yyyy....|...yyyyyy...|yyyyyyyyyyyy|.yyyyyyyyyy.|..yyyyyyyy..|...yyyyyy...|..yyy..yyy..|..yy....yy..|............|............"};
 const _pxc={};
-function px(e,cls){
+function pxi(e,cls){
   if(!e)return '';
   const g=PXG[e]||PXG[String(e).replace(/\uFE0F/g,'')];
   if(!g)return '<span class="emo '+(cls||'')+'">'+esc(e)+'</span>';
@@ -543,15 +586,33 @@ function px(e,cls){
 }
 const ICO_ORDER=['⭐','🌟','🎲','🚀','🪐','🛸','👽','☄️','🌀','🌌','💎','🛡️','🎁','🎫','🏦','💰','💳','🏆','💯','🔑','🔒',
 '📖','📕','📒','📚','📝','📋','📅','✏️','✎','🎒','🪥','🛏️','🍚','🍜','🍪','🍭','🍟','🥤','🏀','🏃','🛼','🎹','🎮','🕹️','🎴','🎬','📺','📱','🧸','🎡','🗺️','🧦','🧹','🤝','🙋','✋','👏','👆','🙈','😤','🐌','👶','👧','🔥','💡','⚠️','☁️','🎉','✅','🚫','➕','➖','🔁','🔄','⏪','⏩','⏸️','⬆️','⬇️','🔗','🌙','🌓','💥','💣','🧾','📦','📷','💾','⚙️','🏠','🧮','❓','🏁','😈','🚀'];
-const PXKEYS=(()=>{const seen={},o=[];for(const k of ICO_ORDER)if(PXG[k]&&!seen[k]){seen[k]=1;o.push(k)}
-  for(const k of Object.keys(PXG))if(!seen[k]){seen[k]=1;o.push(k)}return o})();
+const FLAT={"star":"<path d=\"M12 3.2l2.5 5.1 5.6.8-4.05 3.95.96 5.6L12 16l-5.01 2.65.96-5.6L3.9 9.1l5.6-.8z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>","flame":"<path d=\"M12 2.6c3.4 3.2 5.6 5.8 5.6 9a5.6 5.6 0 1 1-11.2 0c0-2.3 1.3-4 2.6-5.4.1 1.8.9 2.8 2.1 3.2.7-1.8.6-4.3.9-6.8z\" fill=\"#f0913a\" stroke=\"#f0913a\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><path d=\"M12 10.2c1.5 1.5 2.4 2.7 2.4 4.1a2.4 2.4 0 1 1-4.8 0c0-1.4.9-2.6 2.4-4.1z\" fill=\"#ffd166\"/>","dice":"<rect x=\"3.6\" y=\"3.6\" width=\"16.8\" height=\"16.8\" rx=\"4.8\" fill=\"#5b6cff\"/><circle cx=\"8.7\" cy=\"8.7\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"15.3\" cy=\"15.3\" r=\"1.8\" fill=\"#fff\"/>","note":"<rect x=\"4.2\" y=\"3.4\" width=\"15.6\" height=\"17.2\" rx=\"3.4\" fill=\"#3f7bd8\"/><rect x=\"4.2\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#2f5eaa\"/><rect x=\"9\" y=\"6.4\" width=\"8.4\" height=\"11.2\" rx=\"1.8\" fill=\"#fff\"/><rect x=\"10.6\" y=\"8.8\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"11.4\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"14\" width=\"3.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/>","piano":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.8\" fill=\"#4a4136\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"8\" rx=\"1.3\" fill=\"#fff\"/><rect x=\"7.6\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"11.4\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"15.2\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/>","run":"<circle cx=\"14.6\" cy=\"5.4\" r=\"2.5\" fill=\"#2f8f6b\"/><path d=\"M13.4 9.4l-3.4 2.6 1.1 3.3 2.5 1.7 1.2 3.5\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M10 12l-3.4 1.5\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\"/><path d=\"M13.4 9.4l3.5-.8 2.3 2.3\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","bag":"<circle cx=\"7.4\" cy=\"4.8\" r=\"2.3\" fill=\"#f0b429\"/><rect x=\"13\" y=\"2.6\" width=\"4\" height=\"4\" rx=\"1.1\" fill=\"#3f7bd8\"/><rect x=\"3.4\" y=\"9.2\" width=\"17.2\" height=\"11.2\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"3.4\" y=\"6.8\" width=\"17.2\" height=\"4.6\" rx=\"1.9\" fill=\"#b03f3f\"/><rect x=\"10.3\" y=\"11.8\" width=\"3.4\" height=\"3.6\" rx=\"1.3\" fill=\"#f6b3b3\"/>","pencil":"<path d=\"M15.6 3.6l4.8 4.8-9.4 9.4-4.8-4.8z\" fill=\"#f5c04a\"/><path d=\"M17.2 2a2.6 2.6 0 0 1 3.7 0l1.1 1.1a2.6 2.6 0 0 1 0 3.7l-1 1-4.8-4.8z\" fill=\"#e89b3c\" transform=\"translate(-1.6 1.6)\"/><path d=\"M6.2 13l4.8 4.8-6 1.2z\" fill=\"#4a4136\"/>","brush":"<rect x=\"9.6\" y=\"8.4\" width=\"4.8\" height=\"12\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"8.6\" y=\"4.2\" width=\"6.8\" height=\"5.6\" rx=\"2.2\" fill=\"#2f5eaa\"/><rect x=\"9.8\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/><rect x=\"12.5\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/>","broom":"<rect x=\"10.6\" y=\"2.6\" width=\"3\" height=\"9.4\" rx=\"1.5\" fill=\"#8b6b4a\"/><path d=\"M6.4 11.8h11.2l1.7 7.4a1.6 1.6 0 0 1-1.6 2H6.3a1.6 1.6 0 0 1-1.6-2z\" fill=\"#f0b429\"/><rect x=\"5.8\" y=\"15.3\" width=\"12.4\" height=\"1.9\" rx=\".95\" fill=\"#cf8f16\"/>","hand":"<rect x=\"7.2\" y=\"10.6\" width=\"10\" height=\"9.8\" rx=\"4.6\" fill=\"#efb06a\"/><rect x=\"8.4\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"11.1\" y=\"3.6\" width=\"2.5\" height=\"9\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.8\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"5.1\" y=\"9.2\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","book":"<path d=\"M12 6.8C10.4 5.3 8.2 4.6 5.4 4.6A1.5 1.5 0 0 0 3.9 6.1v11.3a1.5 1.5 0 0 0 1.5 1.5c2.8 0 5 .7 6.6 2.2z\" fill=\"#7d5bd6\"/><path d=\"M12 6.8c1.6-1.5 3.8-2.2 6.6-2.2a1.5 1.5 0 0 1 1.5 1.5v11.3a1.5 1.5 0 0 1-1.5 1.5c-2.8 0-5 .7-6.6 2.2z\" fill=\"#a488ee\"/>","home":"<path d=\"M11 3.7a1.6 1.6 0 0 1 2 0l7.4 6a1.6 1.6 0 0 1 .6 1.3v7.6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11a1.6 1.6 0 0 1 .6-1.3z\" fill=\"#e8622c\"/><rect x=\"9.6\" y=\"13.6\" width=\"4.8\" height=\"7\" rx=\"1.8\" fill=\"#fff\"/>","plus":"<path d=\"M10.3 4.3h3.4a1.5 1.5 0 0 1 1.5 1.5v3.3h3.3a1.5 1.5 0 0 1 1.5 1.5v3.4a1.5 1.5 0 0 1-1.5 1.5h-3.3v3.3a1.5 1.5 0 0 1-1.5 1.5h-3.4a1.5 1.5 0 0 1-1.5-1.5v-3.3H5.5A1.5 1.5 0 0 1 4 13.7v-3.4a1.5 1.5 0 0 1 1.5-1.5h3.3V5.8a1.5 1.5 0 0 1 1.5-1.5z\" fill=\"#2f8f6b\"/>","gift":"<rect x=\"5.2\" y=\"12\" width=\"13.6\" height=\"8.6\" rx=\"2.4\" fill=\"#d96bb0\"/><rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"4.4\" rx=\"1.8\" fill=\"#c2519a\"/><rect x=\"10.6\" y=\"8.2\" width=\"2.8\" height=\"12.4\" fill=\"#fff\"/><path d=\"M12 8.4C10.5 5.2 6.5 5.6 6.7 8.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M12 8.4c1.5-3.2 5.5-2.8 5.3-.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","bank":"<path d=\"M11.2 3.5a1.7 1.7 0 0 1 1.6 0l7.5 4.4a1.05 1.05 0 0 1-.5 1.95H4.2a1.05 1.05 0 0 1-.5-1.95z\" fill=\"#3f7bd8\"/><rect x=\"5.5\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"10.65\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"15.8\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"3.5\" y=\"18.3\" width=\"17\" height=\"2.7\" rx=\"1.35\" fill=\"#2f5eaa\"/>","receipt":"<path d=\"M5.4 4.8a1.6 1.6 0 0 1 1.6-1.6h10a1.6 1.6 0 0 1 1.6 1.6v16l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5z\" fill=\"#7a8699\"/><rect x=\"8\" y=\"7.2\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"10.8\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"14.4\" width=\"5\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/>","gear":"<path d=\"M12 3l1.6 2 2.5-.9.7 2.6 2.6.7-.9 2.5 2 1.6-2 1.6.9 2.5-2.6.7-.7 2.6-2.5-.9L12 21l-1.6-2-2.5.9-.7-2.6-2.6-.7.9-2.5-2-1.6 2-1.6-.9-2.5 2.6-.7.7-2.6 2.5.9z\" fill=\"#8d99ab\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"#fff\"/>","sparkle":"<path d=\"M12 4l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 14.8 7.8 17l.8-4.7-3.4-3.3 4.7-.7z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M19.4 3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z\" fill=\"#ffd166\"/><path d=\"M4.6 15.6l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z\" fill=\"#ffd166\"/>","minus":"<rect x=\"4\" y=\"10.2\" width=\"16\" height=\"3.6\" rx=\"1.8\" fill=\"#cc4b3c\"/>","check":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#2f8f6b\"/><path d=\"M7.6 12.3l3 3 5.8-6.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\"/><path d=\"M6.4 17.6L17.6 6.4\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\" stroke-linecap=\"round\"/>","warn":"<path d=\"M10.3 4.2a2 2 0 0 1 3.4 0l7 12a2 2 0 0 1-1.7 3H5a2 2 0 0 1-1.7-3z\" fill=\"#f0b429\"/><rect x=\"10.9\" y=\"8.6\" width=\"2.2\" height=\"5.6\" rx=\"1.1\" fill=\"#fff\"/><circle cx=\"12\" cy=\"16.8\" r=\"1.3\" fill=\"#fff\"/>","bulb":"<path d=\"M12 3a6.6 6.6 0 0 0-3.8 12c.5.4.8 1 .8 1.6v.4h6v-.4c0-.6.3-1.2.8-1.6A6.6 6.6 0 0 0 12 3z\" fill=\"#f5c04a\"/><rect x=\"9\" y=\"18\" width=\"6\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/><rect x=\"9.8\" y=\"20.4\" width=\"4.4\" height=\"1.6\" rx=\".8\" fill=\"#8d99ab\"/>","cloud":"<path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 10.7 1.1 3.9 3.9 0 0 1-.7 7.7z\" fill=\"#b9c8de\"/><path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 5.1-3.4v12.2z\" fill=\"#cfdaeb\"/>","refresh":"<path d=\"M20 12a8 8 0 1 1-2.4-5.7\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M19.8 3.4v4.4h-4.4z\" fill=\"#2f8f6b\"/>","party":"<path d=\"M4 20.4l5.6-12.2 6.6 6.6-12.2 5.6z\" fill=\"#f0b429\"/><path d=\"M6.4 15.2l2.4 2.4-4.8 2.8z\" fill=\"#e8933a\"/><circle cx=\"17.4\" cy=\"5.4\" r=\"1.6\" fill=\"#d96bb0\"/><circle cx=\"21\" cy=\"9.4\" r=\"1.3\" fill=\"#3f7bd8\"/><circle cx=\"13.4\" cy=\"3.6\" r=\"1.2\" fill=\"#2f8f6b\"/>","box":"<rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"12.4\" rx=\"2.6\" fill=\"#c89a68\"/><rect x=\"2.8\" y=\"5.4\" width=\"18.4\" height=\"4.4\" rx=\"1.8\" fill=\"#8b6b4a\"/><rect x=\"10.4\" y=\"5.4\" width=\"3.2\" height=\"15.2\" fill=\"#a67c4e\"/>","camera":"<rect x=\"2.8\" y=\"7\" width=\"18.4\" height=\"13.4\" rx=\"3.2\" fill=\"#4a4136\"/><rect x=\"8\" y=\"3.8\" width=\"8\" height=\"4\" rx=\"1.6\" fill=\"#6b5f4e\"/><circle cx=\"12\" cy=\"13.6\" r=\"4.2\" fill=\"#9fc4f0\"/><circle cx=\"12\" cy=\"13.6\" r=\"2.1\" fill=\"#3f7bd8\"/>","save":"<path d=\"M4.8 3.6h11.4l4 4v13a1.8 1.8 0 0 1-1.8 1.8H4.8A1.8 1.8 0 0 1 3 20.6V5.4a1.8 1.8 0 0 1 1.8-1.8z\" fill=\"#3f7bd8\"/><rect x=\"7.4\" y=\"3.6\" width=\"8\" height=\"6\" rx=\"1.2\" fill=\"#fff\"/><rect x=\"6.6\" y=\"13.4\" width=\"10.8\" height=\"7.4\" rx=\"1.4\" fill=\"#cfdaeb\"/>","key":"<circle cx=\"8\" cy=\"8\" r=\"4.6\" fill=\"#f0b429\"/><circle cx=\"8\" cy=\"8\" r=\"1.8\" fill=\"#fffdf9\"/><path d=\"M11.2 11.2l8 8\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M16.2 16.2l2 2M18.6 13.8l2.4 2.4\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/>","lock":"<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"10.6\" rx=\"3.4\" fill=\"#f0b429\"/><path d=\"M8.2 10V7.6a3.8 3.8 0 0 1 7.6 0V10\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"14.8\" r=\"1.9\" fill=\"#8b6b4a\"/>","up":"<path d=\"M12 3.4l7.4 7.4a1.6 1.6 0 0 1-1.1 2.7h-3.1v5.7a1.8 1.8 0 0 1-1.8 1.8h-2.8a1.8 1.8 0 0 1-1.8-1.8v-5.7H5.7a1.6 1.6 0 0 1-1.1-2.7z\" fill=\"#3f7bd8\"/>","down":"<path d=\"M12 20.6l-7.4-7.4a1.6 1.6 0 0 1 1.1-2.7h3.1V4.8A1.8 1.8 0 0 1 10.6 3h2.8a1.8 1.8 0 0 1 1.8 1.8v5.7h3.1a1.6 1.6 0 0 1 1.1 2.7z\" fill=\"#3f7bd8\"/>","link":"<path d=\"M9.6 14.4l4.8-4.8\" fill=\"none\" stroke=\"#7a8699\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13.2 7.4l1.4-1.4a3.8 3.8 0 0 1 5.4 5.4l-1.4 1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M10.8 16.6l-1.4 1.4a3.8 3.8 0 0 1-5.4-5.4l1.4-1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","theme":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#f0b429\"/><path d=\"M12 3.4a8.6 8.6 0 0 1 0 17.2z\" fill=\"#4a4136\"/>","calc":"<rect x=\"4\" y=\"2.8\" width=\"16\" height=\"18.4\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"6.4\" y=\"5.2\" width=\"11.2\" height=\"4\" rx=\"1.2\" fill=\"#9fc4f0\"/><rect x=\"6.4\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.4\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/>","trophy":"<path d=\"M7 3.6h10v6.8a5 5 0 0 1-10 0z\" fill=\"#f0b429\"/><path d=\"M7 5.2H4.8a3 3 0 0 0 3 3M17 5.2h2.2a3 3 0 0 1-3 3\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"2\"/><rect x=\"10.4\" y=\"14.6\" width=\"3.2\" height=\"3.6\" fill=\"#d4941a\"/><rect x=\"7\" y=\"18\" width=\"10\" height=\"2.8\" rx=\"1.4\" fill=\"#d4941a\"/>","hundred":"<rect x=\"2.6\" y=\"6.4\" width=\"4\" height=\"8.4\" rx=\"2\" fill=\"#d94f4f\"/><rect x=\"8.6\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"16.4\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"2.6\" y=\"17.4\" width=\"19\" height=\"2.4\" rx=\"1.2\" fill=\"#d94f4f\"/>","moneybag":"<path d=\"M8.6 7.2h6.8c3 2.2 4.8 5.2 4.8 8.2a5.2 5.2 0 0 1-5.2 5.2H9a5.2 5.2 0 0 1-5.2-5.2c0-3 1.8-6 4.8-8.2z\" fill=\"#f0b429\"/><path d=\"M8.8 3.4h6.4l-1.4 3.8h-3.6z\" fill=\"#d4941a\"/><path d=\"M12 10.6v7M10 12.4h3.4a1.6 1.6 0 0 1 0 3.2h-3a1.6 1.6 0 0 0 0 3.2H14\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","card":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13.2\" rx=\"2.8\" fill=\"#7d5bd6\"/><rect x=\"2.6\" y=\"8.4\" width=\"18.8\" height=\"3.2\" fill=\"#4d3399\"/><rect x=\"5.4\" y=\"14\" width=\"6.4\" height=\"2\" rx=\"1\" fill=\"#cbb8f5\"/>","kid":"<path d=\"M5.6 10.4a6.4 6.4 0 0 1 12.8 0v1.4a6.4 6.4 0 0 1-12.8 0z\" fill=\"#efb06a\"/><path d=\"M5.2 10.6a6.8 6.8 0 0 1 13.6 0c0 .8-1 1-1.6.4-1.6-1.6-3.4-2.2-5.2-2.2s-3.6.6-5.2 2.2c-.6.6-1.6.4-1.6-.4z\" fill=\"#8b5e3c\"/><circle cx=\"9.6\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.4\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.6 18.6a5.4 5.4 0 0 1 10.8 0v2.4H6.6z\" fill=\"#d96bb0\"/>","baby":"<circle cx=\"12\" cy=\"11.4\" r=\"6.4\" fill=\"#efb06a\"/><path d=\"M6.6 8.6a6.4 6.4 0 0 1 10.8 0c-1.6.8-3.4 1.2-5.4 1.2s-3.8-.4-5.4-1.2z\" fill=\"#c89a68\"/><circle cx=\"9.8\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.2\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.8 18.8a5.2 5.2 0 0 1 10.4 0v2.2H6.8z\" fill=\"#6b9be8\"/>","calendar":"<rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"16\" rx=\"2.8\" fill=\"#fffdf9\"/><rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"5\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"6.6\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"15\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"6.2\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"14.8\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.2\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/>","clipboard":"<rect x=\"4\" y=\"4.2\" width=\"16\" height=\"17\" rx=\"2.8\" fill=\"#8b6b4a\"/><rect x=\"6.2\" y=\"7\" width=\"11.6\" height=\"12\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"8.2\" y=\"2.2\" width=\"7.6\" height=\"4\" rx=\"1.8\" fill=\"#c89a68\"/><rect x=\"8.4\" y=\"10\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"13.2\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"16.4\" width=\"4.4\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/>","books":"<rect x=\"3\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#d94f4f\"/><rect x=\"8.4\" y=\"6.2\" width=\"4.6\" height=\"13.8\" rx=\"1.6\" fill=\"#2f8f6b\"/><rect x=\"13.8\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#3f7bd8\"/><rect x=\"3\" y=\"20\" width=\"18\" height=\"2.2\" rx=\"1.1\" fill=\"#8b6b4a\"/>","memo":"<rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"#fffdf9\"/><rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.4\"/><rect x=\"6.2\" y=\"7\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"6.2\" y=\"10.4\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><path d=\"M17.6 8.4l3.4 3.4-6 6-4 .6.6-4z\" fill=\"#f5c04a\"/><path d=\"M11.6 16.4l2.6 2.6-3.6.6z\" fill=\"#4a4136\"/>","point":"<rect x=\"9.4\" y=\"3\" width=\"3.4\" height=\"11\" rx=\"1.7\" fill=\"#efb06a\"/><path d=\"M9.4 10.6h5.8a4.6 4.6 0 0 1 4.6 4.6v2.2a3.8 3.8 0 0 1-3.8 3.8h-4.4a4.4 4.4 0 0 1-3.2-1.4l-2.8-3a1.8 1.8 0 0 1 2.6-2.5l1.2 1.2z\" fill=\"#efb06a\"/><rect x=\"12.6\" y=\"12.4\" width=\"2.6\" height=\"4\" rx=\"1.3\" fill=\"#d9944f\"/>","shield":"<path d=\"M12 2.6l7.4 2.8v6.2c0 4.4-3 8.2-7.4 9.8-4.4-1.6-7.4-5.4-7.4-9.8V5.4z\" fill=\"#3f7bd8\"/><path d=\"M8.4 12.2l2.6 2.6 4.8-5.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ticket":"<rect x=\"2.6\" y=\"6.6\" width=\"18.8\" height=\"10.8\" rx=\"3\" fill=\"#f0913a\"/><path d=\"M9 6.6v10.8\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-dasharray=\"2 2.2\" stroke-linecap=\"round\"/><path d=\"M15.4 9.2l1 2 2.2.3-1.6 1.55.38 2.2-1.98-1.05-1.98 1.05.38-2.2-1.6-1.55 2.2-.3z\" fill=\"#fffdf9\"/>","bed":"<rect x=\"2.6\" y=\"8.6\" width=\"18.8\" height=\"7.4\" rx=\"2.4\" fill=\"#c89a68\"/><rect x=\"4.6\" y=\"9.8\" width=\"6.2\" height=\"4.4\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"2.6\" y=\"5.8\" width=\"2.8\" height=\"14.6\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"18.6\" y=\"11\" width=\"2.8\" height=\"9.4\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"2.6\" y=\"15\" width=\"18.8\" height=\"2.6\" rx=\"1.3\" fill=\"#6b9be8\"/>","ball":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#e8792c\"/><path d=\"M12 3.4v17.2M3.4 12h17.2\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/><path d=\"M6 5.8c2.6 3 2.6 9.4 0 12.4M18 5.8c-2.6 3-2.6 9.4 0 12.4\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/>","rice":"<path d=\"M2.8 11h18.4a9.2 9.2 0 0 1-18.4 0z\" fill=\"#3f7bd8\"/><rect x=\"2.8\" y=\"11\" width=\"18.4\" height=\"2.4\" rx=\"1.2\" fill=\"#2f5eaa\"/><path d=\"M6.4 10.8a5.6 5.6 0 0 1 11.2 0z\" fill=\"#fffdf9\"/><path d=\"M8.8 2.6l6.6 6M15.4 2.6l-6.6 6\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","twokids":"<circle cx=\"7.6\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M2.8 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#3f7bd8\"/><circle cx=\"16.4\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M11.6 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#d96bb0\"/>","alarm":"<circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"#fffdf9\"/><circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\"/><path d=\"M12 9.2v4.2l2.8 1.8\" fill=\"none\" stroke=\"#4a4136\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M3.6 5.4a4.4 4.4 0 0 1 4.4-2.8M20.4 5.4A4.4 4.4 0 0 0 16 2.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>","angry":"<circle cx=\"12\" cy=\"12\" r=\"8.8\" fill=\"#d94f4f\"/><path d=\"M6.6 8.8l3.6 1.8M17.4 8.8l-3.6 1.8\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"9\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><circle cx=\"15\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><path d=\"M9 17.2h6\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>","snail":"<path d=\"M2.6 18.6h11.8a1.8 1.8 0 0 1 0 3.6H4a1.8 1.8 0 0 1-1.4-3.6z\" fill=\"#c89a68\"/><path d=\"M17 4.6a7.4 7.4 0 1 1-7.4 7.4 5.4 5.4 0 1 1 10.8 0 3.4 3.4 0 1 1-6.8 0\" fill=\"none\" stroke=\"#8b6b4a\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M4.6 18.6c0-2.4 1.6-4.2 4-4.2\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","phone":"<rect x=\"6\" y=\"2.2\" width=\"12\" height=\"19.6\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"7.6\" y=\"5\" width=\"8.8\" height=\"13\" rx=\"1.4\" fill=\"#9fc4f0\"/><rect x=\"10.4\" y=\"18.9\" width=\"3.2\" height=\"1.4\" rx=\".7\" fill=\"#8d99ab\"/>","monkey":"<circle cx=\"5.2\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"18.8\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"12\" cy=\"11.4\" r=\"7.4\" fill=\"#8b6b4a\"/><path d=\"M12 8.4a5.4 5.4 0 0 1 5.2 4c-1.6 1.6-3.4 2.4-5.2 2.4s-3.6-.8-5.2-2.4a5.4 5.4 0 0 1 5.2-4z\" fill=\"#efb06a\"/><path d=\"M4.6 14.4a4.6 4.6 0 0 1 5.6 3.6H4.6zM19.4 14.4a4.6 4.6 0 0 0-5.6 3.6h5.6z\" fill=\"#efb06a\"/>","stop":"<rect x=\"7\" y=\"10.4\" width=\"10.4\" height=\"10\" rx=\"4.8\" fill=\"#efb06a\"/><rect x=\"8.2\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"10.9\" y=\"3.2\" width=\"2.5\" height=\"9.2\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.6\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"4.8\" y=\"9\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","socks":"<rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"12.2\" width=\"8.6\" height=\"4.8\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"15\" width=\"8\" height=\"4.8\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/>","bomb":"<circle cx=\"10.6\" cy=\"14.4\" r=\"7.2\" fill=\"#4a4136\"/><path d=\"M15.6 9.4l2.2-2.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M18 7a3.4 3.4 0 1 1 3.2-2.4\" fill=\"none\" stroke=\"#f0913a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"8.2\" cy=\"11.6\" r=\"1.8\" fill=\"#6b5f4e\"/>","cookie":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#c89a68\"/><circle cx=\"9\" cy=\"9\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"15.2\" cy=\"10.4\" r=\"1.3\" fill=\"#6b4a2e\"/><circle cx=\"11.4\" cy=\"14.6\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"16\" cy=\"15.4\" r=\"1.2\" fill=\"#6b4a2e\"/><circle cx=\"7.4\" cy=\"14.2\" r=\"1.1\" fill=\"#6b4a2e\"/>","lolli":"<circle cx=\"12\" cy=\"8.6\" r=\"6.2\" fill=\"#d96bb0\"/><path d=\"M12 8.6a2.2 2.2 0 0 1 2.2-2.2 4.4 4.4 0 0 1 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M12 8.6a2.2 2.2 0 0 0-2.2 2.2 4.4 4.4 0 0 0 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"10.8\" y=\"14.4\" width=\"2.4\" height=\"7.4\" rx=\"1.2\" fill=\"#e3d9c6\"/>","gamepad":"<path d=\"M7.4 7.6h9.2a5.6 5.6 0 0 1 5.4 7l-.8 3a3.4 3.4 0 0 1-6-1.2l-.4-1.4H9.2l-.4 1.4a3.4 3.4 0 0 1-6 1.2l-.8-3a5.6 5.6 0 0 1 5.4-7z\" fill=\"#7d5bd6\"/><rect x=\"6\" y=\"11.4\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#fffdf9\"/><rect x=\"7.3\" y=\"10.1\" width=\"1.8\" height=\"4.4\" rx=\".9\" fill=\"#fffdf9\"/><circle cx=\"16\" cy=\"11.4\" r=\"1.3\" fill=\"#fffdf9\"/><circle cx=\"18.2\" cy=\"13.4\" r=\"1.3\" fill=\"#fffdf9\"/>","joystick":"<path d=\"M4.4 16.6h15.2l1.4 3.4a1.4 1.4 0 0 1-1.3 2H4.3a1.4 1.4 0 0 1-1.3-2z\" fill=\"#4a4136\"/><rect x=\"10.6\" y=\"6.6\" width=\"2.8\" height=\"10.4\" rx=\"1.4\" fill=\"#8d99ab\"/><circle cx=\"12\" cy=\"5.4\" r=\"3.4\" fill=\"#d94f4f\"/>","tv":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13\" rx=\"2.6\" fill=\"#4a4136\"/><rect x=\"4.6\" y=\"7.4\" width=\"14.8\" height=\"9\" rx=\"1.4\" fill=\"#9fc4f0\"/><path d=\"M8 2.6l4 3.2 4-3.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"7.6\" y=\"19.8\" width=\"8.8\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/>","drink":"<path d=\"M5.4 7.8h13.2l-1.4 12a2.6 2.6 0 0 1-2.6 2.3H9.4a2.6 2.6 0 0 1-2.6-2.3z\" fill=\"#d94f4f\"/><rect x=\"4.2\" y=\"5.4\" width=\"15.6\" height=\"3\" rx=\"1.5\" fill=\"#fffdf9\"/><path d=\"M14.6 5.4l2.2-3.8\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><rect x=\"7.4\" y=\"12\" width=\"9.2\" height=\"2\" rx=\"1\" fill=\"#f2a3a3\"/>","moon":"<path d=\"M13.6 2.8a9.4 9.4 0 1 0 7.6 13.6A9.4 9.4 0 0 1 13.6 2.8z\" fill=\"#f0b429\"/><circle cx=\"8.4\" cy=\"15.2\" r=\"1.6\" fill=\"#d4941a\"/><circle cx=\"11.6\" cy=\"18.4\" r=\"1.1\" fill=\"#d4941a\"/>","noodles":"<path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-17.2 0z\" fill=\"#d94f4f\"/><path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-.4 2.6H3.8a8.6 8.6 0 0 1-.4-2.6z\" fill=\"#fffdf9\"/><path d=\"M7.6 9.4c0-2.4 1.4-3.6 1.4-5.4M12 9.4c0-2.8 1.6-4 1.6-6M16.4 9.4c0-2.2 1.2-3.4 1.2-5\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","skate":"<path d=\"M5.2 4.6h5.2v7.6h5.4a4 4 0 0 1 4 4v1.6H5.2z\" fill=\"#d96bb0\"/><rect x=\"4\" y=\"17.2\" width=\"16.4\" height=\"2.2\" rx=\"1.1\" fill=\"#8d99ab\"/><circle cx=\"8\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/><circle cx=\"16.4\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/>","map":"<path d=\"M2.8 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><path d=\"M8.8 4l6.4 2.4v14.4L8.8 18.4z\" fill=\"#57b894\"/><path d=\"M15.2 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><circle cx=\"12\" cy=\"10.6\" r=\"2.4\" fill=\"#d94f4f\"/>","cards":"<rect x=\"3\" y=\"6.6\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#3f7bd8\" transform=\"rotate(-10 8 13.6)\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#fffdf9\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.3\"/><path d=\"M16 8l1.1 2.2 2.4.35-1.75 1.7.4 2.4-2.15-1.15-2.15 1.15.4-2.4-1.75-1.7 2.4-.35z\" fill=\"#d94f4f\"/>","fries":"<path d=\"M6.6 9.4h10.8l-1 9.6a2.6 2.6 0 0 1-2.6 2.4h-3.6a2.6 2.6 0 0 1-2.6-2.4z\" fill=\"#d94f4f\"/><rect x=\"5.6\" y=\"13\" width=\"12.8\" height=\"2.2\" rx=\"1.1\" fill=\"#fffdf9\"/><rect x=\"7.2\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/><rect x=\"10.8\" y=\"2.2\" width=\"2.4\" height=\"8.2\" rx=\"1.2\" fill=\"#f5c04a\"/><rect x=\"14.4\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/>","redbook":"<rect x=\"4\" y=\"3.4\" width=\"16\" height=\"17.2\" rx=\"2.6\" fill=\"#d94f4f\"/><rect x=\"4\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#a83b3b\"/><rect x=\"9.6\" y=\"7\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"9.6\" y=\"10.4\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/><rect x=\"9.6\" y=\"13.8\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/>","clapper":"<rect x=\"2.8\" y=\"9\" width=\"18.4\" height=\"11.6\" rx=\"2.4\" fill=\"#4a4136\"/><path d=\"M3.4 4.6l17-1.8.8 4.6-17 1.8z\" fill=\"#6b5f4e\"/><path d=\"M7 4.2l1.2 4.4M11.6 3.8l1.2 4.4M16.2 3.4l1.2 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\"/>","ferris":"<circle cx=\"12\" cy=\"10.4\" r=\"7.6\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.2\"/><path d=\"M12 2.8v15.2M4.4 10.4h15.2M6.6 5l10.8 10.8M17.4 5L6.6 15.8\" fill=\"none\" stroke=\"#6b9be8\" stroke-width=\"1.6\"/><circle cx=\"12\" cy=\"10.4\" r=\"2\" fill=\"#f0b429\"/><path d=\"M12 18l4.6 4H7.4z\" fill=\"#8d99ab\"/>","teddy":"<circle cx=\"6.4\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"17.6\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"6.4\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"17.6\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"12\" cy=\"13\" r=\"8\" fill=\"#8b6b4a\"/><ellipse cx=\"12\" cy=\"15.4\" rx=\"4.4\" ry=\"3.4\" fill=\"#c89a68\"/><circle cx=\"9.4\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><circle cx=\"14.6\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><ellipse cx=\"12\" cy=\"14\" rx=\"1.5\" ry=\"1.1\" fill=\"#4a4136\"/>"};
+const FTINT={"star":"#f5a623","flame":"#f0913a","dice":"#5b6cff","note":"#3f7bd8","piano":"#6b5f4e","run":"#2f8f6b","bag":"#d94f4f","pencil":"#e89b3c","brush":"#3f7bd8","broom":"#f0b429","hand":"#d9944f","book":"#7d5bd6","home":"#e8622c","plus":"#2f8f6b","gift":"#c2519a","bank":"#3f7bd8","receipt":"#7a8699","gear":"#8d99ab","sparkle":"#f5a623","minus":"#cc4b3c","check":"#2f8f6b","ban":"#d94f4f","warn":"#f0b429","bulb":"#f5c04a","cloud":"#8d99ab","refresh":"#2f8f6b","party":"#f0b429","box":"#8b6b4a","camera":"#6b5f4e","save":"#3f7bd8","key":"#f0b429","lock":"#f0b429","up":"#3f7bd8","down":"#3f7bd8","link":"#3f7bd8","theme":"#6b5f4e","calc":"#6b5f4e","trophy":"#f0b429","hundred":"#d94f4f","moneybag":"#f0b429","card":"#7d5bd6","kid":"#d96bb0","baby":"#6b9be8","calendar":"#d94f4f","clipboard":"#8b6b4a","books":"#3f7bd8","memo":"#f5c04a","point":"#d9944f","shield":"#3f7bd8","ticket":"#f0913a","bed":"#8b6b4a","ball":"#e8792c","rice":"#c89a68","twokids":"#3f7bd8","alarm":"#d94f4f","angry":"#d94f4f","snail":"#8b6b4a","phone":"#6b5f4e","monkey":"#8b6b4a","stop":"#d9944f","socks":"#3f7bd8","bomb":"#6b5f4e","cookie":"#c89a68","lolli":"#d96bb0","gamepad":"#7d5bd6","joystick":"#d94f4f","tv":"#6b5f4e","drink":"#d94f4f","moon":"#f0b429","noodles":"#d94f4f","skate":"#d96bb0","map":"#2f8f6b","cards":"#3f7bd8","fries":"#d94f4f","redbook":"#d94f4f","clapper":"#6b5f4e","ferris":"#3f7bd8","teddy":"#8b6b4a"};
+const E2F={"⭐":"star","🌟":"sparkle","🎲":"dice","🎁":"gift","🏦":"bank","🛡️":"shield","🎫":"ticket","📖":"book","✅":"check","👶":"baby","🔁":"refresh","🔄":"refresh","🔥":"flame","✎":"pencil","✏️":"pencil","💡":"bulb","🧹":"broom","🎉":"party","➕":"plus","➖":"minus","🧾":"receipt","☁️":"cloud","⚠️":"warn","📦":"box","🍪":"cookie","🎮":"gamepad","🕹️":"joystick","📚":"books","🏆":"trophy","🧮":"calc","👧":"kid","📅":"calendar","📋":"clipboard","⬇️":"down","⬆️":"up","🔑":"key","💾":"save","📷":"camera","🍭":"lolli","🎒":"bag","🪥":"brush","🙋":"hand","🛏️":"bed","🏀":"ball","🍚":"rice","🤝":"twokids","💯":"hundred","🧦":"socks","🐌":"snail","😤":"angry","📱":"phone","📝":"memo","🙈":"monkey","✋":"stop","👋":"stop","👏":"party","📺":"tv","🥤":"drink","🌙":"moon","🍜":"noodles","🛼":"skate","🗺️":"map","🎴":"cards","🍟":"fries","📕":"redbook","🎬":"clapper","📒":"note","🎡":"ferris","🎹":"piano","🏃":"run","🚫":"ban","🏠":"home","⚙️":"gear","🔗":"link","👆":"point","🔒":"lock","💰":"moneybag","💳":"card","🌓":"theme","💣":"bomb","🧸":"teddy","⏰":"alarm","💎":"sparkle","❓":"bulb","🏁":"star"};
+const FORDER=["star","sparkle","flame","dice","shield","ticket","trophy","hundred","check","ban","warn","plus","minus","note","piano","run","bag","pencil","brush","broom","hand","book","bed","ball","rice","twokids","alarm","books","memo","angry","snail","phone","monkey","stop","socks","bomb","cookie","lolli","fries","drink","noodles","gamepad","joystick","tv","cards","teddy","skate","map","ferris","moon","redbook","clapper","box","gift","bank","moneybag","card","calc","receipt","key","lock","home","gear","cloud","save","camera","refresh","calendar","clipboard","link","theme","up","down","party","bulb","point","kid","baby"];
+const FGRP=[["分數與狀態",13],["日常任務",16],["扣分",7],["獎勵品",18],["銀行",7],["系統",17]];
+function fi(n,cls){
+  const g=FLAT[n]; if(!g)return '';
+  return '<svg class="fx '+(cls||'')+'" style="--t:'+(FTINT[n]||'#8d99ab')+'" viewBox="0 0 24 24" aria-hidden="true">'+g+'</svg>';
+}
+/* 介面用圓潤扁平圖示；大富翁棋盤自己呼叫 pxi() 保留像素 */
+function px(e,cls){
+  if(!e)return '';
+  const n=E2F[e]||E2F[String(e).replace(/\uFE0F/g,'')];
+  return n?fi(n,cls):pxi(e,cls);
+}
+E2F['❌']='ban';E2F['✖️']='ban';E2F['🧽']='broom';E2F['✨']='sparkle';
+const F2E={};for(const e in E2F)if(!F2E[E2F[e]])F2E[E2F[e]]=e;
+const PXKEYS=FORDER.map(n=>F2E[n]).filter(Boolean);
 function icoField(id,val,label){
   val=val||'';
   return '<div class="f"><label>'+(label||'圖示')+'</label>'+
     '<input type="hidden" id="'+id+'" value="'+esc(val)+'">'+
     '<div class="icobox" data-ico="'+id+'">'+
       '<div class="icotop"><span class="icocur">'+px(val||'⭐')+'</span><u>點一下換圖示</u></div>'+
-      '<div class="icogrid">'+PXKEYS.map(k=>'<button type="button" class="icoi'+(k===val?' on':'')+'" data-ico-v="'+esc(k)+'">'+px(k)+'</button>').join('')+'</div>'+
+      '<div class="icogrid">'+(()=>{let h='',i=0;for(const[g,n]of FGRP){h+='<div class="icog">'+g+'</div>';
+        for(const k of PXKEYS.slice(i,i+n))h+='<button type="button" class="icoi'+(k===val?' on':'')+'" data-ico-v="'+esc(k)+'">'+px(k)+'</button>';
+        i+=n}return h})()+'</div>'+
     '</div></div>';
 }
 document.addEventListener('click',ev=>{
@@ -1179,6 +1240,8 @@ $('#tbtn').onclick=()=>{if(pendingUndo){pendingUndo();pendingUndo=null}$('#toast
 
 /* ---------------- 彈窗 ---------------- */
 function sheet(title,html,onOpen){
+  title=String(title).replace(/^([\u2190-\u27BF\u2B00-\u2BFF\uFE0F\u{1F300}-\u{1FAFF}]+)\s*/u,
+    (m,e)=>px(e.replace(/\uFE0F/g,''))+' ');
   $('#sheet').innerHTML='<div class="grab"></div><h3>'+title+'<button class="x" data-act="close">✕</button></h3>'+html;
   $('#scrim').classList.add('on');
   document.body.style.overflow='hidden';
@@ -1229,6 +1292,16 @@ function b64dec(b64){
   return new TextDecoder().decode(by);
 }
 const ghReady=()=>!!(GH.owner&&GH.repo&&GH.token);
+const ghVerified=()=>ghReady()&&GH.ok===true;
+function ghErr(what,st,body){
+  const where=GH.owner+'/'+GH.repo;
+  if(st===401)return 'Token 無效或已過期，請到 GitHub 重新產生一組';
+  if(st===403)return 'Token 權限不足（要開這個 repo 的 Contents: Read and write），或短時間內請求太多次';
+  if(st===404)return '找不到 '+where+'　請檢查帳號 / repo 名稱有沒有打錯，或 Token 有沒有授權這個 repo';
+  if(st===409||st===422)return '雲端同時被另一台裝置改過，請再按一次同步';
+  if(st>=500)return 'GitHub 伺服器忙碌（'+st+'），稍後再試';
+  return what+'（HTTP '+st+'）';
+}
 let syncState='idle', syncMsg='', pushTimer=null, pushing=false, needMedia=false;
 
 function setSync(s,msg){syncState=s;syncMsg=msg||'';paintSync()}
@@ -1253,7 +1326,7 @@ async function gh(path,opts){
 async function ghRead(path){
   const r=await gh(path);
   if(r.status===404)return{missing:true};
-  if(!r.ok)throw new Error('讀取失敗 '+r.status+' '+(await r.text()).slice(0,120));
+  if(!r.ok)throw new Error(ghErr('讀取失敗',r.status));
   const j=await r.json();
   shaCache[path]=j.sha;LS.set(K_SHA,shaCache);
   let data=null;
@@ -1274,7 +1347,7 @@ async function ghWrite(path,obj,msg,remerge){
     if(rem&&rem.data&&remerge)obj=remerge(rem.data);
     r=await gh(path,{method:'PUT',body:JSON.stringify(build(obj))});
   }
-  if(!r.ok)throw new Error('寫入失敗 '+r.status+' '+(await r.text()).slice(0,140));
+  if(!r.ok)throw new Error(ghErr('寫入失敗',r.status));
   const j=await r.json();
   shaCache[path]=j.content.sha;LS.set(K_SHA,shaCache);
 }
@@ -1378,7 +1451,7 @@ async function push(){
       await ghWrite(GH.mediaPath||'media.json',M,'圖片更新',rd=>{M=mergeMedia(M,rd);LS.set(K_MEDIA,M);return M});
       needMedia=false;
     }
-    dirty=false;LS.set(K_DIRTY,false);setSync('idle');render();
+    dirty=false;LS.set(K_DIRTY,false);if(!GH.ok){GH.ok=true;LS.set(K_GH,GH)}setSync('idle');render();
   }catch(e){
     setSync('err',e.message||String(e));
   }finally{pushing=false}
@@ -1391,6 +1464,7 @@ async function pull(quiet){
     if(rs.data){S=migrate(mergeState(S,rs.data));LS.set(K_STATE,S)}
     const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
     if(rm.data){M=mergeMedia(M,rm.data);LS.set(K_MEDIA,M)}
+    if(!GH.ok){GH.ok=true;LS.set(K_GH,GH)}
     setSync('idle');render();
     if(dirty)queuePush();
     if(!quiet)toast('已從 GitHub 取回最新資料');
@@ -1491,8 +1565,8 @@ function vHome(){
   const ks=live(S.kids);
   const today=startOfDay(),week=startOfWeek();
   let h='';
-  if(newBuild)h+='<div class="banner"><span style="font-size:20px">🚀</span><div><b>有新版本可以更新</b>目前 '+BUILD+' → '+esc(newBuild)+'<br><button class="btn sm pri" style="margin-top:8px" data-act="doupdate">重新載入更新</button></div></div>';
-  if(dupCount())h+='<div class="banner"><span style="font-size:20px">🧹</span><div><b>發現 '+dupCount()+' 項重複的預設資料</b>新裝置第一次連雲端時多出來的，可以安全清掉。<br><button class="btn sm pri" style="margin-top:8px" data-act="dup">整理一下</button></div></div>';
+  if(newBuild)h+='<div class="banner">'+px('🚀','big')+'<div><b>有新版本可以更新</b>目前 '+BUILD+' → '+esc(newBuild)+'<br><button class="btn sm pri" style="margin-top:8px" data-act="doupdate">重新載入更新</button></div></div>';
+  if(dupCount())h+='<div class="banner">'+px('🧹','big')+'<div><b>發現 '+dupCount()+' 項重複的預設資料</b>新裝置第一次連雲端時多出來的，可以安全清掉。<br><button class="btn sm pri" style="margin-top:8px" data-act="dup">整理一下</button></div></div>';
   h+='<div class="sec"><h2>今天</h2><span class="more" data-act="tab" data-v="score">去計分 →</span></div><div class="kidgrid">';
   if(!ks.length)h+='<div class="empty">'+px('👶','xl')+'還沒有小孩資料<br><button class="btn sm pri" style="margin-top:10px" data-act="editkid" data-id="">新增小孩</button></div>';
   for(const k of ks){
@@ -1519,7 +1593,7 @@ function vHome(){
       h+='<div class="rt"><div class="rthead">'+avatarHTML(k)+
         '<div class="nm">'+esc(k.name)+'</div>'+
         (stk>0?'<span class="flame">'+px('🔥')+' '+stk+' 天</span>':'')+
-        '<span class="dicep">🎲 '+diceOf(k.id)+'</span>'+
+        '<span class="dicep">'+px('🎲')+' '+diceOf(k.id)+'</span>'+
         '<span class="rtn">'+dn+'/'+rs.length+'</span></div><div class="rtrow">';
       for(const r of rs){
         h+='<button class="rtc '+(routineDone(k.id,r.id)?'on':'')+'" data-act="rt" data-id="'+r.id+'" data-kid="'+k.id+'">'+
@@ -1578,8 +1652,8 @@ function vReward(){
   if(ks.length)h+=kidChips(ks,x=>balanceOf(x.id));
   if(rwTab!=='shop'&&rwTab!=='cpn')rwTab='shop';
   h+='<div class="tabs" style="margin-top:12px">'+
-    '<button class="'+(rwTab==='shop'?'on':'')+'" data-act="rwtab" data-v="shop">🎁 獎勵品</button>'+
-    '<button class="'+(rwTab==='cpn'?'on':'')+'" data-act="rwtab" data-v="cpn">🎫 我的券'+
+    '<button class="'+(rwTab==='shop'?'on':'')+'" data-act="rwtab" data-v="shop">'+px('🎁')+' 獎勵品</button>'+
+    '<button class="'+(rwTab==='cpn'?'on':'')+'" data-act="rwtab" data-v="cpn">'+px('🎫')+' 我的券'+
       (open+wait?' <b>'+(open+wait)+'</b>':'')+'</button></div>';
   if(!selKid)return h+'<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
   return h+(rwTab==='shop'?vShop(ws):vCoupons());
@@ -1755,7 +1829,7 @@ function vBank(){
         '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+dd+' 可領'+(it?'（+'+it+'）':'')+'</div></div></div>'+
         '<div class="pg"><i style="width:'+pct+'%;background:'+(m?'var(--good)':'var(--brand)')+'"></i></div>'+
         (!m&&need&&balanceOf(selKid)>=need
-          ?'<div style="font-size:11.5px;color:var(--gold);font-weight:800;margin-top:8px">💡 再加存 '+need+' 小分 → 到期可領 '+(sv.amount+need+interestFor(sv.amount+need,sv.days))+'（+'+interestFor(sv.amount+need,sv.days)+'）</div>':'')+
+          ?'<div style="font-size:11.5px;color:var(--gold);font-weight:800;margin-top:8px">'+px('💡')+' 再加存 '+need+' 小分 → 到期可領 '+(sv.amount+need+interestFor(sv.amount+need,sv.days))+'（+'+interestFor(sv.amount+need,sv.days)+'）</div>':'')+
         '<div class="row" style="margin-top:10px">'+
         (m?'<button class="btn good sm" data-act="claim" data-id="'+sv.id+'">領回 '+(sv.amount+it)+' 小分</button>'
           :'<button class="btn sm pri" data-act="topup" data-id="'+sv.id+'">＋ 加存</button>')+
@@ -1804,7 +1878,7 @@ function tileDesc(t){
 }
 function tileSheet(i){
   const t=tileAt(i),ks=live(S.kids).filter(k=>gp(k.id).pos===((i%TN)+TN)%TN);
-  sheet(px(t.emoji)+' 第 '+((i<10?'0':'')+i)+' 格 ・ '+esc(t.label),
+  sheet(pxi(t.emoji)+' 第 '+((i<10?'0':'')+i)+' 格 ・ '+esc(t.label),
     '<div class="f" style="line-height:1.9;font-size:14px">'+tileDesc(t)+'</div>'+
     (ks.length?'<div class="f hint">現在站在這格：'+ks.map(k=>esc(k.name)).join('、')+'</div>':'')+
     '<button class="btn wide" style="margin-top:4px" data-act="ghelp">'+px('📖')+' 看完整玩法</button>'+
@@ -1825,7 +1899,7 @@ function gameHelpSheet(){
       '棋盤只會影響遊戲裡的分數，<b class="ib">爸媽的扣分護盾擋不掉</b>。<br>'+
       '長按任何一格，就會跳出那一格的說明。</div>'+
     '<div class="sec"><h2>每一格是什麼</h2></div><div class="list">'+
-      S.game.tiles.map(t=>'<div class="evt"><span class="e">'+px(t.emoji)+'</span><b>'+esc(t.label)+'</b>'+
+      S.game.tiles.map(t=>'<div class="evt"><span class="e">'+pxi(t.emoji)+'</span><b>'+esc(t.label)+'</b>'+
         '<span style="flex:1;text-align:right;color:var(--muted);font-size:11.5px">'+tileDesc(t).replace(/<[^>]+>/g,'').slice(0,22)+'…</span></div>').join('')+
     '</div><button class="btn pri wide" style="margin-top:12px" data-act="close">好</button>');
 }
@@ -1836,7 +1910,7 @@ function vGame(){
   const me=kid(selKid),p=gp(selKid),dc=diceOf(selKid);
   let h=kidChips(ks,x=>px('🎲')+diceOf(x.id));
 
-  h+='<div class="board">';
+  h+='<div class="console"><div class="screen"><div class="board">';
   for(let i=0;i<TN;i++){
     const t=tileAt(i),[r,c]=BPOS[i];
     const corner=(i===0||i===6||i===10||i===16);
@@ -1844,15 +1918,15 @@ function vGame(){
     for(const k of ks)if(gp(k.id).pos===i){toks+=tokenHTML(k,n?'t2':'');n++}
     h+='<div class="tl '+(corner?'corner':'')+(p.pos===i?' here':'')+'" data-i="'+i+'" style="grid-row:'+r+';grid-column:'+c+'">'+
       '<span class="n">'+(i<10?'0':'')+i+'</span>'+
-      '<span class="e">'+px(t.emoji)+'</span><span class="l">'+esc(t.label)+'</span>'+toks+'</div>';
+      '<span class="e">'+pxi(t.emoji)+'</span><span class="l">'+esc(t.label)+'</span>'+toks+'</div>';
   }
   h+='<div class="mid">'+
-    '<div style="font-size:10.5px;color:var(--muted);font-weight:750;letter-spacing:1px">剩下 '+dc+' 顆骰子</div>'+
+    '<div class="dcnt">剩下 <b>'+dc+'</b> 顆骰子</div>'+
     dieHTML(S.game.lastRoll||1)+
     '<button class="btn pri" style="min-height:44px;padding:0 20px" data-act="roll">'+
-      (p.pause>0?px('⏸️')+' 暫停中':px('🎲')+' 擲骰子')+'</button>'+
-    '<div style="font-size:9.5px;color:var(--muted)">第 '+(p.laps+1)+' 圈 ・ 第 '+((p.pos<10?'0':'')+p.pos)+' 格</div>'+
-    '</div></div>';
+      (p.pause>0?pxi('⏸️')+' 暫停中':pxi('🎲')+' 擲骰子')+'</button>'+
+    '<div class="dpos">第 '+(p.laps+1)+' 圈 ・ 第 '+((p.pos<10?'0':'')+p.pos)+' 格</div>'+
+    '</div></div></div></div>';
 
   h+='<div class="gbar">'+
     '<span>'+px('🚀')+' 繞完一圈 <b>+'+lapBonus()+' 小分</b></span>'+
@@ -1887,7 +1961,7 @@ function rollResult(kidId,d,ctx){
     act='<div class="banner" style="margin-top:14px">'+px('🛡️','big')+'<div>'+
         '<b>要用護盾擋掉嗎？</b>'+esc(b.label)+'　你手上還有 <b class="ib">'+n+'</b> 張護盾券，用掉一張就沒事。</div></div>'+
       '<div class="row" style="margin-top:10px">'+
-      '<button class="btn good" data-act="useshield">🛡️ 用護盾擋掉</button>'+
+      '<button class="btn good" data-act="useshield">'+px('🛡️')+' 用護盾擋掉</button>'+
       '<button class="btn bad" data-act="takehit">'+(b.kind==='trap'?'認了，扣 '+b.value+' 小分':'不用，照做')+'</button></div>';
   }else if(ctx.task){
     act='<div class="banner" style="margin-top:14px">'+px('😈','big')+'<div><b>'+esc(ctx.task.label)+'</b>做完了就按下面領分數。</div></div>'+
@@ -1929,7 +2003,7 @@ function rewardCard(w){
     (isItemReward(w)&&selKid&&w.price>budgetAvail(selKid)
       ?'<div class="stock" style="color:var(--gold);font-weight:800">額度不足（剩 NT$'+budgetAvail(selKid)+'）</div>':'')+
     '<div class="who">'+live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id))
-      .map(k=>'<span class="pill '+(balanceOf(k.id)>=cost?'yes':'')+'">'+esc(k.name.slice(0,4))+'</span>').join('')+'</div>'+
+      .map(k=>'<span class="pill '+(balanceOf(k.id)>=cost?'yes':'')+'">'+esc(k.name.slice(0,6))+'</span>').join('')+'</div>'+
     '</div></div></button>';
 }
 
@@ -2103,7 +2177,7 @@ function vSet(){
     sw('tgredeem','兌換獎勵需密碼','兌換時要家長輸入密碼',st.pinForRedeem)+
     '</div>';
   h+='<div class="sec"><h2>雲端同步（GitHub）</h2></div><div class="list">'+
-    nav('ghsetup','☁️','GitHub 連線設定',ghReady()?GH.owner+'/'+GH.repo+' · '+GH.path:'尚未設定',ghReady()?'已連線':'未設定')+
+    nav('ghsetup','☁️','GitHub 連線設定',ghReady()?GH.owner+'/'+GH.repo+' · '+GH.path:'尚未設定',ghVerified()?'已連線':(ghReady()?'未驗證':'未設定'))+
     nav('dup','🧹','整理重複的預設資料',dupCount()?'找到 '+dupCount()+' 項沒用過的重複資料':'目前沒有重複資料',dupCount()||'')+
     nav('ghpull','⬇️','立即從雲端取回','以雲端資料為準合併')+
     nav('ghpush','⬆️','立即上傳到雲端',dirty?'有未上傳的變更':'目前已同步')+
@@ -2393,23 +2467,39 @@ function readGhForm(){
   return{owner:$('#go').value.trim(),repo:$('#gr').value.trim(),branch:$('#gb').value.trim()||'main',
     path:$('#gp').value.trim()||'data.json',mediaPath:$('#gm').value.trim()||'media.json',token:$('#gt').value.trim()};
 }
+async function ghCheck(g){
+  // 回傳 {ok:true, name, priv} 或 {ok:false, msg}
+  if(!g.owner||!g.repo||!g.token)return{ok:false,msg:'帳號、repo、token 都要填'};
+  const where=g.owner+'/'+g.repo;
+  let r;
+  try{
+    r=await fetch('https://api.github.com/repos/'+g.owner+'/'+g.repo,
+      {cache:'no-store',headers:{'Authorization':'Bearer '+g.token,'Accept':'application/vnd.github+json',
+        'X-GitHub-Api-Version':'2022-11-28'}});
+  }catch(e){return{ok:false,msg:'連不上網路，請確認連線後再試'}}
+  if(r.status===401)return{ok:false,msg:'Token 無效或已過期，請到 GitHub 重新產生一組'};
+  if(r.status===403)return{ok:false,msg:'Token 權限不足（要開這個 repo 的 Contents: Read and write）'};
+  if(r.status===404)return{ok:false,msg:'找不到 '+where+'　請檢查帳號 / repo 名稱有沒有打錯，或 Token 有沒有授權這個 repo'};
+  if(!r.ok)return{ok:false,msg:'GitHub 回了 HTTP '+r.status+'，稍後再試'};
+  const j=await r.json();
+  if(j.permissions&&j.permissions.push===false)
+    return{ok:false,msg:'這個 Token 只能讀不能寫，請改成 Contents: Read and write'};
+  return{ok:true,name:j.full_name,priv:!!j.private};
+}
 async function ghTest(){
+  const msg=$('#gmsg');msg.innerHTML='檢查中…';
+  const res=await ghCheck(readGhForm());
+  msg.innerHTML=res.ok
+    ? '<b style="color:var(--good)">'+px('✅')+' 連線成功</b>　'+esc(res.name)+(res.priv?'（私有）':'（公開）')
+    : '<b class="danger">'+px('❌')+' '+esc(res.msg)+'</b>';
+}
+async function ghSave(){
   const g=readGhForm(),msg=$('#gmsg');
   msg.innerHTML='檢查中…';
-  if(!g.owner||!g.repo||!g.token){msg.innerHTML='<b class="danger">帳號、repo、token 都要填</b>';return}
-  try{
-    const r=await fetch('https://api.github.com/repos/'+g.owner+'/'+g.repo,
-      {headers:{'Authorization':'Bearer '+g.token,'Accept':'application/vnd.github+json'}});
-    if(r.status===401)throw new Error('Token 無效或已過期');
-    if(r.status===404)throw new Error('找不到這個 repo（名稱錯、或 token 沒有授權這個 repo）');
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const j=await r.json();
-    msg.innerHTML='<b style="color:var(--good)">✅ 連線成功</b>　'+esc(j.full_name)+(j.private?'（私有）':'（公開）');
-  }catch(e){msg.innerHTML='<b class="danger">✗ '+esc(e.message)+'</b>'}
-}
-function ghSave(){
-  GH=readGhForm();LS.set(K_GH,GH);shaCache={};LS.set(K_SHA,{});
-  closeSheet();toast('已儲存，開始同步');pull(true).then(()=>{if(dirty)push()});
+  const res=await ghCheck(g);
+  if(!res.ok){msg.innerHTML='<b class="danger">'+px('❌')+' '+esc(res.msg)+'</b><div class="hint" style="margin-top:6px">還沒儲存，改好再按一次。</div>';return}
+  GH=Object.assign(g,{ok:true});LS.set(K_GH,GH);shaCache={};LS.set(K_SHA,{});
+  closeSheet();toast('連線成功，開始同步');pull(true).then(()=>{if(dirty)push()});
 }
 function setPinSheet(){
   sheet('🔑 家長密碼',
@@ -2705,7 +2795,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,merg
   deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
   rollDice,gp,tileAt,step,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
-  px,PXKEYS,icoField,editRule,editRw,editRt,editKid,toggleRoutine,
+  px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
   pull,push,checkUpdate,dupFind,dupCount,dupClean,migrate,BUILD,
   get newBuild(){return newBuild},set newBuild(v){newBuild=v},
   rarityOf:w=>rarity(toSmall(w.unit,w.amount)),
