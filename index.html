@@ -228,6 +228,11 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .die i{width:11px;height:11px;border-radius:50%;background:transparent}
 .die i.on{background:var(--bg)}
 .die.roll{animation:shake .45s ease}
+.die.spin{animation:dspin .26s linear infinite}
+@keyframes dspin{from{transform:rotate(0deg) scale(1.08)}to{transform:rotate(360deg) scale(1.08)}}
+.die.pop{animation:dpop .32s cubic-bezier(.2,1.5,.4,1)}
+@keyframes dpop{0%{transform:scale(1.35)}100%{transform:scale(1)}}
+.mid.rolling .btn.pri{opacity:.45;pointer-events:none}
 @keyframes shake{25%{transform:rotate(-14deg) scale(1.06)}50%{transform:rotate(12deg) scale(.96)}75%{transform:rotate(-7deg)}}
 .evt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
 .evt:last-child{border-bottom:0}
@@ -578,7 +583,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v11.1・2026-09-12';
+const BUILD='v11.2・2026-09-12';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -681,7 +686,7 @@ function defaultTiles(){return [
  {i:9, type:'lucky',    label:'幽浮',   emoji:'🛸'},
  {i:10,type:'chance',   label:'機會',   emoji:'❓'},
  {i:11,type:'point',    label:'+1',    emoji:'⭐', value:1},
- {i:12,type:'coupon',   label:'晚睡',   emoji:'🌙', reward:'晚睡 30 分券'},
+ {i:12,type:'coupon',   label:'晚餐',   emoji:'🍜', reward:'今天晚餐我決定券'},
  {i:13,type:'chance',   label:'機會',   emoji:'❓'},
  {i:14,type:'back',     label:'引力井', emoji:'⏪', value:2},
  {i:15,type:'move',     label:'加速',   emoji:'⏩', value:3},
@@ -711,7 +716,7 @@ function defaultCards(){return {
   {t:'pause',     label:'暫停一次骰子'},
   {t:'nocoupon',  label:'這回合不能領券'}
  ],
- lucky:['小零食券','看卡通 1 集券','遊戲時間 10 分券','晚睡 30 分券',
+ lucky:['小零食券','看卡通 1 集券','遊戲時間 10 分券','遊戲時間 20 分券',
         '今天晚餐我決定券','選假日去哪玩券','免扣分護盾券']
 }}
 function seed(){
@@ -722,7 +727,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:10, seeded:true,
+    schema:11, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -967,9 +972,9 @@ function migrate(S){
 
     S.schema=9;
   }
-  if(S.schema<10){   // 倒退不再觸發落點；棋盤上的券改成真的有對應的獎勵
+  if(S.schema<11){   // 倒退不再觸發落點；棋盤的券換成真的有對應的獎勵
     S.game.tiles=defaultTiles(); S.game.cards=defaultCards(); S.game.updatedAt=now();
-    S.schema=10;
+    S.schema=11;
   }
   return S;
 }
@@ -1064,6 +1069,7 @@ function gp(kidId){
   if(!S.game.players[kidId])S.game.players[kidId]={pos:0,laps:0,rollsUsed:0,pause:0,updatedAt:now()};
   const p=S.game.players[kidId];
   if(p.pos==null)p.pos=0; if(p.laps==null)p.laps=0; if(p.rollsUsed==null)p.rollsUsed=0; if(p.pause==null)p.pause=0;
+  if(p.lastRoll==null)p.lastRoll=S.game.lastRoll||1;
   return p;
 }
 function tileAt(i){return S.game.tiles[((i%TN)+TN)%TN]}
@@ -1197,10 +1203,32 @@ function rollDice(kidId){
   p.rollsUsed++;touch(p);
   const ctx={log:[],chain:0,reroll:false,noCoupon:false,task:null,pendingBad:null};
   step(kidId,d,ctx);
-  S.game.updatedAt=now();
-  buzz(35);beep(ctx.log.some(e=>e.delta<0)?'bad':'good');
+  p.lastRoll=d; S.game.updatedAt=now();
+  buzz(35);
   save();
-  rollResult(kidId,d,ctx);
+  spinDie(d,()=>{beep(ctx.log.some(e=>e.delta<0)?'bad':'good');rollResult(kidId,d,ctx)});
+}
+const DFACE={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+let spinning=false;
+function spinDie(final,done){
+  const el=$('.mid .die'), box=$('.mid');
+  if(!el||spinning)return done();
+  spinning=true; if(box)box.classList.add('rolling');
+  const face=n=>{const on=DFACE[n]||[4];
+    [...el.children].forEach((i,k)=>i.className=on.indexOf(k)>=0?'on':'')};
+  const gaps=[55,55,60,70,82,96,113,134,160,192,235];
+  let i=0;
+  const step1=()=>{
+    if(i>=gaps.length){
+      el.classList.remove('spin');el.classList.add('pop');face(final);buzz(50);
+      setTimeout(()=>{el.classList.remove('pop');spinning=false;
+        if(box)box.classList.remove('rolling');done()},280);
+      return;
+    }
+    face(1+Math.floor(Math.random()*6)); tick(880+i*62);
+    setTimeout(step1,gaps[i++]);
+  };
+  el.classList.add('spin'); step1();
 }
 const DAYMS=86400000;
 const plans=()=>S.settings.plans||[];
@@ -2102,7 +2130,7 @@ function vGame(){
   }
   h+='<div class="mid">'+
     '<div class="dcnt">剩下 <b>'+dc+'</b> 顆骰子</div>'+
-    dieHTML(S.game.lastRoll||1)+
+    dieHTML(p.lastRoll||1)+
     '<button class="btn pri" style="min-height:44px;padding:0 20px" data-act="roll">'+
       (p.pause>0?pxi('⏸️')+' 暫停中':pxi('🎲')+' 擲骰子')+'</button>'+
     '<div class="dpos">第 '+(p.laps+1)+' 圈 ・ 第 '+((p.pos<10?'0':'')+p.pos)+' 格</div>'+
@@ -2175,7 +2203,7 @@ function runSlot(dr,onDone){
   },{once:true});
 }
 function rollResult(kidId,d,ctx){
-  S.game.lastRoll=d;
+  S.game.lastRoll=d; gp(kidId).lastRoll=d;
   gPending={kidId,ctx};
   const p=gp(kidId),k=kid(kidId);
   const evts=ctx.log.map(e=>'<div class="evt"><span class="e">'+px(e.emoji||'⭐')+'</span><b>'+esc(e.label)+'</b>'+
@@ -2798,7 +2826,7 @@ document.addEventListener('click',async ev=>{
       const ctx2={log:[],chain:g.ctx.chain,reroll:false,noCoupon:g.ctx.noCoupon,task:null,pendingBad:null};
       applyBad(g.kidId,b,ctx2);
       S.game.updatedAt=now();buzz(120);beep('bad');save();
-      return rollResult(g.kidId,S.game.lastRoll||1,ctx2)}
+      return rollResult(g.kidId,gp(g.kidId).lastRoll||1,ctx2)}
     case 'taskdone':{const g=gPending;if(!g||!g.ctx.task)return closeSheet();
       gPts(g.kidId,g.ctx.task.value,'命運任務：'+g.ctx.task.label,'😈',[]);
       gPending=null;closeSheet();buzz(40);beep('big');save();return toast('👏 完成任務 +'+g.ctx.task.value)}
