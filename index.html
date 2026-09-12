@@ -233,6 +233,14 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .evt:last-child{border-bottom:0}
 .evt .e{font-size:19px;flex:0 0 auto}
 .evt b{flex:1;font-size:13.5px;font-weight:700;line-height:1.35}
+.evt b .sub{display:block;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.5;margin-top:2px}
+.evt b u.tn{text-decoration:none;font-size:11px;color:var(--muted);font-weight:800}
+.cfx{flex:0 0 auto;font-size:10.5px;font-weight:850;padding:2px 8px;border-radius:999px}
+.cfx.p{background:var(--good-soft);color:var(--good)}
+.cfx.n{background:var(--bad-soft);color:var(--bad)}
+.cfx.t{background:var(--gold-soft);color:var(--gold)}
+.cfx.m{background:var(--surface2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.sec h2 svg{width:15px;height:15px;vertical-align:-.18em;margin-right:3px}
 /* 銀行 */
 .tier{padding:12px 13px;border-radius:var(--r-sm);background:var(--surface);border:2px solid var(--line);box-shadow:var(--shadow)}
 .tier.best{border-color:var(--gold)}
@@ -484,6 +492,33 @@ svg.px .po{fill:var(--pxo,#121d38);opacity:.92}
 .mid .die{width:62px;height:62px;border-radius:6px;background:#eef4ff;padding:9px;box-shadow:0 4px 0 #8a9cc4}
 .mid .die i{width:10px;height:10px;border-radius:2px}
 .mid .die i.on{background:#141c2e}
+/* ---- 機會 / 命運拉霸 ---- */
+.slot{border-radius:18px;padding:7px;margin:0 0 14px;background:var(--bezel);
+  box-shadow:var(--shadow),inset 0 2px 0 rgba(255,255,255,.32);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.slots{border-radius:12px;padding:8px;background:#070b16;border:2px solid #1d2947;background-image:
+  radial-gradient(1px 1px at 14% 16%,#6f83b8,transparent),
+  radial-gradient(1px 1px at 68% 22%,#4f5f8d,transparent),
+  radial-gradient(1.5px 1.5px at 86% 72%,#7d92c9,transparent),
+  radial-gradient(1px 1px at 26% 82%,#55689a,transparent),
+  radial-gradient(240px 180px at 50% 50%,rgba(176,108,255,.18),transparent 70%)}
+.slth{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:850;
+  letter-spacing:2px;color:#8fa4cd;padding:2px 0 8px}
+.slth svg{width:16px;height:16px}
+.slotw{position:relative;height:138px;overflow:hidden;border-radius:6px;background:#0c1324;border:2px solid #24314f}
+.slotw::before,.slotw::after{content:"";position:absolute;left:0;right:0;height:38px;z-index:2;pointer-events:none}
+.slotw::before{top:0;background:linear-gradient(#0c1324,rgba(12,19,36,0))}
+.slotw::after{bottom:0;background:linear-gradient(rgba(12,19,36,0),#0c1324)}
+.reel{will-change:transform}
+.reel div{height:46px;display:flex;align-items:center;justify-content:center;padding:0 10px;
+  font-size:13px;font-weight:800;line-height:1.25;text-align:center;color:#7e93bd}
+.slotline{position:absolute;left:5px;right:5px;top:46px;height:46px;z-index:3;pointer-events:none;
+  border-top:2px solid #ffc93c;border-bottom:2px solid #ffc93c;border-radius:3px}
+.slotmsg{padding:8px 4px 1px;text-align:center;font-size:11.5px;font-weight:750;color:#6a7ea8;letter-spacing:.4px}
+.slot.done .reel div.hit{color:#fff}
+.slot.done .slotline{box-shadow:0 0 20px rgba(255,201,60,.55),inset 0 0 14px rgba(255,201,60,.18)}
+.slot.done .slotmsg{color:#ffd76a;font-size:13px;font-weight:850}
+.drawrest{opacity:0;transform:translateY(10px);transition:opacity .3s ease,transform .3s ease}
+.drawrest.on{opacity:1;transform:none}
 .tl{border-width:2px}
 .tl.here{box-shadow:0 0 0 2px var(--gold),0 0 16px color-mix(in srgb,var(--gold) 45%,transparent)}
 nav{border-top:2px solid var(--line)}
@@ -540,7 +575,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v10・2026-09-11';
+const BUILD='v10.1・2026-09-12';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1009,11 +1044,13 @@ function landOn(kidId,idx,ctx){
     case 'chance': {
       const c=pick(S.game.cards.chance);
       gLog({emoji:'❓',label:'機會：'+c.label,delta:0,card:'chance'},L);
+      if(!ctx.drawn)ctx.drawn={deck:'chance',card:c};
       return applyCard(kidId,c,ctx);
     }
     case 'fate': {
       const c=pick(S.game.cards.fate);
       gLog({emoji:'😈',label:'命運：'+c.label,delta:0,card:'fate'},L);
+      if(!ctx.drawn)ctx.drawn={deck:'fate',card:c};
       return applyCard(kidId,c,ctx);
     }
   }
@@ -1225,6 +1262,16 @@ function beep(kind){
       const t=AC.currentTime+d;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.16,t+.012);
       g.gain.exponentialRampToValueAtTime(.0005,t+.2);o.start(t);o.stop(t+.22);
     }
+  }catch(e){}
+}
+function tick(f){
+  if(!S.settings.sound)return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    const o=AC.createOscillator(),g=AC.createGain();
+    o.type='square';o.frequency.value=f||1200;o.connect(g);g.connect(AC.destination);
+    const t=AC.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.045,t+.004);
+    g.gain.exponentialRampToValueAtTime(.0004,t+.05);o.start(t);o.stop(t+.06);
   }catch(e){}
 }
 function toast(msg,undoFn){
@@ -1884,6 +1931,24 @@ function tileSheet(i){
     '<button class="btn wide" style="margin-top:4px" data-act="ghelp">'+px('📖')+' 看完整玩法</button>'+
     '<button class="btn pri wide" style="margin-top:8px" data-act="close">知道了</button>');
 }
+function uniqTiles(){
+  const m=new Map();
+  for(const t of S.game.tiles){
+    const k=t.type+'|'+t.label;
+    if(m.has(k))m.get(k)[1]++; else m.set(k,[t,1]);
+  }
+  return [...m.values()];
+}
+const CARDFX={reroll:['🔁','好'],goto:['⏩','好'],point:['⭐','好'],shield:['🛡️','好'],
+  coupon:['🎫','好'],swap:['🌀','中'],task:['😈','任務'],back:['⏪','壞'],pause:['⏸️','壞'],nocoupon:['🚫','壞']};
+function cardList(emoji,name,cards,note){
+  const row=c=>{const f=CARDFX[c.t]||['⭐','好'];
+    return '<div class="evt"><span class="e">'+pxi(f[0])+'</span><b>'+esc(c.label)+'</b>'+
+      '<span class="cfx '+(f[1]==='壞'?'n':f[1]==='任務'?'t':f[1]==='中'?'m':'p')+'">'+f[1]+'</span></div>'};
+  return '<div class="sec"><h2>'+pxi(emoji)+' '+name+'（'+cards.length+' 張）</h2></div>'+
+    '<div class="f hint" style="margin:-4px 0 8px">'+note+'</div>'+
+    '<div class="list">'+cards.map(row).join('')+'</div>';
+}
 function gameHelpSheet(){
   const per=Math.max(1,S.settings.dicePerPoints|0||5);
   const li=(e,b,d)=>'<div class="evt"><span class="e">'+px(e)+'</span><b>'+b+'</b><span style="flex:1;text-align:right;color:var(--muted);font-size:12px">'+d+'</span></div>';
@@ -1899,8 +1964,14 @@ function gameHelpSheet(){
       '棋盤只會影響遊戲裡的分數，<b class="ib">爸媽的扣分護盾擋不掉</b>。<br>'+
       '長按任何一格，就會跳出那一格的說明。</div>'+
     '<div class="sec"><h2>每一格是什麼</h2></div><div class="list">'+
-      S.game.tiles.map(t=>'<div class="evt"><span class="e">'+pxi(t.emoji)+'</span><b>'+esc(t.label)+'</b>'+
-        '<span style="flex:1;text-align:right;color:var(--muted);font-size:11.5px">'+tileDesc(t).replace(/<[^>]+>/g,'').slice(0,22)+'…</span></div>').join('')+
+      uniqTiles().map(([t,n])=>'<div class="evt"><span class="e">'+pxi(t.emoji)+'</span>'+
+        '<b>'+esc(t.label)+(n>1?' <u class="tn">×'+n+'</u>':'')+'<span class="sub">'+tileDesc(t).replace(/<[^>]+>/g,'')+'</span></b></div>').join('')+
+    '</div>'+
+    cardList('❓','機會卡',S.game.cards.chance,'停在「機會」格會抽一張，抽到哪張看運氣')+
+    cardList('👽','命運卡',S.game.cards.fate,'停在「外星人」格會抽一張，有好有壞')+
+    '<div class="sec"><h2>'+pxi('🛸')+' 幽浮會掉的券（'+S.game.cards.lucky.length+' 種）</h2></div>'+
+    '<div class="f hint" style="margin:-4px 0 8px">停在「幽浮」格會隨機掉一張</div><div class="list">'+
+      S.game.cards.lucky.map(x=>'<div class="evt"><span class="e">'+pxi('🎫')+'</span><b>'+esc(x)+'</b></div>').join('')+
     '</div><button class="btn pri wide" style="margin-top:12px" data-act="close">好</button>');
 }
 function vGame(){
@@ -1948,6 +2019,52 @@ function vGame(){
   }
   return h+'<div style="height:20px"></div>';
 }
+/* ---- 機會 / 命運：拉霸抽卡 ---- */
+const SLOT_MS=3600, SLOT_H=46, SLOT_LOOPS=4;
+const deckOf=k=>(k==='fate'?S.game.cards.fate:S.game.cards.chance);
+const isBadCard=c=>/^(back|pause|nocoupon)$/.test(c.t||'');
+function slotHTML(dr){
+  const isF=dr.deck==='fate', d=deckOf(dr.deck), n=d.length;
+  let hit=d.findIndex(c=>c.label===dr.card.label); if(hit<0)hit=0;
+  const end=SLOT_LOOPS*n+hit;
+  let rows='';
+  for(let i=0;i<=end+2;i++)rows+='<div'+(i===end?' class="hit"':'')+'>'+esc(d[i%n].label)+'</div>';
+  return '<div class="slot" id="slot" data-end="'+end+'">'+
+    '<div class="slots">'+
+      '<div class="slth">'+pxi(isF?'👽':'❓')+(isF?'命運卡':'機會卡')+'</div>'+
+      '<div class="slotw"><div class="reel" id="reel">'+rows+'</div><div class="slotline"></div></div>'+
+      '<div class="slotmsg" id="slotmsg">抽卡中…　點一下跳過</div>'+
+    '</div></div>';
+}
+function runSlot(dr,onDone){
+  const slot=$('#slot'),reel=$('#reel');
+  if(!slot||!reel)return onDone();
+  const end=+slot.dataset.end||0, y=r=>-(r-1)*SLOT_H;
+  let timers=[],done=false;
+  const land=()=>{
+    if(done)return; done=true;
+    timers.forEach(clearTimeout); timers=[];
+    slot.classList.add('done');
+    const m=$('#slotmsg'); if(m)m.textContent=dr.card.label;
+    buzz(70); beep(isBadCard(dr.card)?'bad':'big');
+    onDone();
+  };
+  reel.style.transform='translateY('+y(1)+'px)';
+  requestAnimationFrame(()=>{
+    reel.style.transition='transform '+SLOT_MS+'ms cubic-bezier(.08,.62,.12,1)';
+    reel.style.transform='translateY('+y(end)+'px)';
+  });
+  const N=22;
+  for(let i=1;i<=N;i++)timers.push(setTimeout(()=>tick(1480-i*26),SLOT_MS*(1-Math.pow(1-i/N,2.6))));
+  timers.push(setTimeout(land,SLOT_MS+140));
+  slot.addEventListener('click',()=>{                 // 等不及可以點一下直接開
+    if(done)return;
+    timers.forEach(clearTimeout); timers=[];
+    reel.style.transition='transform .26s cubic-bezier(.2,.85,.3,1)';
+    reel.style.transform='translateY('+y(end)+'px)';
+    setTimeout(land,280);
+  },{once:true});
+}
 function rollResult(kidId,d,ctx){
   S.game.lastRoll=d;
   gPending={kidId,ctx};
@@ -1973,9 +2090,20 @@ function rollResult(kidId,d,ctx){
   }else{
     act='<button class="btn pri wide" style="margin-top:14px" data-act="close">好</button>';
   }
-  sheet('🎲 擲出 '+d+' 點',
-    '<div style="display:flex;justify-content:center;margin:-4px 0 14px">'+dieHTML(d,true)+'</div>'+
-    '<div class="list">'+evts+'</div>'+act);
+  const die='<div style="display:flex;justify-content:center;margin:-4px 0 14px">'+dieHTML(d,true)+'</div>';
+  const rest='<div class="list">'+evts+'</div>'+act;
+  if(ctx.drawn){
+    const dr=ctx.drawn;
+    sheet('🎲 擲出 '+d+' 點', die+slotHTML(dr)+'<div class="drawrest" id="drawrest"></div>',
+      ()=>runSlot(dr,()=>{
+        const r=$('#drawrest'); if(!r)return;
+        r.innerHTML=rest;
+        requestAnimationFrame(()=>{r.classList.add('on');
+          const sh=$('#sheet'); if(sh)sh.scrollTo({top:sh.scrollHeight,behavior:'smooth'})});
+      }));
+    return;
+  }
+  sheet('🎲 擲出 '+d+' 點', die+rest);
 }
 function cpnSheet(id){
   const c=S.coupons.find(x=>x.id===id);if(!c)return;
@@ -2793,7 +2921,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,merg
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
   deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
-  rollDice,gp,tileAt,step,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
+  rollDice,gp,tileAt,step,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
   pull,push,checkUpdate,dupFind,dupCount,dupClean,migrate,BUILD,
