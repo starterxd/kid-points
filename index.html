@@ -500,7 +500,7 @@ svg.px .po{fill:var(--pxo,#121d38);opacity:.92}
 .mid .die{width:62px;height:62px;border-radius:6px;background:#eef4ff;padding:9px;box-shadow:0 4px 0 #8a9cc4}
 .mid .die i{width:10px;height:10px;border-radius:2px}
 .mid .die i.on{background:#141c2e}
-/* ---- 機會 / 命運拉霸 ---- */
+/* ---- 訊號 / 命運拉霸 ---- */
 .slot{border-radius:18px;padding:7px;margin:0 0 14px;background:var(--bezel);
   box-shadow:var(--shadow),inset 0 2px 0 rgba(255,255,255,.32);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .slots{border-radius:12px;padding:8px;background:#070b16;border:2px solid #1d2947;background-image:
@@ -583,7 +583,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v11.2・2026-09-12';
+const BUILD='v11.3・2026-09-12';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -676,40 +676,40 @@ const K_STATE='kp_state_v1', K_MEDIA='kp_media_v1', K_GH='kp_gh_v1', K_DIRTY='kp
 function defaultTiles(){return [
  {i:0, type:'start',    label:'基地',   emoji:'🚀'},
  {i:1, type:'point',    label:'+1',    emoji:'⭐', value:1},
- {i:2, type:'coupon',   label:'補給',   emoji:'🍪', reward:'小零食券'},
- {i:3, type:'chance',   label:'機會',   emoji:'❓'},
- {i:4, type:'coupon',   label:'遊戲',   emoji:'🎮', reward:'遊戲時間 10 分券'},
+ {i:2, type:'move',     label:'加速',   emoji:'⏩', value:3},
+ {i:3, type:'chance',   label:'星雲',   emoji:'🌌'},
+ {i:4, type:'coupon',   label:'補給',   emoji:'🍪', reward:'小零食券'},
  {i:5, type:'trap',     label:'隕石',   emoji:'☄️', value:1},
  {i:6, type:'treasure', label:'水晶',   emoji:'💎', value:2},
  {i:7, type:'fate',     label:'外星人', emoji:'👽'},
- {i:8, type:'coupon',   label:'卡通',   emoji:'📺', reward:'看卡通 1 集券'},
+ {i:8, type:'reroll',   label:'蟲洞',   emoji:'🌀'},
  {i:9, type:'lucky',    label:'幽浮',   emoji:'🛸'},
- {i:10,type:'chance',   label:'機會',   emoji:'❓'},
+ {i:10,type:'chance',   label:'星雲',   emoji:'🌌'},
  {i:11,type:'point',    label:'+1',    emoji:'⭐', value:1},
- {i:12,type:'coupon',   label:'晚餐',   emoji:'🍜', reward:'今天晚餐我決定券'},
- {i:13,type:'chance',   label:'機會',   emoji:'❓'},
- {i:14,type:'back',     label:'引力井', emoji:'⏪', value:2},
- {i:15,type:'move',     label:'加速',   emoji:'⏩', value:3},
+ {i:12,type:'trap',     label:'隕石',   emoji:'☄️', value:1},
+ {i:13,type:'coupon',   label:'遊戲',   emoji:'🎮', reward:'遊戲時間 10 分券'},
+ {i:14,type:'fate',     label:'外星人', emoji:'👽'},
+ {i:15,type:'point',    label:'+1',    emoji:'⭐', value:1},
  {i:16,type:'shield',   label:'護盾',   emoji:'🛡️'},
- {i:17,type:'trap',     label:'隕石',   emoji:'☄️', value:1},
- {i:18,type:'fate',     label:'外星人', emoji:'👽'},
- {i:19,type:'reroll',   label:'蟲洞',   emoji:'🌀'}
+ {i:17,type:'back',     label:'引力井', emoji:'⏪', value:2},
+ {i:18,type:'trap',     label:'隕石',   emoji:'☄️', value:1},
+ {i:19,type:'chance',   label:'星雲',   emoji:'🌌'}
 ]}
 function defaultCards(){return {
  chance:[
-  {t:'reroll',              label:'再骰一次，這次不扣骰子'},
-  {t:'goto',   v:6,         label:'直接前進到水晶格'},
-  {t:'point',  v:2,         label:'立刻 +2 小分'},
-  {t:'shield',              label:'獲得一張護盾券'},
-  {t:'coupon', v:'遊戲時間 10 分券', label:'獲得遊戲時間 10 分券'},
-  {t:'swap',                label:'跟兄弟姊妹交換位置'},
-  {t:'coupon', v:'小零食券',         label:'獲得小零食券'},
-  {t:'coupon', v:'今天晚餐我決定券', label:'獲得今天晚餐我決定券'}
+  {t:'reroll',              label:'引擎重啟：再骰一次，不扣骰子'},
+  {t:'goto',   v:6,         label:'星雲指路：直接前進到水晶：直接前進到水晶格'},
+  {t:'point',  v:2,         label:'撿到星塵：立刻 +2 小分'},
+  {t:'point',  v:1,         label:'撿到星塵：立刻 +1 小分'},
+  {t:'shield',              label:'補給艙：獲得一張護盾券'},
+  {t:'coupon', v:'小零食券', label:'收到補給訊號：獲得小零食券'},
+  {t:'swap',                label:'空間跳躍：跟兄弟姊妹交換位置'},
+  {t:'goto',   v:16,        label:'星雲指路：直接前進到護盾格'}
  ],
  fate:[
   {t:'task', v:1, label:'做 10 下開合跳'},
   {t:'task', v:1, label:'幫忙擦一次桌子'},
-  {t:'task', v:1, label:'唱一首歌給大家聽'},
+  {t:'task', v:1, label:'幫忙倒垃圾'},
   {t:'task', v:1, label:'跟家人說三件感謝的事'},
   {t:'task', v:2, label:'把自己的房間收好'},
   {t:'back', v:2, label:'退後 2 格'},
@@ -717,7 +717,7 @@ function defaultCards(){return {
   {t:'nocoupon',  label:'這回合不能領券'}
  ],
  lucky:['小零食券','看卡通 1 集券','遊戲時間 10 分券','遊戲時間 20 分券',
-        '今天晚餐我決定券','選假日去哪玩券','免扣分護盾券']
+        '今天晚餐我決定券','免扣分護盾券']
 }}
 function seed(){
   const t=now();
@@ -727,7 +727,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:11, seeded:true,
+    schema:12, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -888,7 +888,7 @@ function migrate(S){
   if(!S.settings.archive||typeof S.settings.archive!=='object')S.settings.archive={ts:0,bal:{},earn:{},dice:{},used:{}};
   if(S.schema<7){
   // 銀行格從棋盤移除，改成機會格
-  if(S.game&&S.game.tiles)for(const t of S.game.tiles)if(t.type==='bank'){t.type='chance';t.label='機會';t.emoji='❓'}
+  if(S.game&&S.game.tiles)for(const t of S.game.tiles)if(t.type==='bank'){t.type='chance';t.label='星雲';t.emoji='🌌'}
   // 舊的預設利率 30 天 +4 → +5（只有沒被家長改過才調）
   const pl=S.settings.plans||[];
   if(pl.length===3&&pl[0].days===7&&pl[0].per10===1&&pl[1].days===15&&pl[1].per10===2&&pl[2].days===30&&pl[2].per10===4)
@@ -972,9 +972,9 @@ function migrate(S){
 
     S.schema=9;
   }
-  if(S.schema<11){   // 倒退不再觸發落點；棋盤的券換成真的有對應的獎勵
+  if(S.schema<12){   // 重排棋盤：訊號格、移動格位置、減少券
     S.game.tiles=defaultTiles(); S.game.cards=defaultCards(); S.game.updatedAt=now();
-    S.schema=11;
+    S.schema=12;
   }
   return S;
 }
@@ -1139,7 +1139,7 @@ function landOn(kidId,idx,ctx){
     }
     case 'chance': {
       const c=pick(S.game.cards.chance);
-      gLog({emoji:'❓',label:'機會：'+c.label,delta:0,card:'chance'},L);
+      gLog({emoji:'🌌',label:'星雲：'+c.label,delta:0,card:'chance'},L);
       if(!ctx.drawn)ctx.drawn={deck:'chance',card:c};
       return applyCard(kidId,c,ctx);
     }
@@ -1155,7 +1155,7 @@ function applyCard(kidId,c,ctx){
   const L=ctx.log,p=gp(kidId);
   switch(c.t){
     case 'reroll': if(ctx.chain<chainCap()){ctx.chain++;ctx.reroll=true} break;
-    case 'point': gPts(kidId,c.v||1,'機會卡','❓',L); break;
+    case 'point': gPts(kidId,c.v||1,'星雲卡','🌌',L); break;
     case 'shield': gCoupon(kidId,'免扣分護盾券',L,ctx.noCoupon); break;
     case 'coupon': gCoupon(kidId,c.v,L,ctx.noCoupon); break;
     case 'goto': if(ctx.chain<chainCap()){ctx.chain++;
@@ -2052,11 +2052,11 @@ function tileDesc(t){
     case 'coupon':   return '拿到一張「<b>'+esc(t.reward||'神秘券')+'</b>」，之後到「獎勵 → 我的券」使用。';
     case 'lucky':    return '幽浮掉了一張獎勵券下來，抽到什麼看運氣（零食、遊戲時間、護盾…）。';
     case 'shield':   return '拿到一張<b>免扣分護盾券</b>，可以擋掉一次壞事（扣分、倒退、暫停）。';
-    case 'chance':   return '抽一張<b>機會卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
+    case 'chance':   return '飛進星雲，抽一張<b>星雲卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
     case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務才有分，也可能被拉走或暫停一次。';
-    case 'move':     return '推進器加速，往前走 <b>'+(v||3)+' 格</b>，走到的那一格效果照算。';
-    case 'back':     return '被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>。<b>退到的那一格不會再觸發</b>，只是退回去而已。有護盾券可以擋掉。';
-    case 'reroll':   return '穿過蟲洞，<b>再骰一次</b>，而且不扣骰子。';
+    case 'move':     return '點燃推進器，往前衝 <b>'+(v||3)+' 格</b>，走到的那一格效果照算 —— 起跑不久就遇到，很容易一口氣衝到水晶區。';
+    case 'back':     return '快到基地卻被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>。<b>退到的那一格不會再觸發</b>，只是退回去而已。有護盾券可以擋掉。';
+    case 'reroll':   return '穿過位在半路的蟲洞，<b>再骰一次</b>，而且不扣骰子，運氣好可以一路連下去。';
     default:         return '';
   }
 }
@@ -2104,7 +2104,7 @@ function gameHelpSheet(){
       uniqTiles().map(([t,n])=>'<div class="evt"><span class="e">'+pxi(t.emoji)+'</span>'+
         '<b>'+esc(t.label)+(n>1?' <u class="tn">×'+n+'</u>':'')+'<span class="sub">'+tileDesc(t).replace(/<[^>]+>/g,'')+'</span></b></div>').join('')+
     '</div>'+
-    cardList('❓','機會卡',S.game.cards.chance,'停在「機會」格會抽一張，抽到哪張看運氣')+
+    cardList('🌌','星雲卡',S.game.cards.chance,'停在「星雲」格會抽一張，抽到哪張看運氣')+
     cardList('👽','命運卡',S.game.cards.fate,'停在「外星人」格會抽一張，有好有壞')+
     '<div class="sec"><h2>'+pxi('🛸')+' 幽浮會掉的券（'+S.game.cards.lucky.length+' 種）</h2></div>'+
     '<div class="f hint" style="margin:-4px 0 8px">停在「幽浮」格會隨機掉一張</div><div class="list">'+
@@ -2156,7 +2156,7 @@ function vGame(){
   }
   return h+'<div style="height:20px"></div>';
 }
-/* ---- 機會 / 命運：拉霸抽卡 ---- */
+/* ---- 訊號 / 命運：拉霸抽卡 ---- */
 const SLOT_MS=3600, SLOT_H=46, SLOT_LOOPS=4;
 const deckOf=k=>(k==='fate'?S.game.cards.fate:S.game.cards.chance);
 const isBadCard=c=>/^(back|pause|nocoupon)$/.test(c.t||'');
@@ -2168,7 +2168,7 @@ function slotHTML(dr){
   for(let i=0;i<=end+2;i++)rows+='<div'+(i===end?' class="hit"':'')+'>'+esc(d[i%n].label)+'</div>';
   return '<div class="slot" id="slot" data-end="'+end+'">'+
     '<div class="slots">'+
-      '<div class="slth">'+pxi(isF?'👽':'❓')+(isF?'命運卡':'機會卡')+'</div>'+
+      '<div class="slth">'+pxi(isF?'👽':'🌌')+(isF?'命運卡':'星雲卡')+'</div>'+
       '<div class="slotw"><div class="reel" id="reel">'+rows+'</div><div class="slotline"></div></div>'+
       '<div class="slotmsg" id="slotmsg">抽卡中…　點一下跳過</div>'+
     '</div></div>';
