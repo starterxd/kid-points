@@ -578,7 +578,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v11・2026-09-12';
+const BUILD='v11.1・2026-09-12';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -673,15 +673,15 @@ function defaultTiles(){return [
  {i:1, type:'point',    label:'+1',    emoji:'⭐', value:1},
  {i:2, type:'coupon',   label:'補給',   emoji:'🍪', reward:'小零食券'},
  {i:3, type:'chance',   label:'機會',   emoji:'❓'},
- {i:4, type:'coupon',   label:'遊戲10', emoji:'🎮', reward:'遊戲時間 10 分券'},
+ {i:4, type:'coupon',   label:'遊戲',   emoji:'🎮', reward:'遊戲時間 10 分券'},
  {i:5, type:'trap',     label:'隕石',   emoji:'☄️', value:1},
  {i:6, type:'treasure', label:'水晶',   emoji:'💎', value:2},
  {i:7, type:'fate',     label:'外星人', emoji:'👽'},
- {i:8, type:'coupon',   label:'大補給', emoji:'🍭', reward:'零食大獎券'},
+ {i:8, type:'coupon',   label:'卡通',   emoji:'📺', reward:'看卡通 1 集券'},
  {i:9, type:'lucky',    label:'幽浮',   emoji:'🛸'},
  {i:10,type:'chance',   label:'機會',   emoji:'❓'},
  {i:11,type:'point',    label:'+1',    emoji:'⭐', value:1},
- {i:12,type:'coupon',   label:'遊戲20', emoji:'🕹️', reward:'遊戲時間 20 分券'},
+ {i:12,type:'coupon',   label:'晚睡',   emoji:'🌙', reward:'晚睡 30 分券'},
  {i:13,type:'chance',   label:'機會',   emoji:'❓'},
  {i:14,type:'back',     label:'引力井', emoji:'⏪', value:2},
  {i:15,type:'move',     label:'加速',   emoji:'⏩', value:3},
@@ -693,13 +693,13 @@ function defaultTiles(){return [
 function defaultCards(){return {
  chance:[
   {t:'reroll',              label:'再骰一次，這次不扣骰子'},
-  {t:'goto',   v:6,         label:'直接前進到寶箱'},
+  {t:'goto',   v:6,         label:'直接前進到水晶格'},
   {t:'point',  v:2,         label:'立刻 +2 小分'},
   {t:'shield',              label:'獲得一張護盾券'},
   {t:'coupon', v:'遊戲時間 10 分券', label:'獲得遊戲時間 10 分券'},
   {t:'swap',                label:'跟兄弟姊妹交換位置'},
-  {t:'coupon', v:'免做一次家事券',   label:'獲得免做一次家事券'},
-  {t:'coupon', v:'今天晚餐我決定券', label:'獲得選晚餐券'}
+  {t:'coupon', v:'小零食券',         label:'獲得小零食券'},
+  {t:'coupon', v:'今天晚餐我決定券', label:'獲得今天晚餐我決定券'}
  ],
  fate:[
   {t:'task', v:1, label:'做 10 下開合跳'},
@@ -711,8 +711,8 @@ function defaultCards(){return {
   {t:'pause',     label:'暫停一次骰子'},
   {t:'nocoupon',  label:'這回合不能領券'}
  ],
- lucky:['小零食券','零食大獎券','遊戲時間 10 分券','遊戲時間 20 分券','免做一次家事券',
-        '晚睡 15 分券','今天晚餐我決定券','免扣分護盾券','挑一集卡通券']
+ lucky:['小零食券','看卡通 1 集券','遊戲時間 10 分券','晚睡 30 分券',
+        '今天晚餐我決定券','選假日去哪玩券','免扣分護盾券']
 }}
 function seed(){
   const t=now();
@@ -722,7 +722,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:9, seeded:true,
+    schema:10, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -967,6 +967,10 @@ function migrate(S){
 
     S.schema=9;
   }
+  if(S.schema<10){   // 倒退不再觸發落點；棋盤上的券改成真的有對應的獎勵
+    S.game.tiles=defaultTiles(); S.game.cards=defaultCards(); S.game.updatedAt=now();
+    S.schema=10;
+  }
   return S;
 }
 S=migrate(S);
@@ -1089,11 +1093,12 @@ function offerShield(kidId,ctx,bad){
 function applyBad(kidId,bad,ctx){
   switch(bad.kind){
     case 'trap': gPts(kidId,-(bad.value||1),bad.label,'💥',ctx.log); break;
-    case 'back':
-      if(ctx.chain<chainCap()){ctx.chain++;
-        gLog({emoji:'⏪',label:'倒退 '+(bad.value||2)+' 格',delta:0},ctx.log);
-        return step(kidId,-(bad.value||2),ctx)}
-      gLog({emoji:'⏪',label:'倒退（連鎖上限，這次跳過）',delta:0},ctx.log); break;
+    case 'back': {
+      const n=bad.value||2, p2=gp(kidId);
+      step(kidId,-n,ctx,true);               // 退回去就結束，落點不觸發
+      gLog({emoji:'⏪',label:'倒退 '+n+' 格　→ 第 '+((p2.pos<10?'0':'')+p2.pos)+' 格（這格不觸發）',delta:0},ctx.log);
+      break;
+    }
     case 'pause': {const p=gp(kidId);p.pause=(p.pause||0)+1;touch(p);
       gLog({emoji:'⏸',label:'下次骰子暫停一輪',delta:0},ctx.log); break}
   }
@@ -1105,7 +1110,7 @@ function landOn(kidId,idx,ctx){
   switch(t.type){
     case 'start': gLog({emoji:'🏁',label:'回到起點',delta:0},L); break;
     case 'point': gPts(kidId,t.value||1,'棋盤 '+t.label,'⭐',L); break;
-    case 'treasure': gPts(kidId,t.value||2,'踩到寶箱','💎',L); break;
+    case 'treasure': gPts(kidId,t.value||2,'踩到能量水晶','💎',L); break;
     case 'trap': {
       const bad={kind:'trap',value:t.value||1,label:'踩到陷阱'};
       if(!offerShield(kidId,ctx,bad))applyBad(kidId,bad,ctx);
@@ -1170,7 +1175,7 @@ function applyCard(kidId,c,ctx){
     case 'nocoupon': ctx.noCoupon=true; break;
   }
 }
-function step(kidId,steps,ctx){
+function step(kidId,steps,ctx,quiet){
   const p=gp(kidId),old=p.pos;
   let np=old+steps;
   if(steps>0&&np>=TN){                       // 通過起點 = 完成一圈
@@ -1179,6 +1184,7 @@ function step(kidId,steps,ctx){
     if(lapBonus()>0)gPts(kidId,lapBonus()*laps,'繞完一圈','🏁',ctx.log);
   }
   p.pos=((np%TN)+TN)%TN; touch(p);
+  if(quiet)return;                           // 倒退只移動，退到哪一格都不觸發
   return landOn(kidId,p.pos,ctx);
 }
 function rollDice(kidId){
@@ -2021,7 +2027,7 @@ function tileDesc(t){
     case 'chance':   return '抽一張<b>機會卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
     case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務才有分，也可能被拉走或暫停一次。';
     case 'move':     return '推進器加速，往前走 <b>'+(v||3)+' 格</b>，走到的那一格效果照算。';
-    case 'back':     return '被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>，退到的那一格效果照算。有護盾券可以擋掉。';
+    case 'back':     return '被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>。<b>退到的那一格不會再觸發</b>，只是退回去而已。有護盾券可以擋掉。';
     case 'reroll':   return '穿過蟲洞，<b>再骰一次</b>，而且不扣骰子。';
     default:         return '';
   }
@@ -3044,7 +3050,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
   deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
-  rollDice,gp,tileAt,step,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
+  rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
   pull,push,checkUpdate,dupFind,dupCount,dupClean,migrate,BUILD,
