@@ -437,6 +437,9 @@ svg.chart .lv{fill:var(--muted);font-size:9px;font-weight:800}
 .chint{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.6}
 .chint b{color:var(--ink);font-weight:800}
 .banner b.ib{display:inline;font-weight:850;color:inherit;margin:0}
+.capn{font-size:12px;font-weight:800;color:var(--good)}
+.capn.full{color:var(--gold)}
+.rules.capped .rule{opacity:.42}
 
 /* ---- 像素圖示 ---- */
 svg.px{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.22em;flex:0 0 auto}
@@ -575,7 +578,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v10.1・2026-09-12';
+const BUILD='v11・2026-09-12';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -621,11 +624,11 @@ function pxi(e,cls){
 }
 const ICO_ORDER=['⭐','🌟','🎲','🚀','🪐','🛸','👽','☄️','🌀','🌌','💎','🛡️','🎁','🎫','🏦','💰','💳','🏆','💯','🔑','🔒',
 '📖','📕','📒','📚','📝','📋','📅','✏️','✎','🎒','🪥','🛏️','🍚','🍜','🍪','🍭','🍟','🥤','🏀','🏃','🛼','🎹','🎮','🕹️','🎴','🎬','📺','📱','🧸','🎡','🗺️','🧦','🧹','🤝','🙋','✋','👏','👆','🙈','😤','🐌','👶','👧','🔥','💡','⚠️','☁️','🎉','✅','🚫','➕','➖','🔁','🔄','⏪','⏩','⏸️','⬆️','⬇️','🔗','🌙','🌓','💥','💣','🧾','📦','📷','💾','⚙️','🏠','🧮','❓','🏁','😈','🚀'];
-const FLAT={"star":"<path d=\"M12 3.2l2.5 5.1 5.6.8-4.05 3.95.96 5.6L12 16l-5.01 2.65.96-5.6L3.9 9.1l5.6-.8z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>","flame":"<path d=\"M12 2.6c3.4 3.2 5.6 5.8 5.6 9a5.6 5.6 0 1 1-11.2 0c0-2.3 1.3-4 2.6-5.4.1 1.8.9 2.8 2.1 3.2.7-1.8.6-4.3.9-6.8z\" fill=\"#f0913a\" stroke=\"#f0913a\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><path d=\"M12 10.2c1.5 1.5 2.4 2.7 2.4 4.1a2.4 2.4 0 1 1-4.8 0c0-1.4.9-2.6 2.4-4.1z\" fill=\"#ffd166\"/>","dice":"<rect x=\"3.6\" y=\"3.6\" width=\"16.8\" height=\"16.8\" rx=\"4.8\" fill=\"#5b6cff\"/><circle cx=\"8.7\" cy=\"8.7\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"15.3\" cy=\"15.3\" r=\"1.8\" fill=\"#fff\"/>","note":"<rect x=\"4.2\" y=\"3.4\" width=\"15.6\" height=\"17.2\" rx=\"3.4\" fill=\"#3f7bd8\"/><rect x=\"4.2\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#2f5eaa\"/><rect x=\"9\" y=\"6.4\" width=\"8.4\" height=\"11.2\" rx=\"1.8\" fill=\"#fff\"/><rect x=\"10.6\" y=\"8.8\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"11.4\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"14\" width=\"3.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/>","piano":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.8\" fill=\"#4a4136\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"8\" rx=\"1.3\" fill=\"#fff\"/><rect x=\"7.6\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"11.4\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"15.2\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/>","run":"<circle cx=\"14.6\" cy=\"5.4\" r=\"2.5\" fill=\"#2f8f6b\"/><path d=\"M13.4 9.4l-3.4 2.6 1.1 3.3 2.5 1.7 1.2 3.5\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M10 12l-3.4 1.5\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\"/><path d=\"M13.4 9.4l3.5-.8 2.3 2.3\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","bag":"<circle cx=\"7.4\" cy=\"4.8\" r=\"2.3\" fill=\"#f0b429\"/><rect x=\"13\" y=\"2.6\" width=\"4\" height=\"4\" rx=\"1.1\" fill=\"#3f7bd8\"/><rect x=\"3.4\" y=\"9.2\" width=\"17.2\" height=\"11.2\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"3.4\" y=\"6.8\" width=\"17.2\" height=\"4.6\" rx=\"1.9\" fill=\"#b03f3f\"/><rect x=\"10.3\" y=\"11.8\" width=\"3.4\" height=\"3.6\" rx=\"1.3\" fill=\"#f6b3b3\"/>","pencil":"<path d=\"M15.6 3.6l4.8 4.8-9.4 9.4-4.8-4.8z\" fill=\"#f5c04a\"/><path d=\"M17.2 2a2.6 2.6 0 0 1 3.7 0l1.1 1.1a2.6 2.6 0 0 1 0 3.7l-1 1-4.8-4.8z\" fill=\"#e89b3c\" transform=\"translate(-1.6 1.6)\"/><path d=\"M6.2 13l4.8 4.8-6 1.2z\" fill=\"#4a4136\"/>","brush":"<rect x=\"9.6\" y=\"8.4\" width=\"4.8\" height=\"12\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"8.6\" y=\"4.2\" width=\"6.8\" height=\"5.6\" rx=\"2.2\" fill=\"#2f5eaa\"/><rect x=\"9.8\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/><rect x=\"12.5\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/>","broom":"<rect x=\"10.6\" y=\"2.6\" width=\"3\" height=\"9.4\" rx=\"1.5\" fill=\"#8b6b4a\"/><path d=\"M6.4 11.8h11.2l1.7 7.4a1.6 1.6 0 0 1-1.6 2H6.3a1.6 1.6 0 0 1-1.6-2z\" fill=\"#f0b429\"/><rect x=\"5.8\" y=\"15.3\" width=\"12.4\" height=\"1.9\" rx=\".95\" fill=\"#cf8f16\"/>","hand":"<rect x=\"7.2\" y=\"10.6\" width=\"10\" height=\"9.8\" rx=\"4.6\" fill=\"#efb06a\"/><rect x=\"8.4\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"11.1\" y=\"3.6\" width=\"2.5\" height=\"9\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.8\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"5.1\" y=\"9.2\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","book":"<path d=\"M12 6.8C10.4 5.3 8.2 4.6 5.4 4.6A1.5 1.5 0 0 0 3.9 6.1v11.3a1.5 1.5 0 0 0 1.5 1.5c2.8 0 5 .7 6.6 2.2z\" fill=\"#7d5bd6\"/><path d=\"M12 6.8c1.6-1.5 3.8-2.2 6.6-2.2a1.5 1.5 0 0 1 1.5 1.5v11.3a1.5 1.5 0 0 1-1.5 1.5c-2.8 0-5 .7-6.6 2.2z\" fill=\"#a488ee\"/>","home":"<path d=\"M11 3.7a1.6 1.6 0 0 1 2 0l7.4 6a1.6 1.6 0 0 1 .6 1.3v7.6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11a1.6 1.6 0 0 1 .6-1.3z\" fill=\"#e8622c\"/><rect x=\"9.6\" y=\"13.6\" width=\"4.8\" height=\"7\" rx=\"1.8\" fill=\"#fff\"/>","plus":"<path d=\"M10.3 4.3h3.4a1.5 1.5 0 0 1 1.5 1.5v3.3h3.3a1.5 1.5 0 0 1 1.5 1.5v3.4a1.5 1.5 0 0 1-1.5 1.5h-3.3v3.3a1.5 1.5 0 0 1-1.5 1.5h-3.4a1.5 1.5 0 0 1-1.5-1.5v-3.3H5.5A1.5 1.5 0 0 1 4 13.7v-3.4a1.5 1.5 0 0 1 1.5-1.5h3.3V5.8a1.5 1.5 0 0 1 1.5-1.5z\" fill=\"#2f8f6b\"/>","gift":"<rect x=\"5.2\" y=\"12\" width=\"13.6\" height=\"8.6\" rx=\"2.4\" fill=\"#d96bb0\"/><rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"4.4\" rx=\"1.8\" fill=\"#c2519a\"/><rect x=\"10.6\" y=\"8.2\" width=\"2.8\" height=\"12.4\" fill=\"#fff\"/><path d=\"M12 8.4C10.5 5.2 6.5 5.6 6.7 8.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M12 8.4c1.5-3.2 5.5-2.8 5.3-.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","bank":"<path d=\"M11.2 3.5a1.7 1.7 0 0 1 1.6 0l7.5 4.4a1.05 1.05 0 0 1-.5 1.95H4.2a1.05 1.05 0 0 1-.5-1.95z\" fill=\"#3f7bd8\"/><rect x=\"5.5\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"10.65\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"15.8\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"3.5\" y=\"18.3\" width=\"17\" height=\"2.7\" rx=\"1.35\" fill=\"#2f5eaa\"/>","receipt":"<path d=\"M5.4 4.8a1.6 1.6 0 0 1 1.6-1.6h10a1.6 1.6 0 0 1 1.6 1.6v16l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5z\" fill=\"#7a8699\"/><rect x=\"8\" y=\"7.2\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"10.8\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"14.4\" width=\"5\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/>","gear":"<path d=\"M12 3l1.6 2 2.5-.9.7 2.6 2.6.7-.9 2.5 2 1.6-2 1.6.9 2.5-2.6.7-.7 2.6-2.5-.9L12 21l-1.6-2-2.5.9-.7-2.6-2.6-.7.9-2.5-2-1.6 2-1.6-.9-2.5 2.6-.7.7-2.6 2.5.9z\" fill=\"#8d99ab\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"#fff\"/>","sparkle":"<path d=\"M12 4l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 14.8 7.8 17l.8-4.7-3.4-3.3 4.7-.7z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M19.4 3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z\" fill=\"#ffd166\"/><path d=\"M4.6 15.6l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z\" fill=\"#ffd166\"/>","minus":"<rect x=\"4\" y=\"10.2\" width=\"16\" height=\"3.6\" rx=\"1.8\" fill=\"#cc4b3c\"/>","check":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#2f8f6b\"/><path d=\"M7.6 12.3l3 3 5.8-6.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\"/><path d=\"M6.4 17.6L17.6 6.4\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\" stroke-linecap=\"round\"/>","warn":"<path d=\"M10.3 4.2a2 2 0 0 1 3.4 0l7 12a2 2 0 0 1-1.7 3H5a2 2 0 0 1-1.7-3z\" fill=\"#f0b429\"/><rect x=\"10.9\" y=\"8.6\" width=\"2.2\" height=\"5.6\" rx=\"1.1\" fill=\"#fff\"/><circle cx=\"12\" cy=\"16.8\" r=\"1.3\" fill=\"#fff\"/>","bulb":"<path d=\"M12 3a6.6 6.6 0 0 0-3.8 12c.5.4.8 1 .8 1.6v.4h6v-.4c0-.6.3-1.2.8-1.6A6.6 6.6 0 0 0 12 3z\" fill=\"#f5c04a\"/><rect x=\"9\" y=\"18\" width=\"6\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/><rect x=\"9.8\" y=\"20.4\" width=\"4.4\" height=\"1.6\" rx=\".8\" fill=\"#8d99ab\"/>","cloud":"<path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 10.7 1.1 3.9 3.9 0 0 1-.7 7.7z\" fill=\"#b9c8de\"/><path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 5.1-3.4v12.2z\" fill=\"#cfdaeb\"/>","refresh":"<path d=\"M20 12a8 8 0 1 1-2.4-5.7\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M19.8 3.4v4.4h-4.4z\" fill=\"#2f8f6b\"/>","party":"<path d=\"M4 20.4l5.6-12.2 6.6 6.6-12.2 5.6z\" fill=\"#f0b429\"/><path d=\"M6.4 15.2l2.4 2.4-4.8 2.8z\" fill=\"#e8933a\"/><circle cx=\"17.4\" cy=\"5.4\" r=\"1.6\" fill=\"#d96bb0\"/><circle cx=\"21\" cy=\"9.4\" r=\"1.3\" fill=\"#3f7bd8\"/><circle cx=\"13.4\" cy=\"3.6\" r=\"1.2\" fill=\"#2f8f6b\"/>","box":"<rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"12.4\" rx=\"2.6\" fill=\"#c89a68\"/><rect x=\"2.8\" y=\"5.4\" width=\"18.4\" height=\"4.4\" rx=\"1.8\" fill=\"#8b6b4a\"/><rect x=\"10.4\" y=\"5.4\" width=\"3.2\" height=\"15.2\" fill=\"#a67c4e\"/>","camera":"<rect x=\"2.8\" y=\"7\" width=\"18.4\" height=\"13.4\" rx=\"3.2\" fill=\"#4a4136\"/><rect x=\"8\" y=\"3.8\" width=\"8\" height=\"4\" rx=\"1.6\" fill=\"#6b5f4e\"/><circle cx=\"12\" cy=\"13.6\" r=\"4.2\" fill=\"#9fc4f0\"/><circle cx=\"12\" cy=\"13.6\" r=\"2.1\" fill=\"#3f7bd8\"/>","save":"<path d=\"M4.8 3.6h11.4l4 4v13a1.8 1.8 0 0 1-1.8 1.8H4.8A1.8 1.8 0 0 1 3 20.6V5.4a1.8 1.8 0 0 1 1.8-1.8z\" fill=\"#3f7bd8\"/><rect x=\"7.4\" y=\"3.6\" width=\"8\" height=\"6\" rx=\"1.2\" fill=\"#fff\"/><rect x=\"6.6\" y=\"13.4\" width=\"10.8\" height=\"7.4\" rx=\"1.4\" fill=\"#cfdaeb\"/>","key":"<circle cx=\"8\" cy=\"8\" r=\"4.6\" fill=\"#f0b429\"/><circle cx=\"8\" cy=\"8\" r=\"1.8\" fill=\"#fffdf9\"/><path d=\"M11.2 11.2l8 8\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M16.2 16.2l2 2M18.6 13.8l2.4 2.4\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/>","lock":"<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"10.6\" rx=\"3.4\" fill=\"#f0b429\"/><path d=\"M8.2 10V7.6a3.8 3.8 0 0 1 7.6 0V10\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"14.8\" r=\"1.9\" fill=\"#8b6b4a\"/>","up":"<path d=\"M12 3.4l7.4 7.4a1.6 1.6 0 0 1-1.1 2.7h-3.1v5.7a1.8 1.8 0 0 1-1.8 1.8h-2.8a1.8 1.8 0 0 1-1.8-1.8v-5.7H5.7a1.6 1.6 0 0 1-1.1-2.7z\" fill=\"#3f7bd8\"/>","down":"<path d=\"M12 20.6l-7.4-7.4a1.6 1.6 0 0 1 1.1-2.7h3.1V4.8A1.8 1.8 0 0 1 10.6 3h2.8a1.8 1.8 0 0 1 1.8 1.8v5.7h3.1a1.6 1.6 0 0 1 1.1 2.7z\" fill=\"#3f7bd8\"/>","link":"<path d=\"M9.6 14.4l4.8-4.8\" fill=\"none\" stroke=\"#7a8699\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13.2 7.4l1.4-1.4a3.8 3.8 0 0 1 5.4 5.4l-1.4 1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M10.8 16.6l-1.4 1.4a3.8 3.8 0 0 1-5.4-5.4l1.4-1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","theme":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#f0b429\"/><path d=\"M12 3.4a8.6 8.6 0 0 1 0 17.2z\" fill=\"#4a4136\"/>","calc":"<rect x=\"4\" y=\"2.8\" width=\"16\" height=\"18.4\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"6.4\" y=\"5.2\" width=\"11.2\" height=\"4\" rx=\"1.2\" fill=\"#9fc4f0\"/><rect x=\"6.4\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.4\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/>","trophy":"<path d=\"M7 3.6h10v6.8a5 5 0 0 1-10 0z\" fill=\"#f0b429\"/><path d=\"M7 5.2H4.8a3 3 0 0 0 3 3M17 5.2h2.2a3 3 0 0 1-3 3\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"2\"/><rect x=\"10.4\" y=\"14.6\" width=\"3.2\" height=\"3.6\" fill=\"#d4941a\"/><rect x=\"7\" y=\"18\" width=\"10\" height=\"2.8\" rx=\"1.4\" fill=\"#d4941a\"/>","hundred":"<rect x=\"2.6\" y=\"6.4\" width=\"4\" height=\"8.4\" rx=\"2\" fill=\"#d94f4f\"/><rect x=\"8.6\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"16.4\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"2.6\" y=\"17.4\" width=\"19\" height=\"2.4\" rx=\"1.2\" fill=\"#d94f4f\"/>","moneybag":"<path d=\"M8.6 7.2h6.8c3 2.2 4.8 5.2 4.8 8.2a5.2 5.2 0 0 1-5.2 5.2H9a5.2 5.2 0 0 1-5.2-5.2c0-3 1.8-6 4.8-8.2z\" fill=\"#f0b429\"/><path d=\"M8.8 3.4h6.4l-1.4 3.8h-3.6z\" fill=\"#d4941a\"/><path d=\"M12 10.6v7M10 12.4h3.4a1.6 1.6 0 0 1 0 3.2h-3a1.6 1.6 0 0 0 0 3.2H14\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","card":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13.2\" rx=\"2.8\" fill=\"#7d5bd6\"/><rect x=\"2.6\" y=\"8.4\" width=\"18.8\" height=\"3.2\" fill=\"#4d3399\"/><rect x=\"5.4\" y=\"14\" width=\"6.4\" height=\"2\" rx=\"1\" fill=\"#cbb8f5\"/>","kid":"<path d=\"M5.6 10.4a6.4 6.4 0 0 1 12.8 0v1.4a6.4 6.4 0 0 1-12.8 0z\" fill=\"#efb06a\"/><path d=\"M5.2 10.6a6.8 6.8 0 0 1 13.6 0c0 .8-1 1-1.6.4-1.6-1.6-3.4-2.2-5.2-2.2s-3.6.6-5.2 2.2c-.6.6-1.6.4-1.6-.4z\" fill=\"#8b5e3c\"/><circle cx=\"9.6\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.4\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.6 18.6a5.4 5.4 0 0 1 10.8 0v2.4H6.6z\" fill=\"#d96bb0\"/>","baby":"<circle cx=\"12\" cy=\"11.4\" r=\"6.4\" fill=\"#efb06a\"/><path d=\"M6.6 8.6a6.4 6.4 0 0 1 10.8 0c-1.6.8-3.4 1.2-5.4 1.2s-3.8-.4-5.4-1.2z\" fill=\"#c89a68\"/><circle cx=\"9.8\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.2\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.8 18.8a5.2 5.2 0 0 1 10.4 0v2.2H6.8z\" fill=\"#6b9be8\"/>","calendar":"<rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"16\" rx=\"2.8\" fill=\"#fffdf9\"/><rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"5\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"6.6\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"15\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"6.2\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"14.8\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.2\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/>","clipboard":"<rect x=\"4\" y=\"4.2\" width=\"16\" height=\"17\" rx=\"2.8\" fill=\"#8b6b4a\"/><rect x=\"6.2\" y=\"7\" width=\"11.6\" height=\"12\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"8.2\" y=\"2.2\" width=\"7.6\" height=\"4\" rx=\"1.8\" fill=\"#c89a68\"/><rect x=\"8.4\" y=\"10\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"13.2\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"16.4\" width=\"4.4\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/>","books":"<rect x=\"3\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#d94f4f\"/><rect x=\"8.4\" y=\"6.2\" width=\"4.6\" height=\"13.8\" rx=\"1.6\" fill=\"#2f8f6b\"/><rect x=\"13.8\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#3f7bd8\"/><rect x=\"3\" y=\"20\" width=\"18\" height=\"2.2\" rx=\"1.1\" fill=\"#8b6b4a\"/>","memo":"<rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"#fffdf9\"/><rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.4\"/><rect x=\"6.2\" y=\"7\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"6.2\" y=\"10.4\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><path d=\"M17.6 8.4l3.4 3.4-6 6-4 .6.6-4z\" fill=\"#f5c04a\"/><path d=\"M11.6 16.4l2.6 2.6-3.6.6z\" fill=\"#4a4136\"/>","point":"<rect x=\"9.4\" y=\"3\" width=\"3.4\" height=\"11\" rx=\"1.7\" fill=\"#efb06a\"/><path d=\"M9.4 10.6h5.8a4.6 4.6 0 0 1 4.6 4.6v2.2a3.8 3.8 0 0 1-3.8 3.8h-4.4a4.4 4.4 0 0 1-3.2-1.4l-2.8-3a1.8 1.8 0 0 1 2.6-2.5l1.2 1.2z\" fill=\"#efb06a\"/><rect x=\"12.6\" y=\"12.4\" width=\"2.6\" height=\"4\" rx=\"1.3\" fill=\"#d9944f\"/>","shield":"<path d=\"M12 2.6l7.4 2.8v6.2c0 4.4-3 8.2-7.4 9.8-4.4-1.6-7.4-5.4-7.4-9.8V5.4z\" fill=\"#3f7bd8\"/><path d=\"M8.4 12.2l2.6 2.6 4.8-5.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ticket":"<rect x=\"2.6\" y=\"6.6\" width=\"18.8\" height=\"10.8\" rx=\"3\" fill=\"#f0913a\"/><path d=\"M9 6.6v10.8\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-dasharray=\"2 2.2\" stroke-linecap=\"round\"/><path d=\"M15.4 9.2l1 2 2.2.3-1.6 1.55.38 2.2-1.98-1.05-1.98 1.05.38-2.2-1.6-1.55 2.2-.3z\" fill=\"#fffdf9\"/>","bed":"<rect x=\"2.6\" y=\"8.6\" width=\"18.8\" height=\"7.4\" rx=\"2.4\" fill=\"#c89a68\"/><rect x=\"4.6\" y=\"9.8\" width=\"6.2\" height=\"4.4\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"2.6\" y=\"5.8\" width=\"2.8\" height=\"14.6\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"18.6\" y=\"11\" width=\"2.8\" height=\"9.4\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"2.6\" y=\"15\" width=\"18.8\" height=\"2.6\" rx=\"1.3\" fill=\"#6b9be8\"/>","ball":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#e8792c\"/><path d=\"M12 3.4v17.2M3.4 12h17.2\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/><path d=\"M6 5.8c2.6 3 2.6 9.4 0 12.4M18 5.8c-2.6 3-2.6 9.4 0 12.4\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/>","rice":"<path d=\"M2.8 11h18.4a9.2 9.2 0 0 1-18.4 0z\" fill=\"#3f7bd8\"/><rect x=\"2.8\" y=\"11\" width=\"18.4\" height=\"2.4\" rx=\"1.2\" fill=\"#2f5eaa\"/><path d=\"M6.4 10.8a5.6 5.6 0 0 1 11.2 0z\" fill=\"#fffdf9\"/><path d=\"M8.8 2.6l6.6 6M15.4 2.6l-6.6 6\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","twokids":"<circle cx=\"7.6\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M2.8 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#3f7bd8\"/><circle cx=\"16.4\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M11.6 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#d96bb0\"/>","alarm":"<circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"#fffdf9\"/><circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\"/><path d=\"M12 9.2v4.2l2.8 1.8\" fill=\"none\" stroke=\"#4a4136\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M3.6 5.4a4.4 4.4 0 0 1 4.4-2.8M20.4 5.4A4.4 4.4 0 0 0 16 2.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>","angry":"<circle cx=\"12\" cy=\"12\" r=\"8.8\" fill=\"#d94f4f\"/><path d=\"M6.6 8.8l3.6 1.8M17.4 8.8l-3.6 1.8\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"9\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><circle cx=\"15\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><path d=\"M9 17.2h6\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>","snail":"<path d=\"M2.6 18.6h11.8a1.8 1.8 0 0 1 0 3.6H4a1.8 1.8 0 0 1-1.4-3.6z\" fill=\"#c89a68\"/><path d=\"M17 4.6a7.4 7.4 0 1 1-7.4 7.4 5.4 5.4 0 1 1 10.8 0 3.4 3.4 0 1 1-6.8 0\" fill=\"none\" stroke=\"#8b6b4a\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M4.6 18.6c0-2.4 1.6-4.2 4-4.2\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","phone":"<rect x=\"6\" y=\"2.2\" width=\"12\" height=\"19.6\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"7.6\" y=\"5\" width=\"8.8\" height=\"13\" rx=\"1.4\" fill=\"#9fc4f0\"/><rect x=\"10.4\" y=\"18.9\" width=\"3.2\" height=\"1.4\" rx=\".7\" fill=\"#8d99ab\"/>","monkey":"<circle cx=\"5.2\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"18.8\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"12\" cy=\"11.4\" r=\"7.4\" fill=\"#8b6b4a\"/><path d=\"M12 8.4a5.4 5.4 0 0 1 5.2 4c-1.6 1.6-3.4 2.4-5.2 2.4s-3.6-.8-5.2-2.4a5.4 5.4 0 0 1 5.2-4z\" fill=\"#efb06a\"/><path d=\"M4.6 14.4a4.6 4.6 0 0 1 5.6 3.6H4.6zM19.4 14.4a4.6 4.6 0 0 0-5.6 3.6h5.6z\" fill=\"#efb06a\"/>","stop":"<rect x=\"7\" y=\"10.4\" width=\"10.4\" height=\"10\" rx=\"4.8\" fill=\"#efb06a\"/><rect x=\"8.2\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"10.9\" y=\"3.2\" width=\"2.5\" height=\"9.2\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.6\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"4.8\" y=\"9\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","socks":"<rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"12.2\" width=\"8.6\" height=\"4.8\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"15\" width=\"8\" height=\"4.8\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/>","bomb":"<circle cx=\"10.6\" cy=\"14.4\" r=\"7.2\" fill=\"#4a4136\"/><path d=\"M15.6 9.4l2.2-2.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M18 7a3.4 3.4 0 1 1 3.2-2.4\" fill=\"none\" stroke=\"#f0913a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"8.2\" cy=\"11.6\" r=\"1.8\" fill=\"#6b5f4e\"/>","cookie":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#c89a68\"/><circle cx=\"9\" cy=\"9\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"15.2\" cy=\"10.4\" r=\"1.3\" fill=\"#6b4a2e\"/><circle cx=\"11.4\" cy=\"14.6\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"16\" cy=\"15.4\" r=\"1.2\" fill=\"#6b4a2e\"/><circle cx=\"7.4\" cy=\"14.2\" r=\"1.1\" fill=\"#6b4a2e\"/>","lolli":"<circle cx=\"12\" cy=\"8.6\" r=\"6.2\" fill=\"#d96bb0\"/><path d=\"M12 8.6a2.2 2.2 0 0 1 2.2-2.2 4.4 4.4 0 0 1 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M12 8.6a2.2 2.2 0 0 0-2.2 2.2 4.4 4.4 0 0 0 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"10.8\" y=\"14.4\" width=\"2.4\" height=\"7.4\" rx=\"1.2\" fill=\"#e3d9c6\"/>","gamepad":"<path d=\"M7.4 7.6h9.2a5.6 5.6 0 0 1 5.4 7l-.8 3a3.4 3.4 0 0 1-6-1.2l-.4-1.4H9.2l-.4 1.4a3.4 3.4 0 0 1-6 1.2l-.8-3a5.6 5.6 0 0 1 5.4-7z\" fill=\"#7d5bd6\"/><rect x=\"6\" y=\"11.4\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#fffdf9\"/><rect x=\"7.3\" y=\"10.1\" width=\"1.8\" height=\"4.4\" rx=\".9\" fill=\"#fffdf9\"/><circle cx=\"16\" cy=\"11.4\" r=\"1.3\" fill=\"#fffdf9\"/><circle cx=\"18.2\" cy=\"13.4\" r=\"1.3\" fill=\"#fffdf9\"/>","joystick":"<path d=\"M4.4 16.6h15.2l1.4 3.4a1.4 1.4 0 0 1-1.3 2H4.3a1.4 1.4 0 0 1-1.3-2z\" fill=\"#4a4136\"/><rect x=\"10.6\" y=\"6.6\" width=\"2.8\" height=\"10.4\" rx=\"1.4\" fill=\"#8d99ab\"/><circle cx=\"12\" cy=\"5.4\" r=\"3.4\" fill=\"#d94f4f\"/>","tv":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13\" rx=\"2.6\" fill=\"#4a4136\"/><rect x=\"4.6\" y=\"7.4\" width=\"14.8\" height=\"9\" rx=\"1.4\" fill=\"#9fc4f0\"/><path d=\"M8 2.6l4 3.2 4-3.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"7.6\" y=\"19.8\" width=\"8.8\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/>","drink":"<path d=\"M5.4 7.8h13.2l-1.4 12a2.6 2.6 0 0 1-2.6 2.3H9.4a2.6 2.6 0 0 1-2.6-2.3z\" fill=\"#d94f4f\"/><rect x=\"4.2\" y=\"5.4\" width=\"15.6\" height=\"3\" rx=\"1.5\" fill=\"#fffdf9\"/><path d=\"M14.6 5.4l2.2-3.8\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><rect x=\"7.4\" y=\"12\" width=\"9.2\" height=\"2\" rx=\"1\" fill=\"#f2a3a3\"/>","moon":"<path d=\"M13.6 2.8a9.4 9.4 0 1 0 7.6 13.6A9.4 9.4 0 0 1 13.6 2.8z\" fill=\"#f0b429\"/><circle cx=\"8.4\" cy=\"15.2\" r=\"1.6\" fill=\"#d4941a\"/><circle cx=\"11.6\" cy=\"18.4\" r=\"1.1\" fill=\"#d4941a\"/>","noodles":"<path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-17.2 0z\" fill=\"#d94f4f\"/><path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-.4 2.6H3.8a8.6 8.6 0 0 1-.4-2.6z\" fill=\"#fffdf9\"/><path d=\"M7.6 9.4c0-2.4 1.4-3.6 1.4-5.4M12 9.4c0-2.8 1.6-4 1.6-6M16.4 9.4c0-2.2 1.2-3.4 1.2-5\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","skate":"<path d=\"M5.2 4.6h5.2v7.6h5.4a4 4 0 0 1 4 4v1.6H5.2z\" fill=\"#d96bb0\"/><rect x=\"4\" y=\"17.2\" width=\"16.4\" height=\"2.2\" rx=\"1.1\" fill=\"#8d99ab\"/><circle cx=\"8\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/><circle cx=\"16.4\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/>","map":"<path d=\"M2.8 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><path d=\"M8.8 4l6.4 2.4v14.4L8.8 18.4z\" fill=\"#57b894\"/><path d=\"M15.2 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><circle cx=\"12\" cy=\"10.6\" r=\"2.4\" fill=\"#d94f4f\"/>","cards":"<rect x=\"3\" y=\"6.6\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#3f7bd8\" transform=\"rotate(-10 8 13.6)\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#fffdf9\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.3\"/><path d=\"M16 8l1.1 2.2 2.4.35-1.75 1.7.4 2.4-2.15-1.15-2.15 1.15.4-2.4-1.75-1.7 2.4-.35z\" fill=\"#d94f4f\"/>","fries":"<path d=\"M6.6 9.4h10.8l-1 9.6a2.6 2.6 0 0 1-2.6 2.4h-3.6a2.6 2.6 0 0 1-2.6-2.4z\" fill=\"#d94f4f\"/><rect x=\"5.6\" y=\"13\" width=\"12.8\" height=\"2.2\" rx=\"1.1\" fill=\"#fffdf9\"/><rect x=\"7.2\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/><rect x=\"10.8\" y=\"2.2\" width=\"2.4\" height=\"8.2\" rx=\"1.2\" fill=\"#f5c04a\"/><rect x=\"14.4\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/>","redbook":"<rect x=\"4\" y=\"3.4\" width=\"16\" height=\"17.2\" rx=\"2.6\" fill=\"#d94f4f\"/><rect x=\"4\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#a83b3b\"/><rect x=\"9.6\" y=\"7\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"9.6\" y=\"10.4\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/><rect x=\"9.6\" y=\"13.8\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/>","clapper":"<rect x=\"2.8\" y=\"9\" width=\"18.4\" height=\"11.6\" rx=\"2.4\" fill=\"#4a4136\"/><path d=\"M3.4 4.6l17-1.8.8 4.6-17 1.8z\" fill=\"#6b5f4e\"/><path d=\"M7 4.2l1.2 4.4M11.6 3.8l1.2 4.4M16.2 3.4l1.2 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\"/>","ferris":"<circle cx=\"12\" cy=\"10.4\" r=\"7.6\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.2\"/><path d=\"M12 2.8v15.2M4.4 10.4h15.2M6.6 5l10.8 10.8M17.4 5L6.6 15.8\" fill=\"none\" stroke=\"#6b9be8\" stroke-width=\"1.6\"/><circle cx=\"12\" cy=\"10.4\" r=\"2\" fill=\"#f0b429\"/><path d=\"M12 18l4.6 4H7.4z\" fill=\"#8d99ab\"/>","teddy":"<circle cx=\"6.4\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"17.6\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"6.4\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"17.6\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"12\" cy=\"13\" r=\"8\" fill=\"#8b6b4a\"/><ellipse cx=\"12\" cy=\"15.4\" rx=\"4.4\" ry=\"3.4\" fill=\"#c89a68\"/><circle cx=\"9.4\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><circle cx=\"14.6\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><ellipse cx=\"12\" cy=\"14\" rx=\"1.5\" ry=\"1.1\" fill=\"#4a4136\"/>"};
-const FTINT={"star":"#f5a623","flame":"#f0913a","dice":"#5b6cff","note":"#3f7bd8","piano":"#6b5f4e","run":"#2f8f6b","bag":"#d94f4f","pencil":"#e89b3c","brush":"#3f7bd8","broom":"#f0b429","hand":"#d9944f","book":"#7d5bd6","home":"#e8622c","plus":"#2f8f6b","gift":"#c2519a","bank":"#3f7bd8","receipt":"#7a8699","gear":"#8d99ab","sparkle":"#f5a623","minus":"#cc4b3c","check":"#2f8f6b","ban":"#d94f4f","warn":"#f0b429","bulb":"#f5c04a","cloud":"#8d99ab","refresh":"#2f8f6b","party":"#f0b429","box":"#8b6b4a","camera":"#6b5f4e","save":"#3f7bd8","key":"#f0b429","lock":"#f0b429","up":"#3f7bd8","down":"#3f7bd8","link":"#3f7bd8","theme":"#6b5f4e","calc":"#6b5f4e","trophy":"#f0b429","hundred":"#d94f4f","moneybag":"#f0b429","card":"#7d5bd6","kid":"#d96bb0","baby":"#6b9be8","calendar":"#d94f4f","clipboard":"#8b6b4a","books":"#3f7bd8","memo":"#f5c04a","point":"#d9944f","shield":"#3f7bd8","ticket":"#f0913a","bed":"#8b6b4a","ball":"#e8792c","rice":"#c89a68","twokids":"#3f7bd8","alarm":"#d94f4f","angry":"#d94f4f","snail":"#8b6b4a","phone":"#6b5f4e","monkey":"#8b6b4a","stop":"#d9944f","socks":"#3f7bd8","bomb":"#6b5f4e","cookie":"#c89a68","lolli":"#d96bb0","gamepad":"#7d5bd6","joystick":"#d94f4f","tv":"#6b5f4e","drink":"#d94f4f","moon":"#f0b429","noodles":"#d94f4f","skate":"#d96bb0","map":"#2f8f6b","cards":"#3f7bd8","fries":"#d94f4f","redbook":"#d94f4f","clapper":"#6b5f4e","ferris":"#3f7bd8","teddy":"#8b6b4a"};
+const FLAT={"sun":"<circle cx=\"12\" cy=\"12\" r=\"5\" fill=\"#f5a623\"/><path d=\"M12 2.4v2.3M12 19.3v2.3M2.4 12h2.3M19.3 12h2.3M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>","drum":"<rect x=\"3.6\" y=\"9.6\" width=\"16.8\" height=\"9\" rx=\"2.6\" fill=\"#d94f4f\"/><ellipse cx=\"12\" cy=\"9.6\" rx=\"8.4\" ry=\"2.9\" fill=\"#fffdf9\"/><path d=\"M5.4 11.9l2.8 4.8M12 11.7v5.6M18.6 11.9l-2.8 4.8\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"1.9\" stroke-linecap=\"round\"/><path d=\"M6.8 7.2l4.6-4.8M17.2 7.2l-4.6-4.8\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>","star":"<path d=\"M12 3.2l2.5 5.1 5.6.8-4.05 3.95.96 5.6L12 16l-5.01 2.65.96-5.6L3.9 9.1l5.6-.8z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/>","flame":"<path d=\"M12 2.6c3.4 3.2 5.6 5.8 5.6 9a5.6 5.6 0 1 1-11.2 0c0-2.3 1.3-4 2.6-5.4.1 1.8.9 2.8 2.1 3.2.7-1.8.6-4.3.9-6.8z\" fill=\"#f0913a\" stroke=\"#f0913a\" stroke-width=\"1.4\" stroke-linejoin=\"round\"/><path d=\"M12 10.2c1.5 1.5 2.4 2.7 2.4 4.1a2.4 2.4 0 1 1-4.8 0c0-1.4.9-2.6 2.4-4.1z\" fill=\"#ffd166\"/>","dice":"<rect x=\"3.6\" y=\"3.6\" width=\"16.8\" height=\"16.8\" rx=\"4.8\" fill=\"#5b6cff\"/><circle cx=\"8.7\" cy=\"8.7\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"12\" cy=\"12\" r=\"1.8\" fill=\"#fff\"/><circle cx=\"15.3\" cy=\"15.3\" r=\"1.8\" fill=\"#fff\"/>","note":"<rect x=\"4.2\" y=\"3.4\" width=\"15.6\" height=\"17.2\" rx=\"3.4\" fill=\"#3f7bd8\"/><rect x=\"4.2\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#2f5eaa\"/><rect x=\"9\" y=\"6.4\" width=\"8.4\" height=\"11.2\" rx=\"1.8\" fill=\"#fff\"/><rect x=\"10.6\" y=\"8.8\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"11.4\" width=\"5.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/><rect x=\"10.6\" y=\"14\" width=\"3.2\" height=\"1.6\" rx=\".8\" fill=\"#c3d6f5\"/>","piano":"<rect x=\"3\" y=\"6\" width=\"18\" height=\"12\" rx=\"2.8\" fill=\"#4a4136\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"8\" rx=\"1.3\" fill=\"#fff\"/><rect x=\"7.6\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"11.4\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/><rect x=\"15.2\" y=\"7.4\" width=\"2.4\" height=\"5.6\" rx=\"1\" fill=\"#4a4136\"/>","run":"<circle cx=\"14.6\" cy=\"5.4\" r=\"2.5\" fill=\"#2f8f6b\"/><path d=\"M13.4 9.4l-3.4 2.6 1.1 3.3 2.5 1.7 1.2 3.5\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M10 12l-3.4 1.5\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\"/><path d=\"M13.4 9.4l3.5-.8 2.3 2.3\" fill=\"none\" stroke=\"#57b894\" stroke-width=\"2.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","bag":"<circle cx=\"7.4\" cy=\"4.8\" r=\"2.3\" fill=\"#f0b429\"/><rect x=\"13\" y=\"2.6\" width=\"4\" height=\"4\" rx=\"1.1\" fill=\"#3f7bd8\"/><rect x=\"3.4\" y=\"9.2\" width=\"17.2\" height=\"11.2\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"3.4\" y=\"6.8\" width=\"17.2\" height=\"4.6\" rx=\"1.9\" fill=\"#b03f3f\"/><rect x=\"10.3\" y=\"11.8\" width=\"3.4\" height=\"3.6\" rx=\"1.3\" fill=\"#f6b3b3\"/>","pencil":"<path d=\"M15.6 3.6l4.8 4.8-9.4 9.4-4.8-4.8z\" fill=\"#f5c04a\"/><path d=\"M17.2 2a2.6 2.6 0 0 1 3.7 0l1.1 1.1a2.6 2.6 0 0 1 0 3.7l-1 1-4.8-4.8z\" fill=\"#e89b3c\" transform=\"translate(-1.6 1.6)\"/><path d=\"M6.2 13l4.8 4.8-6 1.2z\" fill=\"#4a4136\"/>","brush":"<rect x=\"9.6\" y=\"8.4\" width=\"4.8\" height=\"12\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"8.6\" y=\"4.2\" width=\"6.8\" height=\"5.6\" rx=\"2.2\" fill=\"#2f5eaa\"/><rect x=\"9.8\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/><rect x=\"12.5\" y=\"2.1\" width=\"1.7\" height=\"2.7\" rx=\".85\" fill=\"#9fc4f0\"/>","broom":"<rect x=\"10.6\" y=\"2.6\" width=\"3\" height=\"9.4\" rx=\"1.5\" fill=\"#8b6b4a\"/><path d=\"M6.4 11.8h11.2l1.7 7.4a1.6 1.6 0 0 1-1.6 2H6.3a1.6 1.6 0 0 1-1.6-2z\" fill=\"#f0b429\"/><rect x=\"5.8\" y=\"15.3\" width=\"12.4\" height=\"1.9\" rx=\".95\" fill=\"#cf8f16\"/>","hand":"<rect x=\"7.2\" y=\"10.6\" width=\"10\" height=\"9.8\" rx=\"4.6\" fill=\"#efb06a\"/><rect x=\"8.4\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"11.1\" y=\"3.6\" width=\"2.5\" height=\"9\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.8\" y=\"5\" width=\"2.5\" height=\"7.6\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"5.1\" y=\"9.2\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","book":"<path d=\"M12 6.8C10.4 5.3 8.2 4.6 5.4 4.6A1.5 1.5 0 0 0 3.9 6.1v11.3a1.5 1.5 0 0 0 1.5 1.5c2.8 0 5 .7 6.6 2.2z\" fill=\"#7d5bd6\"/><path d=\"M12 6.8c1.6-1.5 3.8-2.2 6.6-2.2a1.5 1.5 0 0 1 1.5 1.5v11.3a1.5 1.5 0 0 1-1.5 1.5c-2.8 0-5 .7-6.6 2.2z\" fill=\"#a488ee\"/>","home":"<path d=\"M11 3.7a1.6 1.6 0 0 1 2 0l7.4 6a1.6 1.6 0 0 1 .6 1.3v7.6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11a1.6 1.6 0 0 1 .6-1.3z\" fill=\"#e8622c\"/><rect x=\"9.6\" y=\"13.6\" width=\"4.8\" height=\"7\" rx=\"1.8\" fill=\"#fff\"/>","plus":"<path d=\"M10.3 4.3h3.4a1.5 1.5 0 0 1 1.5 1.5v3.3h3.3a1.5 1.5 0 0 1 1.5 1.5v3.4a1.5 1.5 0 0 1-1.5 1.5h-3.3v3.3a1.5 1.5 0 0 1-1.5 1.5h-3.4a1.5 1.5 0 0 1-1.5-1.5v-3.3H5.5A1.5 1.5 0 0 1 4 13.7v-3.4a1.5 1.5 0 0 1 1.5-1.5h3.3V5.8a1.5 1.5 0 0 1 1.5-1.5z\" fill=\"#2f8f6b\"/>","gift":"<rect x=\"5.2\" y=\"12\" width=\"13.6\" height=\"8.6\" rx=\"2.4\" fill=\"#d96bb0\"/><rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"4.4\" rx=\"1.8\" fill=\"#c2519a\"/><rect x=\"10.6\" y=\"8.2\" width=\"2.8\" height=\"12.4\" fill=\"#fff\"/><path d=\"M12 8.4C10.5 5.2 6.5 5.6 6.7 8.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/><path d=\"M12 8.4c1.5-3.2 5.5-2.8 5.3-.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","bank":"<path d=\"M11.2 3.5a1.7 1.7 0 0 1 1.6 0l7.5 4.4a1.05 1.05 0 0 1-.5 1.95H4.2a1.05 1.05 0 0 1-.5-1.95z\" fill=\"#3f7bd8\"/><rect x=\"5.5\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"10.65\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"15.8\" y=\"11\" width=\"2.7\" height=\"6.6\" rx=\"1.2\" fill=\"#6b9be8\"/><rect x=\"3.5\" y=\"18.3\" width=\"17\" height=\"2.7\" rx=\"1.35\" fill=\"#2f5eaa\"/>","receipt":"<path d=\"M5.4 4.8a1.6 1.6 0 0 1 1.6-1.6h10a1.6 1.6 0 0 1 1.6 1.6v16l-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5-2.2-1.5-2.2 1.5z\" fill=\"#7a8699\"/><rect x=\"8\" y=\"7.2\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"10.8\" width=\"8\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"8\" y=\"14.4\" width=\"5\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/>","gear":"<path d=\"M12 3l1.6 2 2.5-.9.7 2.6 2.6.7-.9 2.5 2 1.6-2 1.6.9 2.5-2.6.7-.7 2.6-2.5-.9L12 21l-1.6-2-2.5.9-.7-2.6-2.6-.7.9-2.5-2-1.6 2-1.6-.9-2.5 2.6-.7.7-2.6 2.5.9z\" fill=\"#8d99ab\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linejoin=\"round\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"#fff\"/>","sparkle":"<path d=\"M12 4l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 14.8 7.8 17l.8-4.7-3.4-3.3 4.7-.7z\" fill=\"#f5a623\" stroke=\"#f5a623\" stroke-width=\"2.2\" stroke-linejoin=\"round\"/><path d=\"M19.4 3l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z\" fill=\"#ffd166\"/><path d=\"M4.6 15.6l.6 1.5 1.5.6-1.5.6-.6 1.5-.6-1.5-1.5-.6 1.5-.6z\" fill=\"#ffd166\"/>","minus":"<rect x=\"4\" y=\"10.2\" width=\"16\" height=\"3.6\" rx=\"1.8\" fill=\"#cc4b3c\"/>","check":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#2f8f6b\"/><path d=\"M7.6 12.3l3 3 5.8-6.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ban":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\"/><path d=\"M6.4 17.6L17.6 6.4\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"3\" stroke-linecap=\"round\"/>","warn":"<path d=\"M10.3 4.2a2 2 0 0 1 3.4 0l7 12a2 2 0 0 1-1.7 3H5a2 2 0 0 1-1.7-3z\" fill=\"#f0b429\"/><rect x=\"10.9\" y=\"8.6\" width=\"2.2\" height=\"5.6\" rx=\"1.1\" fill=\"#fff\"/><circle cx=\"12\" cy=\"16.8\" r=\"1.3\" fill=\"#fff\"/>","bulb":"<path d=\"M12 3a6.6 6.6 0 0 0-3.8 12c.5.4.8 1 .8 1.6v.4h6v-.4c0-.6.3-1.2.8-1.6A6.6 6.6 0 0 0 12 3z\" fill=\"#f5c04a\"/><rect x=\"9\" y=\"18\" width=\"6\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/><rect x=\"9.8\" y=\"20.4\" width=\"4.4\" height=\"1.6\" rx=\".8\" fill=\"#8d99ab\"/>","cloud":"<path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 10.7 1.1 3.9 3.9 0 0 1-.7 7.7z\" fill=\"#b9c8de\"/><path d=\"M7.4 18.6a4.4 4.4 0 0 1-.5-8.8 5.6 5.6 0 0 1 5.1-3.4v12.2z\" fill=\"#cfdaeb\"/>","refresh":"<path d=\"M20 12a8 8 0 1 1-2.4-5.7\" fill=\"none\" stroke=\"#2f8f6b\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M19.8 3.4v4.4h-4.4z\" fill=\"#2f8f6b\"/>","party":"<path d=\"M4 20.4l5.6-12.2 6.6 6.6-12.2 5.6z\" fill=\"#f0b429\"/><path d=\"M6.4 15.2l2.4 2.4-4.8 2.8z\" fill=\"#e8933a\"/><circle cx=\"17.4\" cy=\"5.4\" r=\"1.6\" fill=\"#d96bb0\"/><circle cx=\"21\" cy=\"9.4\" r=\"1.3\" fill=\"#3f7bd8\"/><circle cx=\"13.4\" cy=\"3.6\" r=\"1.2\" fill=\"#2f8f6b\"/>","box":"<rect x=\"3.4\" y=\"8.2\" width=\"17.2\" height=\"12.4\" rx=\"2.6\" fill=\"#c89a68\"/><rect x=\"2.8\" y=\"5.4\" width=\"18.4\" height=\"4.4\" rx=\"1.8\" fill=\"#8b6b4a\"/><rect x=\"10.4\" y=\"5.4\" width=\"3.2\" height=\"15.2\" fill=\"#a67c4e\"/>","camera":"<rect x=\"2.8\" y=\"7\" width=\"18.4\" height=\"13.4\" rx=\"3.2\" fill=\"#4a4136\"/><rect x=\"8\" y=\"3.8\" width=\"8\" height=\"4\" rx=\"1.6\" fill=\"#6b5f4e\"/><circle cx=\"12\" cy=\"13.6\" r=\"4.2\" fill=\"#9fc4f0\"/><circle cx=\"12\" cy=\"13.6\" r=\"2.1\" fill=\"#3f7bd8\"/>","save":"<path d=\"M4.8 3.6h11.4l4 4v13a1.8 1.8 0 0 1-1.8 1.8H4.8A1.8 1.8 0 0 1 3 20.6V5.4a1.8 1.8 0 0 1 1.8-1.8z\" fill=\"#3f7bd8\"/><rect x=\"7.4\" y=\"3.6\" width=\"8\" height=\"6\" rx=\"1.2\" fill=\"#fff\"/><rect x=\"6.6\" y=\"13.4\" width=\"10.8\" height=\"7.4\" rx=\"1.4\" fill=\"#cfdaeb\"/>","key":"<circle cx=\"8\" cy=\"8\" r=\"4.6\" fill=\"#f0b429\"/><circle cx=\"8\" cy=\"8\" r=\"1.8\" fill=\"#fffdf9\"/><path d=\"M11.2 11.2l8 8\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/><path d=\"M16.2 16.2l2 2M18.6 13.8l2.4 2.4\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"3.2\" stroke-linecap=\"round\"/>","lock":"<rect x=\"4.6\" y=\"10\" width=\"14.8\" height=\"10.6\" rx=\"3.4\" fill=\"#f0b429\"/><path d=\"M8.2 10V7.6a3.8 3.8 0 0 1 7.6 0V10\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><circle cx=\"12\" cy=\"14.8\" r=\"1.9\" fill=\"#8b6b4a\"/>","up":"<path d=\"M12 3.4l7.4 7.4a1.6 1.6 0 0 1-1.1 2.7h-3.1v5.7a1.8 1.8 0 0 1-1.8 1.8h-2.8a1.8 1.8 0 0 1-1.8-1.8v-5.7H5.7a1.6 1.6 0 0 1-1.1-2.7z\" fill=\"#3f7bd8\"/>","down":"<path d=\"M12 20.6l-7.4-7.4a1.6 1.6 0 0 1 1.1-2.7h3.1V4.8A1.8 1.8 0 0 1 10.6 3h2.8a1.8 1.8 0 0 1 1.8 1.8v5.7h3.1a1.6 1.6 0 0 1 1.1 2.7z\" fill=\"#3f7bd8\"/>","link":"<path d=\"M9.6 14.4l4.8-4.8\" fill=\"none\" stroke=\"#7a8699\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M13.2 7.4l1.4-1.4a3.8 3.8 0 0 1 5.4 5.4l-1.4 1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M10.8 16.6l-1.4 1.4a3.8 3.8 0 0 1-5.4-5.4l1.4-1.4\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","theme":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#f0b429\"/><path d=\"M12 3.4a8.6 8.6 0 0 1 0 17.2z\" fill=\"#4a4136\"/>","calc":"<rect x=\"4\" y=\"2.8\" width=\"16\" height=\"18.4\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"6.4\" y=\"5.2\" width=\"11.2\" height=\"4\" rx=\"1.2\" fill=\"#9fc4f0\"/><rect x=\"6.4\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"11\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.4\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"10.5\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#fffdf9\"/><rect x=\"14.6\" y=\"15.6\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/>","trophy":"<path d=\"M7 3.6h10v6.8a5 5 0 0 1-10 0z\" fill=\"#f0b429\"/><path d=\"M7 5.2H4.8a3 3 0 0 0 3 3M17 5.2h2.2a3 3 0 0 1-3 3\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"2\"/><rect x=\"10.4\" y=\"14.6\" width=\"3.2\" height=\"3.6\" fill=\"#d4941a\"/><rect x=\"7\" y=\"18\" width=\"10\" height=\"2.8\" rx=\"1.4\" fill=\"#d4941a\"/>","hundred":"<rect x=\"2.6\" y=\"6.4\" width=\"4\" height=\"8.4\" rx=\"2\" fill=\"#d94f4f\"/><rect x=\"8.6\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"16.4\" y=\"6.4\" width=\"5.8\" height=\"8.4\" rx=\"2.9\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.6\"/><rect x=\"2.6\" y=\"17.4\" width=\"19\" height=\"2.4\" rx=\"1.2\" fill=\"#d94f4f\"/>","moneybag":"<path d=\"M8.6 7.2h6.8c3 2.2 4.8 5.2 4.8 8.2a5.2 5.2 0 0 1-5.2 5.2H9a5.2 5.2 0 0 1-5.2-5.2c0-3 1.8-6 4.8-8.2z\" fill=\"#f0b429\"/><path d=\"M8.8 3.4h6.4l-1.4 3.8h-3.6z\" fill=\"#d4941a\"/><path d=\"M12 10.6v7M10 12.4h3.4a1.6 1.6 0 0 1 0 3.2h-3a1.6 1.6 0 0 0 0 3.2H14\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","card":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13.2\" rx=\"2.8\" fill=\"#7d5bd6\"/><rect x=\"2.6\" y=\"8.4\" width=\"18.8\" height=\"3.2\" fill=\"#4d3399\"/><rect x=\"5.4\" y=\"14\" width=\"6.4\" height=\"2\" rx=\"1\" fill=\"#cbb8f5\"/>","kid":"<path d=\"M5.6 10.4a6.4 6.4 0 0 1 12.8 0v1.4a6.4 6.4 0 0 1-12.8 0z\" fill=\"#efb06a\"/><path d=\"M5.2 10.6a6.8 6.8 0 0 1 13.6 0c0 .8-1 1-1.6.4-1.6-1.6-3.4-2.2-5.2-2.2s-3.6.6-5.2 2.2c-.6.6-1.6.4-1.6-.4z\" fill=\"#8b5e3c\"/><circle cx=\"9.6\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.4\" cy=\"12.4\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.6 18.6a5.4 5.4 0 0 1 10.8 0v2.4H6.6z\" fill=\"#d96bb0\"/>","baby":"<circle cx=\"12\" cy=\"11.4\" r=\"6.4\" fill=\"#efb06a\"/><path d=\"M6.6 8.6a6.4 6.4 0 0 1 10.8 0c-1.6.8-3.4 1.2-5.4 1.2s-3.8-.4-5.4-1.2z\" fill=\"#c89a68\"/><circle cx=\"9.8\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><circle cx=\"14.2\" cy=\"11.6\" r=\"1.1\" fill=\"#4a4136\"/><path d=\"M6.8 18.8a5.2 5.2 0 0 1 10.4 0v2.2H6.8z\" fill=\"#6b9be8\"/>","calendar":"<rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"16\" rx=\"2.8\" fill=\"#fffdf9\"/><rect x=\"3.2\" y=\"5\" width=\"17.6\" height=\"5\" rx=\"2.8\" fill=\"#d94f4f\"/><rect x=\"6.6\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"15\" y=\"2.6\" width=\"2.4\" height=\"4.4\" rx=\"1.2\" fill=\"#a83b3b\"/><rect x=\"6.2\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"14.8\" y=\"12.2\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#f0b429\"/><rect x=\"6.2\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/><rect x=\"10.5\" y=\"16.4\" width=\"3\" height=\"3\" rx=\"1\" fill=\"#e3d9c6\"/>","clipboard":"<rect x=\"4\" y=\"4.2\" width=\"16\" height=\"17\" rx=\"2.8\" fill=\"#8b6b4a\"/><rect x=\"6.2\" y=\"7\" width=\"11.6\" height=\"12\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"8.2\" y=\"2.2\" width=\"7.6\" height=\"4\" rx=\"1.8\" fill=\"#c89a68\"/><rect x=\"8.4\" y=\"10\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"13.2\" width=\"7.2\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"8.4\" y=\"16.4\" width=\"4.4\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/>","books":"<rect x=\"3\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#d94f4f\"/><rect x=\"8.4\" y=\"6.2\" width=\"4.6\" height=\"13.8\" rx=\"1.6\" fill=\"#2f8f6b\"/><rect x=\"13.8\" y=\"4.6\" width=\"4.6\" height=\"15.4\" rx=\"1.6\" fill=\"#3f7bd8\"/><rect x=\"3\" y=\"20\" width=\"18\" height=\"2.2\" rx=\"1.1\" fill=\"#8b6b4a\"/>","memo":"<rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"#fffdf9\"/><rect x=\"3.6\" y=\"3.4\" width=\"13.4\" height=\"17.4\" rx=\"2.6\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.4\"/><rect x=\"6.2\" y=\"7\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><rect x=\"6.2\" y=\"10.4\" width=\"8\" height=\"1.7\" rx=\".85\" fill=\"#ddd3c2\"/><path d=\"M17.6 8.4l3.4 3.4-6 6-4 .6.6-4z\" fill=\"#f5c04a\"/><path d=\"M11.6 16.4l2.6 2.6-3.6.6z\" fill=\"#4a4136\"/>","point":"<rect x=\"9.4\" y=\"3\" width=\"3.4\" height=\"11\" rx=\"1.7\" fill=\"#efb06a\"/><path d=\"M9.4 10.6h5.8a4.6 4.6 0 0 1 4.6 4.6v2.2a3.8 3.8 0 0 1-3.8 3.8h-4.4a4.4 4.4 0 0 1-3.2-1.4l-2.8-3a1.8 1.8 0 0 1 2.6-2.5l1.2 1.2z\" fill=\"#efb06a\"/><rect x=\"12.6\" y=\"12.4\" width=\"2.6\" height=\"4\" rx=\"1.3\" fill=\"#d9944f\"/>","shield":"<path d=\"M12 2.6l7.4 2.8v6.2c0 4.4-3 8.2-7.4 9.8-4.4-1.6-7.4-5.4-7.4-9.8V5.4z\" fill=\"#3f7bd8\"/><path d=\"M8.4 12.2l2.6 2.6 4.8-5.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>","ticket":"<rect x=\"2.6\" y=\"6.6\" width=\"18.8\" height=\"10.8\" rx=\"3\" fill=\"#f0913a\"/><path d=\"M9 6.6v10.8\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-dasharray=\"2 2.2\" stroke-linecap=\"round\"/><path d=\"M15.4 9.2l1 2 2.2.3-1.6 1.55.38 2.2-1.98-1.05-1.98 1.05.38-2.2-1.6-1.55 2.2-.3z\" fill=\"#fffdf9\"/>","bed":"<rect x=\"2.6\" y=\"8.6\" width=\"18.8\" height=\"7.4\" rx=\"2.4\" fill=\"#c89a68\"/><rect x=\"4.6\" y=\"9.8\" width=\"6.2\" height=\"4.4\" rx=\"1.8\" fill=\"#fffdf9\"/><rect x=\"2.6\" y=\"5.8\" width=\"2.8\" height=\"14.6\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"18.6\" y=\"11\" width=\"2.8\" height=\"9.4\" rx=\"1.4\" fill=\"#8b6b4a\"/><rect x=\"2.6\" y=\"15\" width=\"18.8\" height=\"2.6\" rx=\"1.3\" fill=\"#6b9be8\"/>","ball":"<circle cx=\"12\" cy=\"12\" r=\"8.6\" fill=\"#e8792c\"/><path d=\"M12 3.4v17.2M3.4 12h17.2\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/><path d=\"M6 5.8c2.6 3 2.6 9.4 0 12.4M18 5.8c-2.6 3-2.6 9.4 0 12.4\" fill=\"none\" stroke=\"#a8501a\" stroke-width=\"1.7\"/>","rice":"<path d=\"M2.8 11h18.4a9.2 9.2 0 0 1-18.4 0z\" fill=\"#3f7bd8\"/><rect x=\"2.8\" y=\"11\" width=\"18.4\" height=\"2.4\" rx=\"1.2\" fill=\"#2f5eaa\"/><path d=\"M6.4 10.8a5.6 5.6 0 0 1 11.2 0z\" fill=\"#fffdf9\"/><path d=\"M8.8 2.6l6.6 6M15.4 2.6l-6.6 6\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.1\" stroke-linecap=\"round\"/>","twokids":"<circle cx=\"7.6\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M2.8 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#3f7bd8\"/><circle cx=\"16.4\" cy=\"7\" r=\"3.2\" fill=\"#efb06a\"/><path d=\"M11.6 20.4a4.8 4.8 0 0 1 9.6 0z\" fill=\"#d96bb0\"/>","alarm":"<circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"#fffdf9\"/><circle cx=\"12\" cy=\"13.4\" r=\"7.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\"/><path d=\"M12 9.2v4.2l2.8 1.8\" fill=\"none\" stroke=\"#4a4136\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><path d=\"M3.6 5.4a4.4 4.4 0 0 1 4.4-2.8M20.4 5.4A4.4 4.4 0 0 0 16 2.6\" fill=\"none\" stroke=\"#d94f4f\" stroke-width=\"2.4\" stroke-linecap=\"round\"/>","angry":"<circle cx=\"12\" cy=\"12\" r=\"8.8\" fill=\"#d94f4f\"/><path d=\"M6.6 8.8l3.6 1.8M17.4 8.8l-3.6 1.8\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"9\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><circle cx=\"15\" cy=\"12.6\" r=\"1.2\" fill=\"#fffdf9\"/><path d=\"M9 17.2h6\" fill=\"none\" stroke=\"#8f2f2f\" stroke-width=\"2.2\" stroke-linecap=\"round\"/>","snail":"<path d=\"M2.6 18.6h11.8a1.8 1.8 0 0 1 0 3.6H4a1.8 1.8 0 0 1-1.4-3.6z\" fill=\"#c89a68\"/><path d=\"M17 4.6a7.4 7.4 0 1 1-7.4 7.4 5.4 5.4 0 1 1 10.8 0 3.4 3.4 0 1 1-6.8 0\" fill=\"none\" stroke=\"#8b6b4a\" stroke-width=\"2.8\" stroke-linecap=\"round\"/><path d=\"M4.6 18.6c0-2.4 1.6-4.2 4-4.2\" fill=\"none\" stroke=\"#c89a68\" stroke-width=\"2.8\" stroke-linecap=\"round\"/>","phone":"<rect x=\"6\" y=\"2.2\" width=\"12\" height=\"19.6\" rx=\"3\" fill=\"#4a4136\"/><rect x=\"7.6\" y=\"5\" width=\"8.8\" height=\"13\" rx=\"1.4\" fill=\"#9fc4f0\"/><rect x=\"10.4\" y=\"18.9\" width=\"3.2\" height=\"1.4\" rx=\".7\" fill=\"#8d99ab\"/>","monkey":"<circle cx=\"5.2\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"18.8\" cy=\"9.6\" r=\"2.8\" fill=\"#8b6b4a\"/><circle cx=\"12\" cy=\"11.4\" r=\"7.4\" fill=\"#8b6b4a\"/><path d=\"M12 8.4a5.4 5.4 0 0 1 5.2 4c-1.6 1.6-3.4 2.4-5.2 2.4s-3.6-.8-5.2-2.4a5.4 5.4 0 0 1 5.2-4z\" fill=\"#efb06a\"/><path d=\"M4.6 14.4a4.6 4.6 0 0 1 5.6 3.6H4.6zM19.4 14.4a4.6 4.6 0 0 0-5.6 3.6h5.6z\" fill=\"#efb06a\"/>","stop":"<rect x=\"7\" y=\"10.4\" width=\"10.4\" height=\"10\" rx=\"4.8\" fill=\"#efb06a\"/><rect x=\"8.2\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"10.9\" y=\"3.2\" width=\"2.5\" height=\"9.2\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"13.6\" y=\"4.6\" width=\"2.5\" height=\"7.8\" rx=\"1.25\" fill=\"#efb06a\"/><rect x=\"4.8\" y=\"9\" width=\"2.4\" height=\"5.8\" rx=\"1.2\" fill=\"#d9944f\"/>","socks":"<rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"12.2\" width=\"8.6\" height=\"4.8\" rx=\"2.4\" fill=\"#6b9be8\"/><rect x=\"3.6\" y=\"3.4\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"11\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"15\" width=\"8\" height=\"4.8\" rx=\"2.4\" fill=\"#3f7bd8\"/><rect x=\"12.4\" y=\"6.2\" width=\"4.8\" height=\"2.6\" rx=\"1.3\" fill=\"#fffdf9\"/>","bomb":"<circle cx=\"10.6\" cy=\"14.4\" r=\"7.2\" fill=\"#4a4136\"/><path d=\"M15.6 9.4l2.2-2.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"2.4\" stroke-linecap=\"round\"/><path d=\"M18 7a3.4 3.4 0 1 1 3.2-2.4\" fill=\"none\" stroke=\"#f0913a\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><circle cx=\"8.2\" cy=\"11.6\" r=\"1.8\" fill=\"#6b5f4e\"/>","cookie":"<circle cx=\"12\" cy=\"12\" r=\"9\" fill=\"#c89a68\"/><circle cx=\"9\" cy=\"9\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"15.2\" cy=\"10.4\" r=\"1.3\" fill=\"#6b4a2e\"/><circle cx=\"11.4\" cy=\"14.6\" r=\"1.5\" fill=\"#6b4a2e\"/><circle cx=\"16\" cy=\"15.4\" r=\"1.2\" fill=\"#6b4a2e\"/><circle cx=\"7.4\" cy=\"14.2\" r=\"1.1\" fill=\"#6b4a2e\"/>","lolli":"<circle cx=\"12\" cy=\"8.6\" r=\"6.2\" fill=\"#d96bb0\"/><path d=\"M12 8.6a2.2 2.2 0 0 1 2.2-2.2 4.4 4.4 0 0 1 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><path d=\"M12 8.6a2.2 2.2 0 0 0-2.2 2.2 4.4 4.4 0 0 0 4.4 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"10.8\" y=\"14.4\" width=\"2.4\" height=\"7.4\" rx=\"1.2\" fill=\"#e3d9c6\"/>","gamepad":"<path d=\"M7.4 7.6h9.2a5.6 5.6 0 0 1 5.4 7l-.8 3a3.4 3.4 0 0 1-6-1.2l-.4-1.4H9.2l-.4 1.4a3.4 3.4 0 0 1-6 1.2l-.8-3a5.6 5.6 0 0 1 5.4-7z\" fill=\"#7d5bd6\"/><rect x=\"6\" y=\"11.4\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#fffdf9\"/><rect x=\"7.3\" y=\"10.1\" width=\"1.8\" height=\"4.4\" rx=\".9\" fill=\"#fffdf9\"/><circle cx=\"16\" cy=\"11.4\" r=\"1.3\" fill=\"#fffdf9\"/><circle cx=\"18.2\" cy=\"13.4\" r=\"1.3\" fill=\"#fffdf9\"/>","joystick":"<path d=\"M4.4 16.6h15.2l1.4 3.4a1.4 1.4 0 0 1-1.3 2H4.3a1.4 1.4 0 0 1-1.3-2z\" fill=\"#4a4136\"/><rect x=\"10.6\" y=\"6.6\" width=\"2.8\" height=\"10.4\" rx=\"1.4\" fill=\"#8d99ab\"/><circle cx=\"12\" cy=\"5.4\" r=\"3.4\" fill=\"#d94f4f\"/>","tv":"<rect x=\"2.6\" y=\"5.4\" width=\"18.8\" height=\"13\" rx=\"2.6\" fill=\"#4a4136\"/><rect x=\"4.6\" y=\"7.4\" width=\"14.8\" height=\"9\" rx=\"1.4\" fill=\"#9fc4f0\"/><path d=\"M8 2.6l4 3.2 4-3.2\" fill=\"none\" stroke=\"#8d99ab\" stroke-width=\"1.8\" stroke-linecap=\"round\"/><rect x=\"7.6\" y=\"19.8\" width=\"8.8\" height=\"1.9\" rx=\".95\" fill=\"#8d99ab\"/>","drink":"<path d=\"M5.4 7.8h13.2l-1.4 12a2.6 2.6 0 0 1-2.6 2.3H9.4a2.6 2.6 0 0 1-2.6-2.3z\" fill=\"#d94f4f\"/><rect x=\"4.2\" y=\"5.4\" width=\"15.6\" height=\"3\" rx=\"1.5\" fill=\"#fffdf9\"/><path d=\"M14.6 5.4l2.2-3.8\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"2.2\" stroke-linecap=\"round\"/><rect x=\"7.4\" y=\"12\" width=\"9.2\" height=\"2\" rx=\"1\" fill=\"#f2a3a3\"/>","moon":"<path d=\"M13.6 2.8a9.4 9.4 0 1 0 7.6 13.6A9.4 9.4 0 0 1 13.6 2.8z\" fill=\"#f0b429\"/><circle cx=\"8.4\" cy=\"15.2\" r=\"1.6\" fill=\"#d4941a\"/><circle cx=\"11.6\" cy=\"18.4\" r=\"1.1\" fill=\"#d4941a\"/>","noodles":"<path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-17.2 0z\" fill=\"#d94f4f\"/><path d=\"M3.4 10.6h17.2a8.6 8.6 0 0 1-.4 2.6H3.8a8.6 8.6 0 0 1-.4-2.6z\" fill=\"#fffdf9\"/><path d=\"M7.6 9.4c0-2.4 1.4-3.6 1.4-5.4M12 9.4c0-2.8 1.6-4 1.6-6M16.4 9.4c0-2.2 1.2-3.4 1.2-5\" fill=\"none\" stroke=\"#f0b429\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>","skate":"<path d=\"M5.2 4.6h5.2v7.6h5.4a4 4 0 0 1 4 4v1.6H5.2z\" fill=\"#d96bb0\"/><rect x=\"4\" y=\"17.2\" width=\"16.4\" height=\"2.2\" rx=\"1.1\" fill=\"#8d99ab\"/><circle cx=\"8\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/><circle cx=\"16.4\" cy=\"21\" r=\"2.2\" fill=\"#4a4136\"/>","map":"<path d=\"M2.8 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><path d=\"M8.8 4l6.4 2.4v14.4L8.8 18.4z\" fill=\"#57b894\"/><path d=\"M15.2 6.4l6-2.4v14.4l-6 2.4z\" fill=\"#2f8f6b\"/><circle cx=\"12\" cy=\"10.6\" r=\"2.4\" fill=\"#d94f4f\"/>","cards":"<rect x=\"3\" y=\"6.6\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#3f7bd8\" transform=\"rotate(-10 8 13.6)\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"#fffdf9\"/><rect x=\"11\" y=\"4.4\" width=\"10\" height=\"14\" rx=\"2.2\" fill=\"none\" stroke=\"#e3d9c6\" stroke-width=\"1.3\"/><path d=\"M16 8l1.1 2.2 2.4.35-1.75 1.7.4 2.4-2.15-1.15-2.15 1.15.4-2.4-1.75-1.7 2.4-.35z\" fill=\"#d94f4f\"/>","fries":"<path d=\"M6.6 9.4h10.8l-1 9.6a2.6 2.6 0 0 1-2.6 2.4h-3.6a2.6 2.6 0 0 1-2.6-2.4z\" fill=\"#d94f4f\"/><rect x=\"5.6\" y=\"13\" width=\"12.8\" height=\"2.2\" rx=\"1.1\" fill=\"#fffdf9\"/><rect x=\"7.2\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/><rect x=\"10.8\" y=\"2.2\" width=\"2.4\" height=\"8.2\" rx=\"1.2\" fill=\"#f5c04a\"/><rect x=\"14.4\" y=\"3.4\" width=\"2.4\" height=\"7\" rx=\"1.2\" fill=\"#f0b429\"/>","redbook":"<rect x=\"4\" y=\"3.4\" width=\"16\" height=\"17.2\" rx=\"2.6\" fill=\"#d94f4f\"/><rect x=\"4\" y=\"3.4\" width=\"3.4\" height=\"17.2\" rx=\"1.7\" fill=\"#a83b3b\"/><rect x=\"9.6\" y=\"7\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#fff\"/><rect x=\"9.6\" y=\"10.4\" width=\"7.2\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/><rect x=\"9.6\" y=\"13.8\" width=\"4.4\" height=\"1.8\" rx=\".9\" fill=\"#f6b3b3\"/>","clapper":"<rect x=\"2.8\" y=\"9\" width=\"18.4\" height=\"11.6\" rx=\"2.4\" fill=\"#4a4136\"/><path d=\"M3.4 4.6l17-1.8.8 4.6-17 1.8z\" fill=\"#6b5f4e\"/><path d=\"M7 4.2l1.2 4.4M11.6 3.8l1.2 4.4M16.2 3.4l1.2 4.4\" fill=\"none\" stroke=\"#fffdf9\" stroke-width=\"1.8\"/>","ferris":"<circle cx=\"12\" cy=\"10.4\" r=\"7.6\" fill=\"none\" stroke=\"#3f7bd8\" stroke-width=\"2.2\"/><path d=\"M12 2.8v15.2M4.4 10.4h15.2M6.6 5l10.8 10.8M17.4 5L6.6 15.8\" fill=\"none\" stroke=\"#6b9be8\" stroke-width=\"1.6\"/><circle cx=\"12\" cy=\"10.4\" r=\"2\" fill=\"#f0b429\"/><path d=\"M12 18l4.6 4H7.4z\" fill=\"#8d99ab\"/>","teddy":"<circle cx=\"6.4\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"17.6\" cy=\"7\" r=\"3.2\" fill=\"#8b6b4a\"/><circle cx=\"6.4\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"17.6\" cy=\"7\" r=\"1.5\" fill=\"#c89a68\"/><circle cx=\"12\" cy=\"13\" r=\"8\" fill=\"#8b6b4a\"/><ellipse cx=\"12\" cy=\"15.4\" rx=\"4.4\" ry=\"3.4\" fill=\"#c89a68\"/><circle cx=\"9.4\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><circle cx=\"14.6\" cy=\"11.4\" r=\"1.2\" fill=\"#4a4136\"/><ellipse cx=\"12\" cy=\"14\" rx=\"1.5\" ry=\"1.1\" fill=\"#4a4136\"/>"};
+const FTINT={"sun":"#f0b429","drum":"#d94f4f","star":"#f5a623","flame":"#f0913a","dice":"#5b6cff","note":"#3f7bd8","piano":"#6b5f4e","run":"#2f8f6b","bag":"#d94f4f","pencil":"#e89b3c","brush":"#3f7bd8","broom":"#f0b429","hand":"#d9944f","book":"#7d5bd6","home":"#e8622c","plus":"#2f8f6b","gift":"#c2519a","bank":"#3f7bd8","receipt":"#7a8699","gear":"#8d99ab","sparkle":"#f5a623","minus":"#cc4b3c","check":"#2f8f6b","ban":"#d94f4f","warn":"#f0b429","bulb":"#f5c04a","cloud":"#8d99ab","refresh":"#2f8f6b","party":"#f0b429","box":"#8b6b4a","camera":"#6b5f4e","save":"#3f7bd8","key":"#f0b429","lock":"#f0b429","up":"#3f7bd8","down":"#3f7bd8","link":"#3f7bd8","theme":"#6b5f4e","calc":"#6b5f4e","trophy":"#f0b429","hundred":"#d94f4f","moneybag":"#f0b429","card":"#7d5bd6","kid":"#d96bb0","baby":"#6b9be8","calendar":"#d94f4f","clipboard":"#8b6b4a","books":"#3f7bd8","memo":"#f5c04a","point":"#d9944f","shield":"#3f7bd8","ticket":"#f0913a","bed":"#8b6b4a","ball":"#e8792c","rice":"#c89a68","twokids":"#3f7bd8","alarm":"#d94f4f","angry":"#d94f4f","snail":"#8b6b4a","phone":"#6b5f4e","monkey":"#8b6b4a","stop":"#d9944f","socks":"#3f7bd8","bomb":"#6b5f4e","cookie":"#c89a68","lolli":"#d96bb0","gamepad":"#7d5bd6","joystick":"#d94f4f","tv":"#6b5f4e","drink":"#d94f4f","moon":"#f0b429","noodles":"#d94f4f","skate":"#d96bb0","map":"#2f8f6b","cards":"#3f7bd8","fries":"#d94f4f","redbook":"#d94f4f","clapper":"#6b5f4e","ferris":"#3f7bd8","teddy":"#8b6b4a"};
 const E2F={"⭐":"star","🌟":"sparkle","🎲":"dice","🎁":"gift","🏦":"bank","🛡️":"shield","🎫":"ticket","📖":"book","✅":"check","👶":"baby","🔁":"refresh","🔄":"refresh","🔥":"flame","✎":"pencil","✏️":"pencil","💡":"bulb","🧹":"broom","🎉":"party","➕":"plus","➖":"minus","🧾":"receipt","☁️":"cloud","⚠️":"warn","📦":"box","🍪":"cookie","🎮":"gamepad","🕹️":"joystick","📚":"books","🏆":"trophy","🧮":"calc","👧":"kid","📅":"calendar","📋":"clipboard","⬇️":"down","⬆️":"up","🔑":"key","💾":"save","📷":"camera","🍭":"lolli","🎒":"bag","🪥":"brush","🙋":"hand","🛏️":"bed","🏀":"ball","🍚":"rice","🤝":"twokids","💯":"hundred","🧦":"socks","🐌":"snail","😤":"angry","📱":"phone","📝":"memo","🙈":"monkey","✋":"stop","👋":"stop","👏":"party","📺":"tv","🥤":"drink","🌙":"moon","🍜":"noodles","🛼":"skate","🗺️":"map","🎴":"cards","🍟":"fries","📕":"redbook","🎬":"clapper","📒":"note","🎡":"ferris","🎹":"piano","🏃":"run","🚫":"ban","🏠":"home","⚙️":"gear","🔗":"link","👆":"point","🔒":"lock","💰":"moneybag","💳":"card","🌓":"theme","💣":"bomb","🧸":"teddy","⏰":"alarm","💎":"sparkle","❓":"bulb","🏁":"star"};
-const FORDER=["star","sparkle","flame","dice","shield","ticket","trophy","hundred","check","ban","warn","plus","minus","note","piano","run","bag","pencil","brush","broom","hand","book","bed","ball","rice","twokids","alarm","books","memo","angry","snail","phone","monkey","stop","socks","bomb","cookie","lolli","fries","drink","noodles","gamepad","joystick","tv","cards","teddy","skate","map","ferris","moon","redbook","clapper","box","gift","bank","moneybag","card","calc","receipt","key","lock","home","gear","cloud","save","camera","refresh","calendar","clipboard","link","theme","up","down","party","bulb","point","kid","baby"];
-const FGRP=[["分數與狀態",13],["日常任務",16],["扣分",7],["獎勵品",18],["銀行",7],["系統",17]];
+const FORDER=["star","sparkle","flame","dice","shield","ticket","trophy","hundred","check","ban","warn","plus","minus","note","piano","run","bag","pencil","brush","broom","hand","book","bed","ball","rice","twokids","alarm","books","memo","sun","drum","angry","snail","phone","monkey","stop","socks","bomb","cookie","lolli","fries","drink","noodles","gamepad","joystick","tv","cards","teddy","skate","map","ferris","moon","redbook","clapper","box","gift","bank","moneybag","card","calc","receipt","key","lock","home","gear","cloud","save","camera","refresh","calendar","clipboard","link","theme","up","down","party","bulb","point","kid","baby"];
+const FGRP=[["分數與狀態",13],["日常任務",18],["扣分",7],["獎勵品",18],["銀行",7],["系統",17]];
 function fi(n,cls){
   const g=FLAT[n]; if(!g)return '';
   return '<svg class="fx '+(cls||'')+'" style="--t:'+(FTINT[n]||'#8d99ab')+'" viewBox="0 0 24 24" aria-hidden="true">'+g+'</svg>';
@@ -636,7 +639,7 @@ function px(e,cls){
   const n=E2F[e]||E2F[String(e).replace(/\uFE0F/g,'')];
   return n?fi(n,cls):pxi(e,cls);
 }
-E2F['❌']='ban';E2F['✖️']='ban';E2F['🧽']='broom';E2F['✨']='sparkle';
+E2F['☀️']='sun';E2F['☀']='sun';E2F['🥁']='drum';E2F['❌']='ban';E2F['✖️']='ban';E2F['🧽']='broom';E2F['✨']='sparkle';
 const F2E={};for(const e in E2F)if(!F2E[E2F[e]])F2E[E2F[e]]=e;
 const PXKEYS=FORDER.map(n=>F2E[n]).filter(Boolean);
 function icoField(id,val,label){
@@ -713,15 +716,16 @@ function defaultCards(){return {
 }}
 function seed(){
   const t=now();
-  const R=(label,emoji,kind,unit,amount)=>({id:uid('r'),label,emoji,kind,unit,amount,sort:0,updatedAt:t});
+  const R=(label,emoji,kind,unit,amount,group)=>({id:uid('r'),label,emoji,kind,unit,amount,
+    group:(kind==='earn'?(group||'daily'):undefined),sort:0,updatedAt:t});
   // W(名稱, emoji, 單位, 數量, 參考價格元 或 null=特權型, 備註)
-  const W=(name,emoji,unit,amount,price,note)=>({id:uid('w'),name,emoji,image:null,unit,amount,
-    price:(price==null?null:price),stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
+  const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
+    price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:2, seeded:true,
+    schema:9, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
-              routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,
+              routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
               weeklyBudgetNTD:150,budgetStartTs:0,interestCap:10,
               plans:[{days:7,per10:1},{days:15,per10:2},{days:30,per10:5}],
               lapBonus:1,chainCap:3},
@@ -739,49 +743,46 @@ function seed(){
       R('準時上床睡覺','🛏️','earn','small',1),
       R('練琴 / 運動 30 分','🏀','earn','small',1),
       R('自己準備隔天用品','📚','earn','small',1),
-      R('自己把飯吃完','🍚','earn','small',1),
-      R('幫忙照顧弟弟妹妹','🤝','earn','small',1),
-      R('考試 90 分以上','💯','earn','big',1),
-      R('考試滿分','🏆','earn','big',1),
-      R('一整週都準時起床','⏰','earn','big',1),
-      R('看完一本書並分享','📚','earn','big',1),
-      R('被老師稱讚','🌟','earn','big',1),
+      R('早上表現好','☀️','earn','small',1),
+      R('考試 90 分以上','💯','earn','big',1,'special'),
+      R('考試 95 分以上','🏆','earn','big',2,'special'),
+      R('考試滿分','🌟','earn','big',4,'special'),
+      R('一整週都準時起床','⏰','earn','big',1,'special'),
+      R('看完一本書並分享','📚','earn','big',1,'special'),
+      R('被老師稱讚','🎉','earn','small',2,'special'),
       R('亂丟東西不收','🧦','deduct','small',1),
       R('吃飯拖拖拉拉','🐌','deduct','small',1),
       R('講話沒禮貌','😤','deduct','small',1),
       R('賴床叫三次以上','⏰','deduct','small',1),
       R('超時看螢幕','📱','deduct','small',1),
       R('功課沒寫完','📝','deduct','small',2),
-      R('兄弟姊妹吵架','💥','deduct','small',2),
-      R('說謊','🙈','deduct','big',1),
+      R('兄弟吵架','💥','deduct','small',2),
+      R('說謊','🙈','deduct','big',3),
       R('動手打人','✋','deduct','big',1)
     ],
     rewards:[
       W('遊戲時間 10 分鐘','🎮','small',2,null),
-      W('看卡通 1 集','📺','small',3,null),
-      W('小零食一份','🍪','small',3,30),
-      W('文具小物','✏️','small',3,30,'貼紙、橡皮擦之類'),
-      W('跟爸媽玩桌遊 30 分','🎲','small',3,null),
-      W('遊戲時間 30 分鐘','🕹️','big',1,null),
-      W('飲料一杯','🥤','big',1,50),
-      W('指定單卡一張','🃏','big',1,50),
-      W('免做一次家事','🧹','big',1,null),
+      W('看卡通 1 集（30 分）','📺','small',2,null),
       W('晚睡 30 分鐘','🌙','big',1,null),
       W('今天晚餐我決定','🍜','big',1,null),
-      W('週末跟朋友約玩','🛼','big',2,null),
       W('選假日去哪玩','🗺️','big',2,null),
-      W('寶可夢卡包 1 包','🎴','big',3,150),
+      W('小零食一份','🍪','small',3,30),
+      W('文具小物','✏️','small',3,30,'貼紙、橡皮擦之類'),
+      W('寶可夢卡包 1 包','🎴','small',6,60),
+      W('飲料一杯','🥤','big',1,50),
       W('兒童餐','🍟','big',3,150),
-      W('一本新書','📕','big',6,300),
-      W('電影票一張','🎬','big',6,300),
-      W('卡冊 / 卡套組','📒','big',6,300),
-      W('玩具一份','🎁','big',10,500),
-      W('遊樂園 / 展覽門票','🎡','big',10,500)
+      W('一本新書','📕','big',6,300,'',true),
+      W('電影票一張','🎬','big',6,300,'',true),
+      W('卡套組','📒','big',10,500,'',true),
+      W('玩具一份','🎁','big',10,500,'',true),
+      W('遊樂園 / 展覽門票','🎡','big',10,500,'',true),
+      W('寶可夢卡包一盒','📦','big',32,1600,'',true)
     ],
     routines:[
       {id:uid('t'),label:'念英文 15 分鐘',emoji:'📖',dice:1,kidIds:[],sort:0,updatedAt:t},
       {id:uid('t'),label:'練鋼琴 15 分鐘',emoji:'🎹',dice:1,kidIds:[],sort:1,updatedAt:t},
-      {id:uid('t'),label:'運動 15 分鐘',emoji:'🏃',dice:1,kidIds:[],sort:2,updatedAt:t}
+      {id:uid('t'),label:'運動 15 分鐘',emoji:'🏃',dice:1,kidIds:[],sort:2,updatedAt:t},
+      {id:uid('t'),label:'練鼓 15 分鐘',emoji:'🥁',dice:1,kidIds:[],sort:3,updatedAt:t}
     ],
     routineLog:[],
     coupons:[],
@@ -889,7 +890,83 @@ function migrate(S){
     S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:5}];
   S.schema=7;
 }
-  if(S.schema<8){S.game.tiles=defaultTiles();S.game.updatedAt=now();S.schema=8}
+  if(S.settings.dailyEarnCap==null)S.settings.dailyEarnCap=3;
+  if(S.schema<9){
+    // 2026-09-12 家長重新調整過的規則與獎勵清單。用「名稱」對舊資料，沒對到的自訂項目不動。
+    const R9=[
+      ['自己收玩具 / 收書包',{emoji:'🎒',unit:'small',amount:1,group:'daily'}],
+      ['主動寫功課不用催',  {emoji:'✏️',unit:'small',amount:1,group:'daily'}],
+      ['刷牙洗臉不用催',    {emoji:'🪥',unit:'small',amount:1,group:'daily'}],
+      ['幫忙做家事',        {emoji:'🧹',unit:'small',amount:1,group:'daily'}],
+      ['有禮貌打招呼',      {emoji:'🙋',unit:'small',amount:1,group:'daily'}],
+      ['閱讀 20 分鐘',      {emoji:'📖',unit:'small',amount:1,group:'daily'}],
+      ['準時上床睡覺',      {emoji:'🛏️',unit:'small',amount:1,group:'daily'}],
+      ['練琴 / 運動 30 分', {emoji:'🏀',unit:'small',amount:1,group:'daily'}],
+      ['自己準備隔天用品',  {emoji:'📚',unit:'small',amount:1,group:'daily'}],
+      ['自己把飯吃完',      null],
+      ['幫忙照顧弟弟妹妹',  null],
+      ['早上表現好',        {emoji:'☀️',unit:'small',amount:1,group:'daily',kind:'earn',add:true}],
+      ['考試 90 分以上',    {emoji:'💯',unit:'big',amount:1,group:'special'}],
+      ['考試 95 分以上',    {emoji:'🏆',unit:'big',amount:2,group:'special',kind:'earn',add:true}],
+      ['考試滿分',          {emoji:'🌟',unit:'big',amount:4,group:'special'}],
+      ['一整週都準時起床',  {emoji:'⏰',unit:'big',amount:1,group:'special'}],
+      ['看完一本書並分享',  {emoji:'📚',unit:'big',amount:1,group:'special'}],
+      ['被老師稱讚',        {emoji:'🎉',unit:'small',amount:2,group:'special'}],
+      ['兄弟姊妹吵架',      {label:'兄弟吵架',emoji:'💥',unit:'small',amount:2}],
+      ['說謊',              {emoji:'🙈',unit:'big',amount:3}]
+    ];
+    for(const [key,spec] of R9){
+      const r=S.rules.find(x=>!x.deleted&&x.label===key);
+      if(!spec){ if(r){r.deleted=true;touch(r)} continue }
+      if(r){ Object.assign(r,spec); delete r.add; touch(r) }
+      else if(spec.add && !S.rules.some(x=>!x.deleted&&x.label===(spec.label||key))){
+        const n={id:uid('r'),label:spec.label||key,emoji:spec.emoji,kind:spec.kind||'earn',
+                 unit:spec.unit,amount:spec.amount,group:spec.group,sort:S.rules.length};
+        S.rules.push(touch(n));
+      }
+    }
+    for(const r of S.rules)if(r.kind==='earn'&&!r.group)r.group='daily';
+
+    const W9=[
+      ['遊戲時間 10 分鐘', {emoji:'🎮',unit:'small',amount:2,price:null,noBudget:false}],
+      ['看卡通 1 集',      {name:'看卡通 1 集（30 分）',emoji:'📺',unit:'small',amount:2,price:null,noBudget:false}],
+      ['晚睡 30 分鐘',     {emoji:'🌙',unit:'big',amount:1,price:null,noBudget:false}],
+      ['今天晚餐我決定',   {emoji:'🍜',unit:'big',amount:1,price:null,noBudget:false}],
+      ['選假日去哪玩',     {emoji:'🗺️',unit:'big',amount:2,price:null,noBudget:false}],
+      ['跟爸媽玩桌遊 30 分',null],
+      ['遊戲時間 30 分鐘', null],
+      ['免做一次家事',     null],
+      ['週末跟朋友約玩',   null],
+      ['指定單卡一張',     null],
+      ['小零食一份',       {emoji:'🍪',unit:'small',amount:3,price:30,noBudget:false}],
+      ['文具小物',         {emoji:'✏️',unit:'small',amount:3,price:30,noBudget:false}],
+      ['寶可夢卡包 1 包',  {emoji:'🎴',unit:'small',amount:6,price:60,noBudget:false}],
+      ['飲料一杯',         {emoji:'🥤',unit:'big',amount:1,price:50,noBudget:false}],
+      ['兒童餐',           {emoji:'🍟',unit:'big',amount:3,price:150,noBudget:false}],
+      ['一本新書',         {emoji:'📕',unit:'big',amount:6,price:300,noBudget:true,note:''}],
+      ['電影票一張',       {emoji:'🎬',unit:'big',amount:6,price:300,noBudget:true,note:''}],
+      ['卡冊 / 卡套組',    {name:'卡套組',emoji:'📒',unit:'big',amount:10,price:500,noBudget:true,note:''}],
+      ['玩具一份',         {emoji:'🎁',unit:'big',amount:10,price:500,noBudget:true,note:''}],
+      ['遊樂園 / 展覽門票',{emoji:'🎡',unit:'big',amount:10,price:500,noBudget:true,note:''}],
+      ['寶可夢卡包一盒',   {emoji:'📦',unit:'big',amount:32,price:1600,noBudget:true,note:'',add:true}]
+    ];
+    for(const [key,spec] of W9){
+      const w=S.rewards.find(x=>!x.deleted&&x.name===key);
+      if(!spec){ if(w){w.deleted=true;touch(w)} continue }
+      if(w){ const a=Object.assign({},spec); delete a.add; Object.assign(w,a); touch(w) }
+      else if(spec.add && !S.rewards.some(x=>!x.deleted&&x.name===(spec.name||key))){
+        const n={id:uid('w'),name:spec.name||key,emoji:spec.emoji,image:null,unit:spec.unit,amount:spec.amount,
+                 price:spec.price,noBudget:!!spec.noBudget,stock:null,kidIds:[],note:spec.note||'',sort:S.rewards.length};
+        S.rewards.push(touch(n));
+      }
+    }
+    for(const w of S.rewards)if(w.noBudget==null)w.noBudget=false;
+
+    if(!S.routines.some(x=>!x.deleted&&x.label==='練鼓 15 分鐘'))
+      S.routines.push(touch({id:uid('t'),label:'練鼓 15 分鐘',emoji:'🥁',dice:1,kidIds:[],sort:S.routines.length}));
+
+    S.schema=9;
+  }
   return S;
 }
 S=migrate(S);
@@ -904,6 +981,13 @@ const live=arr=>arr.filter(x=>!x.deleted);
 function ledgerOf(kidId){return S.ledger.filter(e=>e.kidId===kidId&&!e.voided)}
 const ARC=()=>(S.settings.archive||(S.settings.archive={ts:0,bal:{},earn:{},dice:{},used:{}}));
 const arcOf=(box,kidId)=>((ARC()[box]||{})[kidId]|0);
+const dailyCap=()=>Math.max(0,S.settings.dailyEarnCap|0);
+function dailyEarned(kidId){
+  const d=dayKey();let n=0;
+  for(const e of S.ledger)if(e.kidId===kidId&&!e.voided&&e.cap&&e.small>0&&dayKey(e.ts)===d)n+=e.small;
+  return n;
+}
+function dailyLeft(kidId){return dailyCap()?Math.max(0,dailyCap()-dailyEarned(kidId)):Infinity}
 function balanceOf(kidId){let b=arcOf('bal',kidId);for(const e of S.ledger)if(e.kidId===kidId&&!e.voided)b+=e.small;return b}
 function earnedOf(kidId){let b=arcOf('earn',kidId);for(const e of S.ledger)if(e.kidId===kidId&&!e.voided&&e.small>0)b+=e.small;return b}
 function sinceOf(kidId,ts){let g=0,l=0,r=0;for(const e of S.ledger){if(e.kidId!==kidId||e.voided||e.ts<ts)continue;
@@ -917,7 +1001,7 @@ function startOfWeek(){const x=new Date();const d=(x.getDay()+6)%7;x.setDate(x.g
 function mediaUrl(key){return key&&M.items[key]||null}
 const NTD=()=>Math.max(1,S.settings.ntdPerSmall|0||10);
 function valueOf(w){return w.price!=null?w.price:toSmall(w.unit,w.amount)*NTD()}
-function priceTag(w){return w.price!=null?'NT$'+w.price:'特權'}
+function priceTag(w){return w.price==null?'特權':(w.noBudget?'★ NT$'+w.price:'NT$'+w.price)}
 function rarity(costSmall){return costSmall<5?1:costSmall<15?2:costSmall<30?3:costSmall<50?4:5}
 function stars(n){return '<span class="rarity">'+'★'.repeat(n)+'</span>'}
 
@@ -928,16 +1012,17 @@ const weeklyNTD=()=>Math.max(0,S.settings.weeklyBudgetNTD|0);
 function budgetStartTs(){if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();return S.settings.budgetStartTs}
 function budgetWeeks(){return Math.floor((now()-budgetStartTs())/WEEKMS)+1}
 function budgetAllowance(){return budgetWeeks()*weeklyNTD()}
-function budgetUsed(kidId){let n=0;for(const c of S.coupons)if(!c.voided&&c.kidId===kidId)n+=c.priceNTD||0;return n}
+function budgetUsed(kidId){let n=0;for(const c of S.coupons)if(!c.voided&&c.kidId===kidId&&!c.offBudget)n+=c.priceNTD||0;return n}
 // 銀行利息額外加額度（第三階段會用到）
 function budgetBonus(kidId){let n=0;for(const e of S.ledger)
   if(!e.voided&&e.kidId===kidId&&e.type==='bank-out')n+=(e.interest||0)*NTD();return n}
 function budgetAvail(kidId){return Math.max(0,budgetAllowance()+budgetBonus(kidId)-budgetUsed(kidId))}
 function usedThisWeek(kidId){const w=startOfWeek();let n=0;
-  for(const c of S.coupons)if(!c.voided&&c.kidId===kidId&&c.ts>=w)n+=c.priceNTD||0;return n}
+  for(const c of S.coupons)if(!c.voided&&c.kidId===kidId&&!c.offBudget&&c.ts>=w)n+=c.priceNTD||0;return n}
 
 /* ---------------- 券 ---------------- */
 const isItemReward=w=>w.price!=null&&w.price>0;
+const usesBudget=w=>isItemReward(w)&&!w.noBudget;   // 特殊獎勵有標價，但不吃每週額度
 function couponsOf(kidId,state){
   return S.coupons.filter(c=>!c.voided&&(!kidId||c.kidId===kidId)&&(
     state==='open'?(!c.usedTs&&!c.doneTs&&c.kind!=='item'):
@@ -1295,6 +1380,14 @@ function sheet(title,html,onOpen){
   if(onOpen)onOpen($('#sheet'));
 }
 function closeSheet(){$('#scrim').classList.remove('on');document.body.style.overflow=''}
+/* 編輯完回到原本那張清單，而且停在原來的位置 */
+let listScroll=0;
+function keepScroll(){const sh=$('#sheet');listScroll=sh?sh.scrollTop:0}
+function backTo(openList){
+  openList();
+  const sh=$('#sheet');
+  if(sh)requestAnimationFrame(()=>{sh.scrollTop=Math.min(listScroll,Math.max(0,sh.scrollHeight-sh.clientHeight))});
+}
 $('#scrim').addEventListener('click',e=>{if(e.target.id==='scrim')closeSheet()});
 
 /* ---------------- PIN ---------------- */
@@ -1683,8 +1776,17 @@ function vScore(){
   h+='<div class="card" style="padding:13px;margin-top:12px;display:flex;align-items:center;gap:12px">'+avatarHTML(k)+
      '<div><div style="font-weight:800">'+esc(k.name)+'</div><div style="font-size:12.5px;color:var(--muted)">目前 '+fmtScore(bal)+'（'+bal+' 小分）</div></div>'+
      '<button class="btn sm" style="margin-left:auto" data-act="manual">自訂</button></div>';
-  const earn=live(S.rules).filter(r=>r.kind==='earn'),ded=live(S.rules).filter(r=>r.kind==='deduct');
-  h+='<div class="sec"><h2>加分 ('+earn.length+')</h2></div><div class="rules">'+(earn.map(r=>ruleBtn(r,false)).join('')||'<div class="empty">尚無加分規則</div>')+'</div>';
+  const all=live(S.rules);
+  const day=all.filter(r=>r.kind==='earn'&&r.group!=='special');
+  const sp=all.filter(r=>r.kind==='earn'&&r.group==='special');
+  const ded=all.filter(r=>r.kind==='deduct');
+  const cap=dailyCap(), used=cap?dailyEarned(k.id):0, left=cap?Math.max(0,cap-used):0;
+  h+='<div class="sec"><h2>日常加分 ('+day.length+')</h2>'+
+     (cap?'<span class="more capn'+(left?'':' full')+'">今天 '+used+' / '+cap+' 小分</span>':'')+'</div>'+
+     (cap&&!left?'<div class="banner" style="margin-bottom:10px">'+px('✅','big')+'<div><b>今天的日常加分滿了</b>'+esc(k.name)+' 今天已經拿到 '+cap+' 小分。下面的「特殊加分」不受這個上限限制。</div></div>':'')+
+     '<div class="rules'+(cap&&!left?' capped':'')+'">'+(day.map(r=>ruleBtn(r,false)).join('')||'<div class="empty">尚無日常加分規則</div>')+'</div>';
+  if(sp.length)h+='<div class="sec"><h2>特殊加分 ('+sp.length+')</h2><span class="more">不計每天上限</span></div>'+
+     '<div class="rules">'+sp.map(r=>ruleBtn(r,false)).join('')+'</div>';
   h+='<div class="sec"><h2>扣分 ('+ded.length+')</h2></div><div class="rules">'+(ded.map(r=>ruleBtn(r,false)).join('')||'<div class="empty">尚無扣分規則</div>')+'</div>';
   h+='<div style="height:20px"></div>';
   return h;
@@ -1711,7 +1813,8 @@ function budgetBox(){
   return '<div class="bud" style="margin-top:12px">'+
     '<div class="top"><b>NT$'+av+'</b><u>可用的獎勵額度</u></div>'+
     '<div class="bar"><i style="width:'+pct+'%"></i></div>'+
-    '<div class="lg">本週已用 NT$'+used+' / 每週 NT$'+wk+'　・　沒用完會累積，可以存著換大獎</div></div>';
+    '<div class="lg">本週已用 NT$'+used+' / 每週 NT$'+wk+'　・　沒用完會累積，可以存著換大獎'+
+      (live(S.rewards).some(w=>w.noBudget)?'<br>標 ★ 的<b class="ib">特殊獎勵不吃額度</b>，只看分數夠不夠':'')+'</div></div>';
 }
 function vShop(ws){
   let h=budgetBox();
@@ -2128,7 +2231,8 @@ function rewardCard(w){
     '<div class="bd"><b>'+esc(w.name)+'</b><span class="cost">'+fmtCost(w.unit,w.amount)+'</span>'+
     (w.note?'<div class="stock">'+esc(w.note)+'</div>':'')+
     (w.stock!=null?'<div class="stock">剩 '+w.stock+' 個'+(out?'（已兌完）':'')+'</div>':'')+
-    (isItemReward(w)&&selKid&&w.price>budgetAvail(selKid)
+    (w.noBudget?'<div class="stock" style="color:var(--gold);font-weight:800">特殊獎勵・不計每週額度</div>':'')+
+    (usesBudget(w)&&selKid&&w.price>budgetAvail(selKid)
       ?'<div class="stock" style="color:var(--gold);font-weight:800">額度不足（剩 NT$'+budgetAvail(selKid)+'）</div>':'')+
     '<div class="who">'+live(S.kids).filter(k=>!w.kidIds.length||w.kidIds.includes(k.id))
       .map(k=>'<span class="pill '+(balanceOf(k.id)>=cost?'yes':'')+'">'+esc(k.name.slice(0,6))+'</span>').join('')+'</div>'+
@@ -2297,8 +2401,9 @@ function vSet(){
   h+='<div class="sec"><h2>積分規則</h2></div><div class="list">'+
     nav('bigunit','⭐','1 大分 = ? 小分','目前 '+BU()+' 小分換 1 大分',BU())+
     nav('ntdrate','💰','1 小分 = ? 元','獎勵品換算基準，1 大分 = NT$'+(NTD()*BU()),'NT$'+NTD())+
+    nav('dcap','☀️','每天日常加分上限',dailyCap()?'日常規則每天最多 '+dailyCap()+' 小分；特殊加分不受限':'目前沒有上限',dailyCap()||'不限')+
     nav('rtbonus','🔥','任務獎勵','全完成 +'+st.routineAllBonus+'、連續 3 天 +'+st.streak3Bonus+'、連續 7 天 +'+st.streak7Bonus,'調整')+
-    nav('budget','💳','每週實體獎勵額度','只有標價格的獎勵會扣，沒用完會累積','NT$'+weeklyNTD())+
+    nav('budget','💳','每週實體獎勵額度','有標價格又非「特殊獎勵」的才會扣，沒用完會累積','NT$'+weeklyNTD())+
     nav('rates','🏦','銀行利率',plans().map(x=>x.days+'天+'+x.per10).join(' ・ ')+'　每筆上限 +'+capInt(),'調整')+
     sw('tgneg','允許出現負分','關閉時扣分最多扣到 0',st.allowNegative)+
     sw('tgundo','撤銷紀錄需密碼','避免小孩自己撤銷扣分',st.pinForUndo)+
@@ -2338,7 +2443,8 @@ function applyRule(ruleId,ask){
   if(!ks.length){toast('請先新增小孩');return}
   if(ask&&ks.length>1)return pickKidSheet(r);
   if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
-  addPoints(selKid,r.kind==='deduct'?-toSmall(r.unit,r.amount):toSmall(r.unit,r.amount),r.label,{ruleId:r.id,emoji:r.emoji,type:r.kind});
+  addPoints(selKid,r.kind==='deduct'?-toSmall(r.unit,r.amount):toSmall(r.unit,r.amount),r.label,
+    {ruleId:r.id,emoji:r.emoji,type:r.kind,cap:(r.kind==='earn'&&r.group!=='special')||undefined});
 }
 function pickKidSheet(r){
   const dd=r.kind==='deduct';
@@ -2353,7 +2459,12 @@ function pickKidSheet(r){
 }
 function addPoints(kidId,small,label,extra){
   const k=kid(kidId);if(!k||!small)return;
-  let delta=small;
+  let delta=small,trimmed=0;
+  if(small>0&&extra&&extra.cap&&dailyCap()){
+    const left=dailyLeft(kidId);
+    if(left<=0){toast(k.name+' 今天的日常加分已經滿 '+dailyCap()+' 小分了，明天再來');buzz(90);beep('bad');return}
+    if(small>left){trimmed=small-left;small=left;delta=left}
+  }
   if(small<0&&!S.settings.allowNegative){
     const bal=balanceOf(kidId);
     delta=-Math.min(Math.abs(small),Math.max(0,bal));
@@ -2362,7 +2473,8 @@ function addPoints(kidId,small,label,extra){
   const e=commit(Object.assign({kidId,small:delta,label},extra||{}));
   buzz(delta>0?25:90);beep(delta<0?'bad':Math.abs(delta)>=BU()?'big':'good');
   save();
-  toast((delta>0?'✅ ':'⚠️ ')+k.name+' '+(delta>0?'+':'−')+fmtScore(Math.abs(delta))+'　'+label,()=>{
+  toast((delta>0?'✅ ':'⚠️ ')+k.name+' '+(delta>0?'+':'−')+fmtScore(Math.abs(delta))+'　'+label
+    +(trimmed?'（今天上限只剩這些）':''),()=>{
     e.voided=true;touch(e);save();toast('已復原');
   });
 }
@@ -2387,7 +2499,7 @@ function finishRedeem(wid,kidId){
   const cost=toSmall(w.unit,w.amount);
   if(balanceOf(kidId)<cost){toast('分數不足');return}
   const item=isItemReward(w);
-  if(item){
+  if(usesBudget(w)){
     const av=budgetAvail(kidId);
     if(w.price>av){
       toast('獎勵額度只剩 NT$'+av+'，這項要 NT$'+w.price+'　先換特權型的吧');buzz(120);return;
@@ -2396,7 +2508,7 @@ function finishRedeem(wid,kidId){
   const go=()=>{
     const e=commit({kidId,small:-cost,label:'兌換：'+w.name,type:'redeem',rewardId:w.id,emoji:w.emoji});
     const c=issueCoupon(kidId,{name:w.name,emoji:w.emoji,kind:item?'item':'privilege',
-      source:'redeem',rewardId:w.id,priceNTD:item?w.price:0,ledgerId:e.id});
+      source:'redeem',rewardId:w.id,priceNTD:item?w.price:0,offBudget:!!w.noBudget,ledgerId:e.id});
     if(w.stock!=null){w.stock=Math.max(0,w.stock-1);touch(w)}
     closeSheet();buzz(40);beep('big');save();revealCard(w,k);
     toast('🎉 '+k.name+' 換到「'+w.name+'」'+(item?'　已放進待爸媽處理':'　券已放進「我的券」'),
@@ -2518,7 +2630,7 @@ function rtBonusSheet(){
 }
 function manageRules(){
   const grp=kind=>live(S.rules).filter(r=>r.kind===kind).map(r=>
-    '<button class="li" data-act="editrule" data-id="'+r.id+'"><div class="ic">'+esc(r.emoji||'•')+'</div>'+
+    '<button class="li" data-act="editrule" data-id="'+r.id+'"><div class="ic">'+px(r.emoji||'⭐')+'</div>'+
     '<div class="tx"><b>'+esc(r.label)+'</b><u>'+(kind==='deduct'?'−':'+')+fmtCost(r.unit,r.amount)+'</u></div>'+
     '<span style="color:var(--muted)">›</span></button>').join('')||'<div class="empty">尚無規則</div>';
   sheet('📋 規則管理',
@@ -2531,7 +2643,9 @@ function editRule(id,kind){
   const r=id?S.rules.find(x=>x.id===id):{id:'',label:'',emoji:'',kind:kind||'earn',unit:'small',amount:1};
   sheet(id?'編輯規則':'新增規則',
     icoField('re',r.emoji||'⭐')+'<div class="f2">'+
-    '<div class="f"><label>類型</label><select id="rk"><option value="earn" '+(r.kind==='earn'?'selected':'')+'>加分</option><option value="deduct" '+(r.kind==='deduct'?'selected':'')+'>扣分</option></select></div></div>'+
+    '<div class="f"><label>類型</label><select id="rk"><option value="earn" '+(r.kind==='earn'?'selected':'')+'>加分</option><option value="deduct" '+(r.kind==='deduct'?'selected':'')+'>扣分</option></select></div>'+
+    '<div class="f"><label>算不算每天上限</label><select id="rg"><option value="daily" '+(r.group!=='special'?'selected':'')+'>日常（算）</option><option value="special" '+(r.group==='special'?'selected':'')+'>特殊（不算）</option></select></div></div>'+
+    '<div class="f hint" style="margin-top:-6px">「日常」的加分每天最多 '+(dailyCap()||'不限')+' 小分；考試、被稱讚那種請選「特殊」。扣分不受影響。</div>'+
     '<div class="f"><label>規則名稱</label><input id="rl" value="'+esc(r.label)+'" placeholder="例如：自己收玩具" maxlength="24"></div>'+
     '<div class="f2"><div class="f"><label>分數類型</label><select id="ru"><option value="small" '+(r.unit==='small'?'selected':'')+'>小分</option><option value="big" '+(r.unit==='big'?'selected':'')+'>大分</option></select></div>'+
     '<div class="f"><label>數量</label><input id="ra" type="number" inputmode="numeric" min="1" value="'+(r.amount||1)+'"></div></div>'+
@@ -2562,6 +2676,8 @@ function editRw(id){
     '<div class="hint">目前匯率：1 小分 = NT$'+NTD()+'（1 大分 = NT$'+(NTD()*BU())+'）</div></div>'+
     '<div class="f2"><div class="f"><label>所需分數類型</label><select id="wu"><option value="small" '+(w.unit==='small'?'selected':'')+'>小分</option><option value="big" '+(w.unit==='big'?'selected':'')+'>大分</option></select></div>'+
     '<div class="f"><label>數量</label><input id="wa" type="number" inputmode="numeric" min="1" value="'+(w.amount||1)+'"></div></div>'+
+    '<div class="f"><label>算不算每週額度</label><select id="wb"><option value="0" '+(w.noBudget?'':'selected')+'>一般（有價格就扣額度）</option><option value="1" '+(w.noBudget?'selected':'')+'>特殊獎勵（有價格但不扣額度）</option></select>'+
+    '<div class="hint">特權型（沒填價格）本來就不扣額度。</div></div>'+
     '<div class="f"><label>備註</label><input id="wt" value="'+esc(w.note||'')+'" placeholder="例如：300 元以內" maxlength="30"></div>'+
     '<div class="f"><label>限定誰可以兌換（都不選＝全部）</label><div class="chips" id="wk">'+
       live(S.kids).map(k=>'<button class="chip plain '+(kidIds.includes(k.id)?'on':'')+'" data-k="'+k.id+'">'+esc(k.name)+'</button>').join('')+'</div></div>'+
@@ -2725,30 +2841,30 @@ document.addEventListener('click',async ev=>{
     case 'syncpanel':return ghReady()?(view='set',render(),window.scrollTo(0,0)):ghSetup();
 
     case 'mkids':return manageKids();
-    case 'editkid':return editKid(id);
+    case 'editkid':keepScroll();return editKid(id);
     case 'pickav':return pickImage(d=>el._setav(putMedia(d)));
     case 'rmav':return el._setav(null);
     case 'savekid':{
       const g=el._get(),nm=g.name||'寶貝';
       if(id){const k=kid(id);Object.assign(k,{name:nm,color:g.color,avatar:g.avatar});touch(k)}
       else S.kids.push(touch({id:uid('k'),name:nm,color:g.color,avatar:g.avatar,sort:S.kids.length}));
-      closeSheet();save({media:true});return toast('已儲存');
+      save({media:true});backTo(manageKids);return toast('已儲存');
     }
     case 'delkid':{
       if(!confirm('刪除後這位小孩的分數與紀錄不再顯示，確定？'))return;
-      const k=kid(id);k.deleted=true;touch(k);if(selKid===id)selKid=null;closeSheet();save();return toast('已刪除');
+      const k=kid(id);k.deleted=true;touch(k);if(selKid===id)selKid=null;save();backTo(manageKids);return toast('已刪除');
     }
     case 'mrt':return manageRt();
-    case 'editrt':return editRt(id);
+    case 'editrt':keepScroll();return editRt(id);
     case 'savert':{
       const g=el._get();
       const o={label:$('#tl').value.trim()||'未命名',emoji:$('#te').value.trim()||'⭐',
                dice:clamp(parseInt($('#td').value)||0,0,9),kidIds:g.kidIds};
       if(id)Object.assign(touch(S.routines.find(x=>x.id===id)),o);
       else S.routines.push(touch(Object.assign({id:uid('t'),sort:S.routines.length},o)));
-      closeSheet();save();return toast('已儲存');
+      save();backTo(manageRt);return toast('已儲存');
     }
-    case 'delrt':{const r=S.routines.find(x=>x.id===id);r.deleted=true;touch(r);closeSheet();save();return toast('已刪除')}
+    case 'delrt':{const r=S.routines.find(x=>x.id===id);r.deleted=true;touch(r);save();backTo(manageRt);return toast('已刪除')}
     case 'rtbonus':return rtBonusSheet();
     case 'savertb':{
       const st=S.settings;
@@ -2759,15 +2875,16 @@ document.addEventListener('click',async ev=>{
       touch(st);closeSheet();save();return toast('已儲存');
     }
     case 'mrules':return manageRules();
-    case 'editrule':return editRule(id,t.dataset.kind);
+    case 'editrule':keepScroll();return editRule(id,t.dataset.kind);
     case 'saverule':{
       const o={label:$('#rl').value.trim()||'未命名',emoji:$('#re').value.trim(),kind:$('#rk').value,
+               group:$('#rg')?$('#rg').value:'daily',
                unit:$('#ru').value,amount:Math.max(1,parseInt($('#ra').value)||1)};
       if(id)Object.assign(touch(S.rules.find(x=>x.id===id)),o);
       else S.rules.push(touch(Object.assign({id:uid('r'),sort:S.rules.length},o)));
-      closeSheet();save();return toast('已儲存');
+      save();backTo(manageRules);return toast('已儲存');
     }
-    case 'delrule':{const r=S.rules.find(x=>x.id===id);r.deleted=true;touch(r);closeSheet();save();return toast('已刪除')}
+    case 'delrule':{const r=S.rules.find(x=>x.id===id);r.deleted=true;touch(r);save();backTo(manageRules);return toast('已刪除')}
     case 'calcpts':{
       const pr=Math.max(0,parseInt($('#wp').value)||0);
       if(!pr)return toast('先填價格');
@@ -2777,7 +2894,7 @@ document.addEventListener('click',async ev=>{
       return toast('NT$'+pr+' → '+small+' 小分');
     }
     case 'mrw':return manageRw();
-    case 'editrw':return editRw(id);
+    case 'editrw':keepScroll();return editRw(id);
     case 'pickrw':return pickImage(d=>el._setimg(d));
     case 'rmrw':return el._setimg(null);
     case 'saverw':{
@@ -2785,16 +2902,22 @@ document.addEventListener('click',async ev=>{
       const pr=$('#wp').value.trim();
       const o={name:$('#wn').value.trim()||'未命名',emoji:$('#we').value.trim()||'🎁',
         unit:$('#wu').value,amount:Math.max(1,parseInt($('#wa').value)||1),
-        price:pr===''?null:Math.max(0,parseInt(pr)||0),
+        price:pr===''?null:Math.max(0,parseInt(pr)||0),noBudget:$('#wb')?$('#wb').value==='1':false,
         stock:st===''?null:Math.max(0,parseInt(st)||0),note:$('#wt').value.trim(),kidIds:g.kidIds};
       let media=false;
       if(g.img&&g.img.startsWith('data:')){o.image=putMedia(g.img);media=true}else if(!g.img)o.image=null;
       if(id){const w=S.rewards.find(x=>x.id===id);if(g.img&&!g.img.startsWith('data:'))o.image=w.image;Object.assign(touch(w),o)}
       else S.rewards.push(touch(Object.assign({id:uid('w'),sort:S.rewards.length},o)));
-      closeSheet();save({media});return toast('已儲存');
+      save({media});backTo(manageRw);return toast('已儲存');
     }
-    case 'delrw':{const w=S.rewards.find(x=>x.id===id);w.deleted=true;touch(w);closeSheet();save();return toast('已刪除')}
+    case 'delrw':{const w=S.rewards.find(x=>x.id===id);w.deleted=true;touch(w);save();backTo(manageRw);return toast('已刪除')}
 
+    case 'dcap':{
+      const v=prompt('每天「日常加分」最多可以拿幾小分？（填 0 = 不限）',String(dailyCap()));
+      if(v==null)return;
+      S.settings.dailyEarnCap=Math.max(0,parseInt(v)||0);touch(S.settings);save();
+      return toast(dailyCap()?'每天最多 '+dailyCap()+' 小分':'已取消每天上限');
+    }
     case 'rates':{
       const ps=plans().slice().sort((a,b)=>a.days-b.days);
       sheet('🏦 銀行利率',
@@ -2917,7 +3040,7 @@ if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋
 if(ghReady())pull(true);
 setTimeout(()=>checkUpdate(true),2500);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate(true)});
-window.KP={get S(){return S},get M(){return M},addPoints,balanceOf,fmtScore,mergeState,mergeLedger,render,
+window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,dailyEarned,dailyLeft,dailyCap,budgetAvail,finishRedeem,usesBudget,LS,balanceOf,fmtScore,mergeState,mergeLedger,render,
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
   deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
