@@ -204,7 +204,8 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
 .delta{font-weight:850;font-size:14.5px;flex:0 0 auto}
 .delta.p{color:var(--good)} .delta.n{color:var(--bad)}
 .li.void{opacity:.42} .li.void .tx b{text-decoration:line-through}
-.daylab{font-size:11.5px;font-weight:850;color:var(--muted);padding:15px 3px 7px;letter-spacing:1px}
+.daylab{display:flex;align-items:center;font-size:11.5px;font-weight:850;color:var(--muted);padding:15px 3px 7px;letter-spacing:1px}
+.daylab .dtot{margin-left:auto;font-size:12.5px;font-weight:850;color:var(--brand);display:inline-flex;align-items:center;gap:4px;letter-spacing:0}
 .empty{text-align:center;color:var(--muted);padding:36px 16px;font-size:14px}
 .empty .e{font-size:42px;display:block;margin-bottom:8px;opacity:.55}
 
@@ -274,7 +275,7 @@ header{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 8
   font-size:13px;font-weight:750;color:var(--muted);min-height:42px}
 .tabs button.on{background:var(--brand);border-color:transparent;color:#fff;box-shadow:0 3px 12px color-mix(in srgb,var(--brand) 40%,transparent)}
 .tabs button b{font-weight:850}
-.tabs button.on svg.fx,.rarbar button.on svg.fx{filter:brightness(0) invert(1)}
+.tabs button.on svg.fx,.rarbar button.on svg.fx{background:#fff;border-radius:6px;padding:1px;box-sizing:content-box}
 .bud{padding:12px 13px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
 .bud .top{display:flex;align-items:baseline;gap:7px;margin-bottom:9px}
 .bud .top b{font-size:19px;font-weight:850;letter-spacing:-.5px;color:var(--good)}
@@ -583,7 +584,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v11.3・2026-09-12';
+const BUILD='v12・2026-09-13';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -727,12 +728,11 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:12, seeded:true,
+    schema:13, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
-              weeklyBudgetNTD:150,budgetStartTs:0,interestCap:10,
-              plans:[{days:7,per10:1},{days:15,per10:2},{days:30,per10:5}],
+              weeklyBudgetNTD:150,budgetStartTs:0,interestCap:20,rates:[3,4,6,8,10],
               lapBonus:1,chainCap:3},
     kids:[
       {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
@@ -877,8 +877,8 @@ function migrate(S){
   if(S.settings.weeklyBudgetNTD==null)S.settings.weeklyBudgetNTD=150;
   if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
   if(!S.savings)S.savings=[];
-  if(!S.settings.plans||!S.settings.plans.length)S.settings.plans=[{days:7,per10:1},{days:15,per10:2},{days:30,per10:4}];
-  if(S.settings.interestCap==null)S.settings.interestCap=10;
+  if(!Array.isArray(S.settings.rates)||!S.settings.rates.length)S.settings.rates=[3,4,6,8,10];
+  if(S.settings.interestCap==null)S.settings.interestCap=20;
   if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
   if(!S.game.players)S.game.players={};
   if(!S.game.tiles||S.game.tiles.length!==20)S.game.tiles=defaultTiles();
@@ -972,16 +972,23 @@ function migrate(S){
 
     S.schema=9;
   }
-  if(S.schema<12){   // 重排棋盤：訊號格、移動格位置、減少券
+  if(S.schema<12){   // 重排棋盤：星雲格、移動格位置、減少券
     S.game.tiles=defaultTiles(); S.game.cards=defaultCards(); S.game.updatedAt=now();
     S.schema=12;
+  }
+  if(S.schema<13){   // 銀行改成每 7 天複利，不再分 7/15/30 天期別
+    S.settings.rates=[3,4,6,8,10];
+    S.settings.interestCap=20;
+    delete S.settings.plans;
+    for(const sv of S.savings){delete sv.days;delete sv.addIds;touch(sv)}
+    S.schema=13;
   }
   return S;
 }
 S=migrate(S);
 
 let view='home', selKid=null, unlockUntil=0, pendingUndo=null, toastT=null, rwTab='shop', depAmt=10, gPending=null;
-let chartRange='week', chartPick=null, topUpAmt=5, rwRar=0;
+let chartRange='week', chartPick=null, rwRar=0, logTab='pts';
 
 /* ---------------- 分數計算 ---------------- */
 const BU=()=>Math.max(2,S.settings.bigUnit|0||5);
@@ -1231,68 +1238,69 @@ function spinDie(final,done){
   el.classList.add('spin'); step1();
 }
 const DAYMS=86400000;
-const plans=()=>S.settings.plans||[];
+/* ---- 銀行：每滿 7 天結一次息，利息滾入本金（複利），週次越多利率越高 ---- */
+const RATES=()=>{const r=S.settings.rates;return (Array.isArray(r)&&r.length)?r:[3,4,6,8,10]};
+const rateOf=w=>{const r=RATES();return (w<=r.length?r[w-1]:r[r.length-1])/100};
 const capInt=()=>Math.max(0,S.settings.interestCap|0);
-function interestFor(amount,days){
-  const pl=plans().find(x=>x.days===days);if(!pl)return 0;
-  return Math.min(Math.floor(amount/10)*(pl.per10||0),capInt());   // 每滿 10 小分，零頭不計息；上限封頂
-}
 function liveSavings(kidId){return S.savings.filter(s=>!s.voided&&!s.claimedTs&&(!kidId||s.kidId===kidId))}
-function bankedOf(kidId){let n=0;for(const s of liveSavings(kidId))n+=s.amount;return n}
-function dueTs(s){return s.startTs+s.days*DAYMS}
-function isMature(s){return now()>=dueTs(s)}
-function daysLeft(s){return Math.max(0,Math.ceil((dueTs(s)-now())/DAYMS))}
-function matureCount(kidId){return liveSavings(kidId).filter(isMature).length}
-function deposit(kidId,amount,days){
+function svWeeks(sv,at){return Math.max(0,Math.floor(((at||now())-sv.startTs)/WEEKMS))}
+/* 純函式：只靠 startTs 與本金推算，兩台裝置算出來一定一樣 */
+function svValue(sv,at){
+  const w=svWeeks(sv,at), cap=capInt();
+  let amt=sv.amount|0, frac=0, got=0;
+  for(let i=1;i<=w;i++){
+    const g=amt*rateOf(i)+frac;
+    let add=Math.floor(g);
+    if(cap&&got+add>cap)add=Math.max(0,cap-got);
+    frac=g-Math.floor(g);
+    amt+=add; got+=add;
+    if(cap&&got>=cap)break;
+  }
+  return {amount:amt,interest:got,weeks:w};
+}
+function svNext(sv,at){
+  const t=at||now(), w=svWeeks(sv,t), ts=sv.startTs+(w+1)*WEEKMS;
+  return {days:Math.max(0,Math.ceil((ts-t)/DAYMS)), rate:rateOf(w+1),
+          gain:svValue(sv,ts).amount-svValue(sv,t).amount};
+}
+function bankedOf(kidId){let n=0;for(const s of liveSavings(kidId))n+=svValue(s).amount;return n}
+function interestOf(kidId){let n=0;for(const s of liveSavings(kidId))n+=svValue(s).interest;return n}
+function matureCount(kidId){return liveSavings(kidId).filter(s=>svWeeks(s)>=1).length}
+/* 試算：存 amount 放 weeks 週之後值多少 */
+function project(amount,weeks){
+  const cap=capInt();let amt=amount|0,frac=0,got=0;
+  for(let i=1;i<=weeks;i++){
+    const g=amt*rateOf(i)+frac;let add=Math.floor(g);
+    if(cap&&got+add>cap)add=Math.max(0,cap-got);
+    frac=g-Math.floor(g);amt+=add;got+=add;if(cap&&got>=cap)break;
+  }
+  return {amount:amt,interest:got};
+}
+function deposit(kidId,amount){
   amount=Math.floor(amount)||0;
   if(amount<=0){toast('要存的分數要大於 0');return}
   if(amount>balanceOf(kidId)){toast('分數不夠，目前只有 '+balanceOf(kidId)+' 小分');buzz(120);return}
-  if(!plans().some(x=>x.days===days)){toast('沒有這個期別');return}
-  const e=commit({kidId,small:-amount,label:'存入銀行 '+amount+' 小分（'+days+' 天）',type:'bank-in',emoji:'🏦'});
-  const sv={id:uid('s'),kidId,amount,days,startTs:now(),claimedTs:null,broke:false,
-            ledgerId:e.id,voided:false,updatedAt:now()};
-  S.savings.push(sv);
+  const e=commit({kidId,small:-amount,label:'存入銀行 '+amount+' 小分',type:'bank-in',emoji:'🏦'});
+  S.savings.push({id:uid('s'),kidId,amount,startTs:now(),claimedTs:null,broke:false,
+                  ledgerId:e.id,voided:false,updatedAt:now()});
   if(S.savings.length>400)S.savings=S.savings.slice(-400);
   closeSheet();buzz(40);beep('good');save();
-  toast('🏦 存了 '+amount+' 小分，'+days+' 天後可以領 '+(amount+interestFor(amount,days))+' 小分');
-}
-function topUp(savingId,amount){
-  const sv=S.savings.find(x=>x.id===savingId);
-  if(!sv||sv.claimedTs||sv.voided)return;
-  amount=Math.floor(amount)||0;
-  if(amount<=0){toast('要加存的分數要大於 0');return}
-  const bal=balanceOf(sv.kidId);
-  if(amount>bal){toast('分數不夠，目前只有 '+bal+' 小分');buzz(120);return}
-  const before=interestFor(sv.amount,sv.days);
-  const e=commit({kidId:sv.kidId,small:-amount,label:'加存 '+amount+' 小分（'+sv.days+' 天期）',type:'bank-in',emoji:'🏦'});
-  sv.amount+=amount;
-  sv.addIds=(sv.addIds||[]).concat([e.id]);
-  touch(sv);
-  const after=interestFor(sv.amount,sv.days);
-  closeSheet();buzz(40);beep(after>before?'big':'good');save();
-  toast('🏦 加存 '+amount+' 小分　到期可領 '+(sv.amount+after)+'（利息 +'+after+'）');
+  const p1=project(amount,1),p4=project(amount,4);
+  toast('🏦 存了 '+amount+' 小分　7 天後 '+p1.amount+'、一個月後 '+p4.amount);
 }
 function claimSaving(id){
   const sv=S.savings.find(x=>x.id===id);
   if(!sv||sv.claimedTs||sv.voided)return;
-  if(!isMature(sv)){toast('還沒到期，還要 '+daysLeft(sv)+' 天');buzz(120);return}
-  const it=interestFor(sv.amount,sv.days);
-  commit({kidId:sv.kidId,small:sv.amount+it,interest:it,type:'bank-out',emoji:'🏦',
-          label:'領回存款 '+sv.amount+' 小分'+(it?'（利息 +'+it+'）':'')});
-  sv.claimedTs=now();touch(sv);
-  closeSheet();buzz(50);beep('big');save();
-  toast('🎉 領回 '+(sv.amount+it)+' 小分'+(it?'　利息 +'+it+'，額度也加 NT$'+(it*NTD()):''));
-}
-function breakSaving(id){
-  const sv=S.savings.find(x=>x.id===id);
-  if(!sv||sv.claimedTs||sv.voided)return;
+  const v=svValue(sv);
   const go=()=>{
-    commit({kidId:sv.kidId,small:sv.amount,interest:0,type:'bank-out',emoji:'🏦',
-            label:'提早解約，退回本金 '+sv.amount+' 小分'});
-    sv.claimedTs=now();sv.broke=true;touch(sv);
-    closeSheet();save();toast('已解約，本金退回（沒有利息）');
+    commit({kidId:sv.kidId,small:v.amount,interest:v.interest,type:'bank-out',emoji:'🏦',
+            label:'領回存款 '+sv.amount+' 小分'+(v.interest?'（存了 '+v.weeks+' 週，利息 +'+v.interest+'）':'（還沒滿 7 天，沒有利息）')});
+    sv.claimedTs=now();touch(sv);
+    closeSheet();buzz(50);beep('big');save();
+    toast(v.interest?'🎉 領回 '+v.amount+' 小分　利息 +'+v.interest+'，額度也加 NT$'+(v.interest*NTD())
+                    :'領回 '+v.amount+' 小分（還沒滿一週，沒有利息）');
   };
-  (pinSet()&&!unlocked())?askPin('提早解約需要家長密碼',go):go();
+  (v.interest||!pinSet()||unlocked())?go():askPin('提早領回需要家長密碼',go);
 }
 
 /* ---------------- 日常任務 ---------------- */
@@ -1898,61 +1906,46 @@ function vCoupons(){
   return h+'<div style="height:20px"></div>';
 }
 function calcSheet(){
-  const ps=plans().slice().sort((a,b)=>a.days-b.days);
-  const rows=[10,20,30,50];
+  const R=RATES(), rows=[10,20,30,50], cols=[1,2,4,8,12];
   let t='<div class="calcwrap"><table class="calc"><tr><th>存進去</th>'+
-    ps.map(pl=>'<th>'+pl.days+' 天</th>').join('')+'</tr>';
+    cols.map(w=>'<th>'+w+' 週</th>').join('')+'</tr>';
   for(const a of rows){
-    t+='<tr><th>'+a+' 小分</th>'+ps.map(pl=>{
-      const it=interestFor(a,pl.days);
-      return '<td'+(it?' class="win"':'')+'><b>'+(a+it)+'</b><i>'+(it?'+'+it:'+0')+'</i></td>';
+    t+='<tr><th>'+a+' 小分</th>'+cols.map(w=>{
+      const r=project(a,w);
+      return '<td'+(r.interest?' class="win"':'')+'><b>'+r.amount+'</b><i>'+(r.interest?'+'+r.interest:'+0')+'</i></td>';
     }).join('')+'</tr>';
   }
   t+='</table></div>';
-  const best=ps[ps.length-1];
-  sheet('🧮 存越久，領越多',
-    '<div class="f hint" style="margin-top:-6px;line-height:1.8">數字是<b>到期那天可以領回的小分</b>，綠色小字是多賺的利息。<br>'+
-    '利息用「每滿 <b>10 小分</b>」算，零頭不計息；每一筆最多 +'+capInt()+' 小分。</div>'+
-    t+
+  let rt='<div class="calcwrap"><table class="calc"><tr><th>第幾週</th>'+
+    R.map((_,i)=>'<th>'+(i+1)+(i===R.length-1?'+':'')+'</th>').join('')+'</tr>'+
+    '<tr><th>利率</th>'+R.map(v=>'<td class="win"><b>'+v+'%</b></td>').join('')+'</tr></table></div>';
+  const p4=project(20,4);
+  sheet('🧮 存越久，利息越高',
+    '<div class="f hint" style="margin-top:-6px;line-height:1.8">'+
+    '存進去之後<b>每滿 7 天</b>結一次利息，利息直接<b>加進本金</b>，下一週連利息一起算 —— 這就是複利。<br>'+
+    '而且<b>存越多週，利率越高</b>：</div>'+rt+
+    '<div class="f hint" style="margin-top:10px;line-height:1.8">下面是存不同金額、放不同週數之後<b>可以領回的小分</b>，綠色小字是多賺的。<br>'+
+    '不滿 1 小分的零頭會留著累積，不會不見。每一筆最多多賺 +'+capInt()+' 小分。</div>'+t+
     '<div class="banner" style="margin-top:12px">'+px('💡','big')+'<div style="line-height:1.75">'+
-    '同樣 20 小分：現在花掉就是 20 小分；<b class="ib" style="color:var(--gold)">存 '+best.days+' 天再領，變成 '+(20+interestFor(20,best.days))+' 小分</b>。<br>'+
-    '利息還會<b class="ib">額外加獎勵額度</b>（每 1 小分 = NT$'+NTD()+'），不佔每週的 NT$'+weeklyNTD()+'。</div></div>'+
+    '同樣 20 小分：現在花掉就是 20 小分；<b class="ib" style="color:var(--gold)">存一個月變成 '+p4.amount+' 小分</b>（多 '+p4.interest+'）。<br>'+
+    '還沒滿 7 天就領回，那一段<b class="ib">沒有利息</b>，所以要放著不動才划算。<br>'+
+    '利息會<b class="ib">額外加獎勵額度</b>（每 1 小分 = NT$'+NTD()+'），不佔每週的 NT$'+weeklyNTD()+'。</div></div>'+
     '<button class="btn pri wide" style="margin-top:12px" data-act="close">知道了</button>');
-}
-function topUpSheet(id){
-  const sv=S.savings.find(x=>x.id===id);if(!sv)return;
-  const bal=balanceOf(sv.kidId);
-  const add=clamp(topUpAmt,0,bal);
-  const now0=interestFor(sv.amount,sv.days), nxt=interestFor(sv.amount+add,sv.days);
-  const need=(10-(sv.amount%10))%10;
-  sheet('🏦 加存到這筆存款',
-    '<div class="f hint" style="margin-top:-6px;line-height:1.8">現在這筆有 <b>'+sv.amount+' 小分</b>，'+
-      (isMature(sv)?'已經到期':'還要 '+daysLeft(sv)+' 天')+'到期。加存不會改到期日。</div>'+
-    (need&&need<=bal?'<div class="banner">'+px('💡','big')+'<div>再加 <b class="ib" style="color:var(--gold)">'+need+' 小分</b> 就滿 '+(sv.amount+need)+'，利息會多 +'+(interestFor(sv.amount+need,sv.days)-now0)+'。</div></div>':'')+
-    '<div class="card" style="padding:16px;margin-top:10px"><div class="stepper">'+
-      '<button class="sb" data-act="tu-" data-id="'+sv.id+'">−</button>'+
-      '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;letter-spacing:-1.5px;color:var(--gold)">'+add+'</div>'+
-      '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">可用 '+bal+' 小分</div></div>'+
-      '<button class="sb" data-act="tu+" data-id="'+sv.id+'">＋</button></div></div>'+
-    '<div class="tier" style="margin-top:10px"><div class="hd"><b>加完之後</b><span>存 '+sv.days+' 天</span></div>'+
-      '<div class="val"><u>到期領</u><b style="color:var(--gold)">'+(sv.amount+add+nxt)+'</b><u>小分</u><i>+'+nxt+'</i></div></div>'+
-    '<button class="btn pri wide" style="margin-top:12px" data-act="dotu" data-id="'+sv.id+'"'+(add<=0?' disabled':'')+'>加存 '+add+' 小分</button>'+
-    '<button class="btn ghost wide" style="margin-top:8px" data-act="close">取消</button>');
 }
 function vBank(){
   const ks=live(S.kids);
   if(!ks.length)return '<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
   if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
-  let h=kidChips(ks,x=>px('🏦')+bankedOf(x.id)+(matureCount(x.id)?' ✓':''));
+  let h=kidChips(ks,x=>px('🏦')+bankedOf(x.id));
 
-  const bal=balanceOf(selKid),banked=bankedOf(selKid);
+  const bal=balanceOf(selKid),banked=bankedOf(selKid),got=interestOf(selKid);
   const amt=clamp(depAmt,0,Math.max(0,bal));
   h+='<div class="stats" style="margin-top:12px">'+
     '<div class="st"><b style="color:var(--good)">'+bal+'</b><u>可用小分</u></div>'+
     '<div class="st"><b style="color:var(--brand)">'+banked+'</b><u>銀行裡</u></div>'+
-    '<div class="st"><b style="color:var(--gold)">'+matureCount(selKid)+'</b><u>可以領了</u></div></div>';
+    '<div class="st"><b style="color:var(--gold)">+'+got+'</b><u>已賺利息</u></div></div>';
 
-  h+='<button class="btn wide" style="margin-top:10px;background:var(--gold-soft);color:var(--gold);font-weight:850" data-act="calc">'+px('🧮')+' 存越久領越多 — 看試算表</button>';
+  h+='<button class="btn wide" style="margin-top:10px;background:var(--gold-soft);color:var(--gold);font-weight:850" data-act="calc">'+px('🧮')+' 每 7 天複利一次 — 看試算表</button>';
 
   h+='<div class="sec"><h2>要存多少小分？</h2></div>';
   h+='<div class="card" style="padding:16px"><div class="stepper">'+
@@ -1961,63 +1954,48 @@ function vBank(){
     '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">目前可用 '+bal+' 小分</div></div>'+
     '<button class="sb" data-act="dep+">＋</button></div></div>';
 
-  if(amt>0&&amt<10){
-    const need=10-amt;
-    h+='<div class="banner">'+px('💡','big')+'<div style="line-height:1.75">'+
-      '利息是「每滿 <b class="ib">10 小分</b>」才算一次，現在 '+amt+' 小分利息是 <b class="ib">+0</b>。<br>'+
-      (need<=bal-amt
-        ? '再存 <b class="ib" style="color:var(--gold)">'+need+' 小分</b>（湊到 10）就開始有利息了。'
-        : '先存起來也可以，之後分數變多再用「<b class="ib">加存</b>」補到 10 分，利息一樣算。')+
-      '</div></div>';
-  }
-
   if(amt>0){
-    h+='<div class="sec"><h2>存 '+amt+' 小分可以領回</h2></div>';
-    const ps=plans().slice().sort((a,b)=>a.days-b.days);
-    const best=ps[ps.length-1];
-    for(const pl of ps){
-      const it=interestFor(amt,pl.days),cap=it>=capInt()&&Math.floor(amt/10)*pl.per10>capInt();
-      const isBest=pl===best;
-      const due=new Date(now()+pl.days*DAYMS).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
-      h+='<div class="tier '+(isBest?'best':'')+'" style="margin-bottom:10px">'+
-        '<div class="hd"><b>存 '+pl.days+' 天</b>'+(isBest?'<span class="best-tag">最划算</span>':'')+
-        '<span>每 10 小分 +'+pl.per10+(cap?'（已封頂）':'')+'</span></div>'+
-        '<div class="val"><u>領回</u><b style="color:'+(isBest?'var(--gold)':'var(--brand)')+'">'+(amt+it)+'</b><u>小分</u>'+
-        '<i>+'+it+'</i></div>'+
-        '<div style="font-size:11.5px;color:var(--muted);margin-top:6px;font-weight:700">'+due+' 到期　'+
-          (it?'多賺 '+it+' 小分（＝ NT$'+(it*NTD())+' 額外額度）':'這個金額還沒有利息')+'</div>'+
-        '<button class="btn pri wide sm" style="margin-top:11px" data-act="dodep" data-d="'+pl.days+'">存 '+pl.days+' 天</button></div>';
+    const R=RATES();
+    h+='<div class="sec"><h2>存 '+amt+' 小分放著會變多少</h2></div>';
+    for(const w of [1,2,4,8]){
+      const r=project(amt,w), best=(w===8);
+      const due=new Date(now()+w*WEEKMS).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
+      h+='<div class="tier '+(best?'best':'')+'" style="margin-bottom:10px">'+
+        '<div class="hd"><b>放 '+w+' 週</b>'+(best?'<span class="best-tag">最划算</span>':'')+
+        '<span>第 '+w+' 週利率 '+(rateOf(w)*100)+'%</span></div>'+
+        '<div class="val"><u>會變成</u><b style="color:'+(best?'var(--gold)':'var(--brand)')+'">'+r.amount+'</b><u>小分</u>'+
+        '<i>+'+r.interest+'</i></div>'+
+        '<div style="font-size:11.5px;color:var(--muted);margin-top:6px;font-weight:700">'+due+' 之後　'+
+          (r.interest?'多賺 '+r.interest+' 小分（＝ NT$'+(r.interest*NTD())+' 額外額度）':'這個金額還要再久一點才看得到利息')+'</div></div>';
     }
+    h+='<button class="btn pri wide" style="margin-top:2px" data-act="dodep">'+px('🏦')+' 存進去 '+amt+' 小分</button>';
     const em='style="font-weight:850;color:var(--gold)"';
-    h+='<div class="banner">'+px('⚠️','big')+'<div style="line-height:1.75">'+
-      '存進去的小分會<span '+em+'>先扣掉</span>，時間到才領得回來。<br>'+
-      '存款期間還可以<span '+em+'>加存</span>，到期日不變。<br>'+
-      '提早解約只退本金、沒有利息。<br>'+
-      '<span '+em+'>到期後就停止計息</span>，記得回來領。<br>'+
+    h+='<div class="banner" style="margin-top:12px">'+px('⚠️','big')+'<div style="line-height:1.75">'+
+      '存進去的小分會<span '+em+'>先扣掉</span>，隨時可以領回來。<br>'+
+      '<span '+em+'>每滿 7 天</span>結一次利息，利息直接滾進本金，下一週連利息一起算。<br>'+
+      '第 1 週 '+R[0]+'%、第 2 週 '+R[1]+'%⋯⋯<span '+em+'>放越久利率越高</span>，第 '+R.length+' 週以後都是 '+R[R.length-1]+'%。<br>'+
+      '沒滿 7 天就領回，那幾天<span '+em+'>不算利息</span>。<br>'+
       '利息不佔每週額度，反而會多給等值額度。</div></div>';
   }
 
-  const svs=liveSavings(selKid).sort((a,b)=>dueTs(a)-dueTs(b));
+  const svs=liveSavings(selKid).sort((a,b)=>a.startTs-b.startTs);
   if(svs.length){
     h+='<div class="sec"><h2>存款中 ('+svs.length+')</h2></div><div class="list">';
     for(const sv of svs){
-      const it=interestFor(sv.amount,sv.days),m=isMature(sv);
-      const pct=clamp(Math.round((now()-sv.startTs)/(sv.days*DAYMS)*100),0,100);
-      const dd=new Date(dueTs(sv)).toLocaleDateString('zh-TW',{month:'numeric',day:'numeric'});
-      const need=(10-(sv.amount%10))%10;
+      const v=svValue(sv), nx=svNext(sv);
+      const days=Math.floor((now()-sv.startTs)/DAYMS);
+      const pct=clamp(Math.round(((now()-sv.startTs)%WEEKMS)/WEEKMS*100),0,100);
       h+='<div class="dep"><div class="r1">'+
         '<div class="ic" style="width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:var(--surface2)">'+px('🏦')+'</div>'+
-        '<div class="tx"><b>'+sv.amount+' 小分 ・ 存 '+sv.days+' 天</b>'+
-        '<u>'+dd+' 到期 ・ '+(m?'已經可以領了':'還要 '+daysLeft(sv)+' 天')+'</u></div>'+
-        '<div style="text-align:right"><div style="font-size:18px;font-weight:850;color:'+(m?'var(--good)':'var(--gold)')+'">'+(sv.amount+it)+'</div>'+
-        '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+dd+' 可領'+(it?'（+'+it+'）':'')+'</div></div></div>'+
-        '<div class="pg"><i style="width:'+pct+'%;background:'+(m?'var(--good)':'var(--brand)')+'"></i></div>'+
-        (!m&&need&&balanceOf(selKid)>=need
-          ?'<div style="font-size:11.5px;color:var(--gold);font-weight:800;margin-top:8px">'+px('💡')+' 再加存 '+need+' 小分 → 到期可領 '+(sv.amount+need+interestFor(sv.amount+need,sv.days))+'（+'+interestFor(sv.amount+need,sv.days)+'）</div>':'')+
+        '<div class="tx"><b>存入 '+sv.amount+' 小分</b>'+
+        '<u>已經存了 '+days+' 天'+(v.weeks?'（結過 '+v.weeks+' 次息）':'（還沒結過息）')+'</u></div>'+
+        '<div style="text-align:right"><div style="font-size:18px;font-weight:850;color:'+(v.interest?'var(--good)':'var(--gold)')+'">'+v.amount+'</div>'+
+        '<div style="font-size:10px;color:var(--muted);margin-top:2px">'+(v.interest?'利息 +'+v.interest:'本金')+'</div></div></div>'+
+        '<div class="pg"><i style="width:'+pct+'%;background:var(--brand)"></i></div>'+
+        '<div style="font-size:11.5px;color:var(--gold);font-weight:800;margin-top:8px">'+px('💡')+
+          ' 再 '+nx.days+' 天結下一次息（'+(nx.rate*100)+'%'+(nx.gain?'，約 +'+nx.gain:'，還不到 1 小分，零頭會留著')+'）</div>'+
         '<div class="row" style="margin-top:10px">'+
-        (m?'<button class="btn good sm" data-act="claim" data-id="'+sv.id+'">領回 '+(sv.amount+it)+' 小分</button>'
-          :'<button class="btn sm pri" data-act="topup" data-id="'+sv.id+'">＋ 加存</button>')+
-        '<button class="btn ghost sm" data-act="breaksv" data-id="'+sv.id+'">提早解約</button>'+
+        '<button class="btn good sm" data-act="claim" data-id="'+sv.id+'">領回 '+v.amount+' 小分</button>'+
         '</div></div>';
     }
     h+='</div>';
@@ -2396,9 +2374,59 @@ function compactOld(){
   closeSheet();save();
   toast('📦 已壓縮 '+old.length+' 筆一年前的紀錄，分數沒有變');
 }
+/* ---- 骰子哪裡來：每天的取得明細（用現有資料推算，不另外存） ---- */
+function diceLog(kidId){
+  const per=Math.max(1,S.settings.dicePerPoints|0||5), byDay={};
+  const add=(day,label,emoji,n)=>{
+    const d=byDay[day]||(byDay[day]={items:[],total:0});
+    const it=d.items.find(x=>x.label===label);
+    if(it)it.n+=n; else d.items.push({label,emoji,n});
+    d.total+=n;
+  };
+  for(const e of S.routineLog){
+    if(e.voided||e.kidId!==kidId)continue;
+    const r=S.routines.find(x=>x.id===e.routineId);
+    add(e.day,'完成「'+((r&&r.label)||'日常任務')+'」',(r&&r.emoji)||'📅',(r&&r.dice)||1);
+  }
+  const days=new Set(S.routineLog.filter(e=>!e.voided&&e.kidId===kidId).map(e=>e.day));
+  for(const d of days)if(allDone(kidId,d))add(d,'當天任務全部完成','🔥',1);
+  const es=S.ledger.filter(e=>e.kidId===kidId&&!e.voided&&e.small>0).slice().sort((a,b)=>a.ts-b.ts);
+  let run=arcOf('earn',kidId), had=Math.floor(run/per);
+  for(const e of es){
+    run+=e.small; const n=Math.floor(run/per);
+    if(n>had){add(dayKey(e.ts),'累積分數（每 '+per+' 小分換 1 顆）','⭐',n-had);had=n}
+  }
+  return Object.keys(byDay).sort().reverse().map(d=>Object.assign({day:d},byDay[d]));
+}
+function vDiceLog(ks){
+  const tgt=selKid?[kid(selKid)].filter(Boolean):ks;
+  if(!tgt.length)return '<div class="empty">'+px('👶','xl')+'請先新增小孩</div>';
+  if(tgt.length>1)return '<div class="empty">'+px('🎲','xl')+'骰子是每個小孩分開算的<br>請先在上面選一個小孩</div>';
+  const k=tgt[0], rows=diceLog(k.id), p=gp(k.id);
+  const got=rows.reduce((a,r)=>a+r.total,0), used=p.rollsUsed|0;
+  let h='<div class="stats" style="margin-top:12px">'+
+    '<div class="st"><b style="color:var(--good)">'+got+'</b><u>總共拿到</u></div>'+
+    '<div class="st"><b style="color:var(--muted)">'+used+'</b><u>已經骰掉</u></div>'+
+    '<div class="st"><b style="color:var(--brand)">'+diceOf(k.id)+'</b><u>還剩下</u></div></div>';
+  if(!rows.length)return h+'<div class="empty">'+px('🎲','xl')+'還沒有拿過骰子<br>回首頁完成今天的任務就會有</div>';
+  for(const r of rows.slice(0,60)){
+    const d=new Date(r.day+'T00:00:00');
+    h+='<div class="daylab">'+d.toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'})+
+       '<span class="dtot">'+px('🎲')+' +'+r.total+'</span></div><div class="list">';
+    for(const it of r.items)
+      h+='<div class="evt"><span class="e">'+px(it.emoji)+'</span><b>'+esc(it.label)+'</b>'+
+         '<span class="delta p">+'+it.n+'</span></div>';
+    h+='</div>';
+  }
+  return h+'<div style="height:20px"></div>';
+}
 function vLog(){
   const ks=live(S.kids);
   let h=kidChips(ks,null,'<button class="chip plain '+(!selKid?'on':'')+'" data-act="sel" data-id="">全部</button>');
+  h+='<div class="tabs" style="margin-top:12px">'+
+    '<button class="'+(logTab==='pts'?'on':'')+'" data-act="logtab" data-v="pts">'+px('⭐')+' 分數</button>'+
+    '<button class="'+(logTab==='dice'?'on':'')+'" data-act="logtab" data-v="dice">'+px('🎲')+' 骰子</button></div>';
+  if(logTab==='dice')return h+vDiceLog(ks);
   const tgt=selKid?[kid(selKid)].filter(Boolean):ks;
   const week=startOfWeek(),month=new Date();month.setDate(1);month.setHours(0,0,0,0);
   let wg=0,mg=0,bal=0;
@@ -2438,7 +2466,7 @@ function vSet(){
     nav('dcap','☀️','每天日常加分上限',dailyCap()?'日常規則每天最多 '+dailyCap()+' 小分；特殊加分不受限':'目前沒有上限',dailyCap()||'不限')+
     nav('rtbonus','🔥','任務獎勵','全完成 +'+st.routineAllBonus+'、連續 3 天 +'+st.streak3Bonus+'、連續 7 天 +'+st.streak7Bonus,'調整')+
     nav('budget','💳','每週實體獎勵額度','有標價格又非「特殊獎勵」的才會扣，沒用完會累積','NT$'+weeklyNTD())+
-    nav('rates','🏦','銀行利率',plans().map(x=>x.days+'天+'+x.per10).join(' ・ ')+'　每筆上限 +'+capInt(),'調整')+
+    nav('rates','🏦','銀行利率','每 7 天複利一次 ・ '+RATES().map((v,i)=>(i===RATES().length-1?'第'+(i+1)+'週後 ':'')+v+'%').join(' → ')+'　每筆上限 +'+capInt(),'調整')+
     sw('tgneg','允許出現負分','關閉時扣分最多扣到 0',st.allowNegative)+
     sw('tgundo','撤銷紀錄需密碼','避免小孩自己撤銷扣分',st.pinForUndo)+
     sw('tgredeem','兌換獎勵需密碼','兌換時要家長輸入密碼',st.pinForRedeem)+
@@ -2831,6 +2859,7 @@ document.addEventListener('click',async ev=>{
       gPts(g.kidId,g.ctx.task.value,'命運任務：'+g.ctx.task.label,'😈',[]);
       gPending=null;closeSheet();buzz(40);beep('big');save();return toast('👏 完成任務 +'+g.ctx.task.value)}
     case 'rwtab':rwTab=t.dataset.v;rwRar=0;return render();
+    case 'logtab':logTab=t.dataset.v;return render();
     case 'rwrar':rwRar=parseInt(t.dataset.v,10)||0;return render();
     case 'calc':return calcSheet();
     case 'ghelp':return gameHelpSheet();
@@ -2847,15 +2876,10 @@ document.addEventListener('click',async ev=>{
     }
     case 'docompact':return compactOld();
     case 'cpick':{const i=parseInt(t.dataset.i,10);chartPick=(chartPick===i?null:i);return render()}
-    case 'topup':topUpAmt=Math.max(1,(10-((S.savings.find(x=>x.id===id)||{amount:0}).amount%10))%10||5);return topUpSheet(id);
-    case 'tu+':topUpAmt=clamp(topUpAmt+1,0,999);return topUpSheet(id);
-    case 'tu-':topUpAmt=clamp(topUpAmt-1,0,999);return topUpSheet(id);
-    case 'dotu':return topUp(id,clamp(topUpAmt,0,balanceOf((S.savings.find(x=>x.id===id)||{}).kidId)));
     case 'dep+':depAmt=clamp(depAmt+(depAmt>=20?10:5),0,999);return render();
     case 'dep-':depAmt=clamp(depAmt-(depAmt>20?10:5),0,999);return render();
-    case 'dodep':return deposit(selKid,clamp(depAmt,0,balanceOf(selKid)),parseInt(t.dataset.d));
+    case 'dodep':return deposit(selKid,clamp(depAmt,0,balanceOf(selKid)));
     case 'claim':return claimSaving(id);
-    case 'breaksv':return breakSaving(id);
     case 'cpn':return cpnSheet(id);
     case 'usecpn':closeSheet();return useCoupon(id);
     case 'cancelcpn':return cancelCoupon(id);
@@ -2953,24 +2977,21 @@ document.addEventListener('click',async ev=>{
       return toast(dailyCap()?'每天最多 '+dailyCap()+' 小分':'已取消每天上限');
     }
     case 'rates':{
-      const ps=plans().slice().sort((a,b)=>a.days-b.days);
-      sheet('🏦 銀行利率',
-        '<div class="f hint" style="margin-top:-6px">利息以「每滿 10 小分」計算，零頭不計息。到期後停止計息。</div>'+
-        ps.map((pl,i)=>'<div class="f2"><div class="f"><label>第 '+(i+1)+' 檔：天數</label>'+
-          '<input id="pd'+i+'" type="number" inputmode="numeric" min="1" value="'+pl.days+'"></div>'+
-          '<div class="f"><label>每 10 小分 +</label><input id="pp'+i+'" type="number" inputmode="numeric" min="0" value="'+pl.per10+'"></div></div>').join('')+
-        '<div class="f"><label>單筆利息上限（小分）</label><input id="pcap" type="number" inputmode="numeric" min="0" value="'+capInt()+'"></div>'+
+      const R=RATES();
+      sheet('🏦 銀行利率（每 7 天結一次息）',
+        '<div class="f hint" style="margin-top:-6px;line-height:1.8">每滿 7 天結一次利息，利息滾進本金。下面是<b>第幾週用幾 %</b>，最後一格之後都用同一個數字。</div>'+
+        '<div class="f2">'+R.slice(0,3).map((v,i)=>'<div class="f"><label>第 '+(i+1)+' 週 %</label>'+
+          '<input id="rr'+i+'" type="number" inputmode="numeric" min="0" max="100" value="'+v+'"></div>').join('')+'</div>'+
+        '<div class="f2">'+R.slice(3,5).map((v,i)=>'<div class="f"><label>第 '+(i+4)+' 週'+(i===1?' 以後':'')+' %</label>'+
+          '<input id="rr'+(i+3)+'" type="number" inputmode="numeric" min="0" max="100" value="'+v+'"></div>').join('')+'</div>'+
+        '<div class="f"><label>單筆累計利息上限（小分，0＝不限）</label><input id="pcap" type="number" inputmode="numeric" min="0" value="'+capInt()+'"></div>'+
         '<button class="btn pri wide" data-act="saverates">儲存</button>');
       return;
     }
     case 'saverates':{
       const out=[];
-      for(let i=0;i<3;i++){
-        const d=parseInt($('#pd'+i).value),v=parseInt($('#pp'+i).value);
-        if(d>0)out.push({days:d,per10:Math.max(0,v||0)});
-      }
-      if(!out.length)return toast('至少要有一檔');
-      S.settings.plans=out.sort((a,b)=>a.days-b.days);
+      for(let i=0;i<5;i++){const v=parseInt(($('#rr'+i)||{}).value);out.push(clamp(isNaN(v)?0:v,0,100))}
+      S.settings.rates=out;
       S.settings.interestCap=Math.max(0,parseInt($('#pcap').value)||0);
       touch(S.settings);closeSheet();save();return toast('利率已更新');
     }
@@ -3077,15 +3098,14 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdat
 window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,dailyEarned,dailyLeft,dailyCap,budgetAvail,finishRedeem,usesBudget,LS,balanceOf,fmtScore,mergeState,mergeLedger,render,
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
-  deposit,claimSaving,breakSaving,interestFor,bankedOf,liveSavings,isMature,matureCount,daysLeft,plans,
+  deposit,claimSaving,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,liveSavings,matureCount,svValue,svWeeks,svNext,project,RATES,rateOf,interestOf,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
-  topUp,topUpSheet,calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
+  calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
   pull,push,checkUpdate,dupFind,dupCount,dupClean,migrate,BUILD,
   get newBuild(){return newBuild},set newBuild(v){newBuild=v},
   rarityOf:w=>rarity(toSmall(w.unit,w.amount)),
   set rwRar(v){rwRar=v},get rwRar(){return rwRar},
-  set topUpAmt(v){topUpAmt=v},get topUpAmt(){return topUpAmt},
   set chartRange(v){chartRange=v},get chartRange(){return chartRange},
   set chartPick(v){chartPick=v},get chartPick(){return chartPick},
   get gPending(){return gPending},set gPending(v){gPending=v},
