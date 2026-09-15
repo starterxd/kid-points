@@ -584,7 +584,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v12・2026-09-13';
+const BUILD='v13・2026-09-15';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -725,10 +725,10 @@ function seed(){
   const R=(label,emoji,kind,unit,amount,group)=>({id:uid('r'),label,emoji,kind,unit,amount,
     group:(kind==='earn'?(group||'daily'):undefined),sort:0,updatedAt:t});
   // W(名稱, emoji, 單位, 數量, 參考價格元 或 null=特權型, 備註)
-  const W=(name,emoji,unit,amount,price,note,noBudget)=>({id:uid('w'),name,emoji,image:null,unit,amount,
-    price:(price==null?null:price),noBudget:!!noBudget,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
+  const W=(name,emoji,unit,amount,price,note,noBudget,stack)=>({id:uid('w'),name,emoji,image:null,unit,amount,
+    price:(price==null?null:price),noBudget:!!noBudget,stack:!!stack,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:13, seeded:true,
+    schema:15, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:false,
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -862,6 +862,12 @@ function dupClean(){
   closeSheet();save();
   toast('🧽 清掉了 '+all.length+' 項重複資料，其他裝置同步後也會跟著清乾淨');
 }
+/* ---------------- 計價券 ----------------
+   在遊戲裡拿到、券面標著金額、可以累積起來一次用掉的券。
+   面額 = 這張券在店裡可以折多少錢；遊戲拿到的不佔每週獎勵額度。 */
+const VOUCHER={
+  '小零食券':{faceNTD:10, emoji:'🍪', where:'去全聯之類的店裡買零食時拿出來折抵'}
+};
 function migrate(S){
   if(!S.settings)S.settings=seed().settings;
   if(!S.deviceId)S.deviceId=uid('d');
@@ -983,6 +989,23 @@ function migrate(S){
     for(const sv of S.savings){delete sv.days;delete sv.addIds;touch(sv)}
     S.schema=13;
   }
+  if(S.schema<15){   // 小零食券改成「計價券」：標面額、可以累積起來一次用
+    for(const w of S.rewards)if(w.stack==null)w.stack=false;
+    // v13 曾經多加過一項同名獎勵品，沒被用過就收掉，避免清單裡出現兩個
+    for(const w of S.rewards){
+      if(w.deleted||w.name!=='零食券 NT$10')continue;
+      if(!S.coupons.some(c=>!c.voided&&c.rewardId===w.id)){w.deleted=true;touch(w)}
+    }
+    for(const c of S.coupons){
+      if(c.stack==null)c.stack=false;
+      if(c.faceNTD==null)c.faceNTD=0;
+      const v=VOUCHER[c.name];
+      if(v&&!c.stack){      // 已經拿到的券原地升級，不動狀態、不補扣額度
+        c.stack=true; c.faceNTD=v.faceNTD; c.offBudget=true; touch(c);
+      }
+    }
+    S.schema=15;
+  }
   return S;
 }
 S=migrate(S);
@@ -1039,6 +1062,19 @@ function usedThisWeek(kidId){const w=startOfWeek();let n=0;
 /* ---------------- 券 ---------------- */
 const isItemReward=w=>w.price!=null&&w.price>0;
 const usesBudget=w=>isItemReward(w)&&!w.noBudget;   // 特殊獎勵有標價，但不吃每週額度
+const rwOf=id=>id?S.rewards.find(x=>x.id===id):null;
+const isStackRw=w=>!!(w&&w.stack);
+const faceOf=c=>c.faceNTD||c.priceNTD||0;           // 這張券的面額
+/* 把券分成「可累積（同名歸成一堆）」與「單張」 */
+function groupCpns(list){
+  const m=new Map(),singles=[];
+  for(const c of list){
+    if(!c.stack){singles.push(c);continue}
+    const g=m.get(c.name)||{key:c.name,items:[],ntd:0};
+    g.items.push(c);g.ntd+=faceOf(c);m.set(c.name,g);
+  }
+  return {groups:[...m.values()],singles};
+}
 function couponsOf(kidId,state){
   return S.coupons.filter(c=>!c.voided&&(!kidId||c.kidId===kidId)&&(
     state==='open'?(!c.usedTs&&!c.doneTs&&c.kind!=='item'):
@@ -1047,7 +1083,7 @@ function couponsOf(kidId,state){
 }
 function issueCoupon(kidId,o){
   const c=Object.assign({id:uid('c'),kidId,ts:now(),usedTs:null,doneTs:null,voided:false,
-    kind:'privilege',source:'manual',priceNTD:0,emoji:'🎫',updatedAt:now()},o);
+    kind:'privilege',source:'manual',priceNTD:0,faceNTD:0,stack:false,emoji:'🎫',updatedAt:now()},o);
   S.coupons.push(c);
   if(S.coupons.length>600)S.coupons=S.coupons.slice(-600);
   return c;
@@ -1089,8 +1125,9 @@ function gPts(kidId,small,label,emoji,list){
 }
 function gCoupon(kidId,name,list,noCoupon){
   if(noCoupon){gLog({emoji:'🚫',label:'這回合不能領券：'+name,delta:0},list);return}
-  const shield=/護盾/.test(name);
-  issueCoupon(kidId,{name,emoji:shield?'🛡️':'🎫',kind:shield?'shield':'privilege',source:'tile'});
+  const shield=/護盾/.test(name), v=VOUCHER[name];
+  issueCoupon(kidId,{name,emoji:shield?'🛡️':(v&&v.emoji)||'🎫',kind:shield?'shield':'privilege',source:'tile',
+    stack:!!v, faceNTD:v?v.faceNTD:0, offBudget:true});
   gLog({emoji:shield?'🛡️':'🎫',label:'獲得「'+name+'」',delta:0,coupon:true},list);
 }
 function shieldsOf(kidId){return S.coupons.filter(c=>!c.voided&&!c.usedTs&&c.kidId===kidId&&c.kind==='shield')}
@@ -1886,18 +1923,32 @@ function cpnRow(c,mode){
     '<div class="tx"><b>'+esc(c.name)+'</b><u>'+when+' ・ '+esc(k?k.name:'')+
       (c.priceNTD?' ・ NT$'+c.priceNTD:'')+'</u></div>'+badge+'</button>';
 }
+function stackRow(g){
+  const c0=g.items[0],k=kid(c0.kidId),each=faceOf(c0);
+  return '<button class="cpn" data-act="cpnstack" data-id="'+esc(g.key)+'">'+
+    '<div class="ic">'+px(c0.emoji||'🎫')+'</div>'+
+    '<div class="tx"><b>'+esc(g.key)+'　×'+g.items.length+'</b>'+
+      '<u>一張 NT$'+each+' ・ 合計 NT$'+g.ntd+' ・ '+esc(k?k.name:'')+'</u></div>'+
+    '<span class="badge ok">可累積</span></button>';
+}
 function vCoupons(){
   const open=couponsOf(selKid,'open'),wait=couponsOf(selKid,'wait'),done=couponsOf(selKid,'done');
   let h=budgetBox();
   if(!open.length&&!wait.length&&!done.length)
     return h+'<div class="empty">'+px('🎫','xl')+'還沒有券<br>到「獎勵品」兌換，或玩大富翁踩到格子就會拿到</div>';
-  if(wait.length){
-    h+='<div class="sec"><h2>待爸媽處理 ('+wait.length+')</h2></div><div class="list">';
-    for(const c of wait)h+=cpnRow(c,'wait');h+='</div>';
+  const go=groupCpns(open), gw=groupCpns(wait);
+  const stacks=go.groups.concat(gw.groups);
+  if(stacks.length){
+    h+='<div class="sec"><h2>可以累積的券</h2><span class="more" data-act="stackhelp">這是什麼？</span></div><div class="list">';
+    for(const g of stacks)h+=stackRow(g);h+='</div>';
   }
-  if(open.length){
-    h+='<div class="sec"><h2>可以使用 ('+open.length+')</h2></div><div class="list">';
-    for(const c of open)h+=cpnRow(c,'open');h+='</div>';
+  if(gw.singles.length){
+    h+='<div class="sec"><h2>待爸媽處理 ('+gw.singles.length+')</h2></div><div class="list">';
+    for(const c of gw.singles)h+=cpnRow(c,'wait');h+='</div>';
+  }
+  if(go.singles.length){
+    h+='<div class="sec"><h2>可以使用 ('+go.singles.length+')</h2></div><div class="list">';
+    for(const c of go.singles)h+=cpnRow(c,'open');h+='</div>';
   }
   if(done.length){
     h+='<div class="sec"><h2>已完成 ('+done.length+')</h2></div><div class="list">';
@@ -2027,7 +2078,9 @@ function tileDesc(t){
     case 'point':    return '直接拿到 <b>+'+(v||1)+' 小分</b>。';
     case 'treasure': return '挖到能量水晶！直接拿到 <b>+'+(v||2)+' 小分</b>。';
     case 'trap':     return '撞到隕石，會<b class="danger">扣 '+(v||1)+' 小分</b>。手上有<b>護盾券</b>的話，會先問你要不要擋掉。';
-    case 'coupon':   return '拿到一張「<b>'+esc(t.reward||'神秘券')+'</b>」，之後到「獎勵 → 我的券」使用。';
+    case 'coupon':   {const v=VOUCHER[t.reward];
+      return '拿到一張「<b>'+esc(t.reward||'神秘券')+'</b>」'+
+        (v?'（面額 <b>NT$'+v.faceNTD+'</b>，可以存著一次用掉）':'')+'，之後到「獎勵 → 我的券」使用。';}
     case 'lucky':    return '幽浮掉了一張獎勵券下來，抽到什麼看運氣（零食、遊戲時間、護盾…）。';
     case 'shield':   return '拿到一張<b>免扣分護盾券</b>，可以擋掉一次壞事（扣分、倒退、暫停）。';
     case 'chance':   return '飛進星雲，抽一張<b>星雲卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
@@ -2073,6 +2126,7 @@ function gameHelpSheet(){
       li('🎲','骰子哪裡來','日常任務每項 +1，當天全完成再 +1')+
       li('⭐','分數也給骰子','每 '+per+' 小分 +1 顆')+
       li('🛡️','護盾券','擋掉一次扣分 / 倒退 / 暫停')+
+      li('🍪','小零食券','面額 NT$'+VOUCHER['小零食券'].faceNTD+'，可以存著一次用掉')+
       li('🔗','連鎖上限','一次骰子最多連動 '+chainCap()+' 次')+
     '</div>'+
     '<div class="f hint" style="line-height:1.85;margin-top:10px">棋盤上拿到的<b>券</b>要到「獎勵 → 我的券」使用。<br>'+
@@ -2220,17 +2274,112 @@ function rollResult(kidId,d,ctx){
   }
   sheet('🎲 擲出 '+d+' 點', die+rest);
 }
+function cpnFields(c){
+  const row=(l,v)=>'<div class="evt"><span class="e">'+px('▪️')+'</span><b>'+l+'</b>'+
+    '<span style="flex:1;text-align:right;color:var(--muted);font-size:12px">'+v+'</span></div>';
+  const face=faceOf(c);
+  return '<div class="list" style="margin-top:2px">'+
+    row('種類', c.stack?'計價券（可以累積）':c.kind==='item'?'實體獎勵（待爸媽處理）':c.kind==='shield'?'護盾券':'特權券')+
+    row('面額', face?'NT$'+face:'沒有標價（特權型）')+
+    row('每週額度', (!c.offBudget&&c.priceNTD)?'已佔用 NT$'+c.priceNTD:'不佔額度')+
+    row('怎麼來的', c.source==='tile'?'玩大富翁拿到':c.source==='redeem'?'用分數兌換':'家長直接給')+
+    row('可以累積嗎', c.stack?'可以，存幾張就一次用幾張':'不行，一張一張用')+
+    '</div>';
+}
 function cpnSheet(id){
   const c=S.coupons.find(x=>x.id===id);if(!c)return;
   const k=kid(c.kidId),fin=c.usedTs||c.doneTs;
   sheet(px(c.emoji||'🎫')+' '+esc(c.name),
     '<div class="f hint" style="margin-top:-6px">'+
       esc(k?k.name:'')+' ・ '+new Date(c.ts).toLocaleString('zh-TW')+
-      (c.priceNTD?'<br>價值 NT$'+c.priceNTD+'（已佔用獎勵額度）':'<br>特權型，不佔額度')+
       (fin?'<br><b style="color:var(--good)">已於 '+new Date(fin).toLocaleString('zh-TW')+' 完成</b>':'')+'</div>'+
+    cpnFields(c)+
     (fin?'':'<button class="btn pri wide" data-act="usecpn" data-id="'+c.id+'">'+
         (c.kind==='item'?'爸媽已經給了':'現在使用')+'</button>')+
     '<button class="btn ghost wide danger" style="margin-top:9px" data-act="cancelcpn" data-id="'+c.id+'">取消這張券，退回分數</button>');
+}
+
+/* ---------- 可累積的券（例如零食券）：一次拿好幾張出來用 ---------- */
+let stackRw=null, stackQty=1;
+function stackItems(key){
+  return S.coupons.filter(c=>!c.voided&&c.kidId===selKid&&c.stack&&c.name===key&&!c.usedTs&&!c.doneTs)
+    .sort((a,b)=>a.ts-b.ts);
+}
+function cpnStackSheet(key){stackRw=key;stackQty=1;drawStack()}
+function drawStack(){
+  const items=stackItems(stackRw);
+  if(!items.length){closeSheet();toast('這種券已經用完了');return}
+  const c0=items[0],k=kid(c0.kidId),n=items.length,each=faceOf(c0),v=VOUCHER[c0.name];
+  stackQty=clamp(stackQty,1,n);
+  sheet(px(c0.emoji||'🎫')+' '+esc(c0.name),
+    '<div class="f hint" style="margin-top:-6px;line-height:1.8">'+
+      esc(k?k.name:'')+' 手上有 <b class="ib">'+n+'</b> 張，每張面額 NT$'+each+
+      '，合計 <b class="ib">NT$'+(each*n)+'</b>。<br>'+
+      (v?esc(v.where):'去店裡的時候一次拿好幾張出來折抵')+'。</div>'+
+    '<div class="sec"><h2>這次要用幾張？</h2></div>'+
+    '<div class="card" style="padding:16px"><div class="stepper">'+
+      '<button class="sb" data-act="sq-">−</button>'+
+      '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;letter-spacing:-1.5px;color:var(--gold)">'+stackQty+'</div>'+
+      '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">可以折 NT$'+(each*stackQty)+'</div></div>'+
+      '<button class="sb" data-act="sq+">＋</button></div></div>'+
+    '<button class="btn pri wide" style="margin-top:12px" data-act="usestack">用掉 '+stackQty+' 張（折 NT$'+(each*stackQty)+'）</button>'+
+    cpnFields(c0)+
+    '<button class="btn ghost wide danger" style="margin-top:9px" data-act="cancelstack">'+
+      (c0.ledgerId?'退回 '+stackQty+' 張，分數還回去':'丟掉 '+stackQty+' 張')+'</button>');
+}
+function useStack(){
+  const items=stackItems(stackRw),n=Math.min(stackQty,items.length);
+  if(!n)return;
+  const each=faceOf(items[0]);
+  for(let i=0;i<n;i++){
+    const c=items[i];
+    if(c.kind==='item')c.doneTs=now();else c.usedTs=now();
+    touch(c);
+  }
+  closeSheet();buzz(40);beep('good');save();
+  toast('✅ 用掉 '+n+' 張，折了 NT$'+(each*n));
+}
+function cancelStack(){
+  const items=stackItems(stackRw).slice().reverse(),n=Math.min(stackQty,items.length);
+  if(!n)return;
+  if(items.slice(0,n).every(c=>!c.ledgerId)){
+    // 遊戲裡拿到的券本來就沒花分數，取消只是丟掉
+    if(!confirm('這些券是玩大富翁拿到的，沒有花到分數，取消就是直接丟掉。確定嗎？'))return;
+  }
+  const go=()=>{
+    for(let i=0;i<n;i++){
+      const c=items[i];c.voided=true;touch(c);
+      if(c.ledgerId){const e=S.ledger.find(x=>x.id===c.ledgerId);if(e&&!e.voided){e.voided=true;touch(e)}}
+    }
+    closeSheet();save();toast('已退回 '+n+' 張，分數還回去了');
+  };
+  (pinSet()&&!unlocked())?askPin('取消兌換需要家長密碼',go):go();
+}
+/* ---------- 一次兌換多張 ---------- */
+let rdmW=null, rdmK=null, rdmQty=1;
+function maxQty(w,kidId){
+  const cost=toSmall(w.unit,w.amount);
+  let n=Math.floor(balanceOf(kidId)/Math.max(1,cost));
+  if(usesBudget(w)&&w.price>0)n=Math.min(n,Math.floor(budgetAvail(kidId)/w.price));
+  if(w.stock!=null)n=Math.min(n,w.stock);
+  return Math.max(0,n);
+}
+function qtySheet(wid,kidId){
+  const w=rwOf(wid),k=kid(kidId);if(!w||!k)return;
+  const mx=maxQty(w,kidId);
+  if(mx<=0){toast('分數或獎勵額度不夠，換不了');buzz(120);return}
+  rdmW=wid;rdmK=kidId;rdmQty=clamp(rdmQty,1,mx);
+  const cost=toSmall(w.unit,w.amount);
+  sheet(px(w.emoji||'🎁')+' 兌換 '+esc(w.name),
+    '<div class="f hint" style="margin-top:-6px;line-height:1.8">'+esc(k.name)+' 現在最多可以換 <b class="ib">'+mx+'</b> 張'+
+      '（每張 '+cost+' 小分'+(w.price?' ・ NT$'+w.price:'')+'）。</div>'+
+    '<div class="card" style="padding:16px"><div class="stepper">'+
+      '<button class="sb" data-act="rq-">−</button>'+
+      '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;letter-spacing:-1.5px;color:var(--gold)">'+rdmQty+'</div>'+
+      '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">要花 '+(cost*rdmQty)+' 小分'+
+        (usesBudget(w)?' ・ 佔額度 NT$'+(w.price*rdmQty):'')+'</div></div>'+
+      '<button class="sb" data-act="rq+">＋</button></div></div>'+
+    '<button class="btn pri wide" style="margin-top:12px" data-act="dordmq">換 '+rdmQty+' 張</button>');
 }
 
 function rewardCard(w){
@@ -2556,26 +2705,35 @@ function doRedeem(wid){
     }).join('')+'</div>';
   sheet('🎁 兌換獎勵',body);
 }
-function finishRedeem(wid,kidId){
+function finishRedeem(wid,kidId,qty){
   const w=S.rewards.find(x=>x.id===wid),k=kid(kidId);if(!w||!k)return;
+  const n=Math.max(1,qty|0||1);
   const cost=toSmall(w.unit,w.amount);
-  if(balanceOf(kidId)<cost){toast('分數不足');return}
+  if(balanceOf(kidId)<cost*n){toast('分數不足');return}
   const item=isItemReward(w);
   if(usesBudget(w)){
     const av=budgetAvail(kidId);
-    if(w.price>av){
-      toast('獎勵額度只剩 NT$'+av+'，這項要 NT$'+w.price+'　先換特權型的吧');buzz(120);return;
+    if(w.price*n>av){
+      toast('獎勵額度只剩 NT$'+av+'，這樣要 NT$'+(w.price*n)+'　先換特權型的吧');buzz(120);return;
     }
   }
+  if(w.stock!=null&&w.stock<n){toast('庫存只剩 '+w.stock+' 個');buzz(120);return}
   const go=()=>{
-    const e=commit({kidId,small:-cost,label:'兌換：'+w.name,type:'redeem',rewardId:w.id,emoji:w.emoji});
-    const c=issueCoupon(kidId,{name:w.name,emoji:w.emoji,kind:item?'item':'privilege',
-      source:'redeem',rewardId:w.id,priceNTD:item?w.price:0,offBudget:!!w.noBudget,ledgerId:e.id});
-    if(w.stock!=null){w.stock=Math.max(0,w.stock-1);touch(w)}
+    const es=[],cs=[];
+    for(let i=0;i<n;i++){
+      const e=commit({kidId,small:-cost,label:'兌換：'+w.name,type:'redeem',rewardId:w.id,emoji:w.emoji});
+      cs.push(issueCoupon(kidId,{name:w.name,emoji:w.emoji,kind:item?'item':'privilege',
+        source:'redeem',rewardId:w.id,priceNTD:item?w.price:0,faceNTD:item?w.price:0,
+        stack:!!w.stack,offBudget:!!w.noBudget,ledgerId:e.id}));
+      es.push(e);
+      if(w.stock!=null){w.stock=Math.max(0,w.stock-1);touch(w)}
+    }
     closeSheet();buzz(40);beep('big');save();revealCard(w,k);
-    toast('🎉 '+k.name+' 換到「'+w.name+'」'+(item?'　已放進待爸媽處理':'　券已放進「我的券」'),
-      ()=>{e.voided=true;touch(e);c.voided=true;touch(c);
-           if(w.stock!=null){w.stock++;touch(w)}save();toast('已復原')});
+    toast('🎉 '+k.name+' 換到「'+w.name+'」'+(n>1?' ×'+n:'')+
+      (isStackRw(w)?'　已放進「我的券」，可以累積':item?'　已放進待爸媽處理':'　券已放進「我的券」'),
+      ()=>{for(const e of es){e.voided=true;touch(e)}
+           for(const c of cs){c.voided=true;touch(c)}
+           if(w.stock!=null){w.stock+=n;touch(w)}save();toast('已復原')});
   };
   S.settings.pinForRedeem&&!unlocked()?askPin('兌換需要家長密碼',go):go();
 }
@@ -2740,6 +2898,8 @@ function editRw(id){
     '<div class="f"><label>數量</label><input id="wa" type="number" inputmode="numeric" min="1" value="'+(w.amount||1)+'"></div></div>'+
     '<div class="f"><label>算不算每週額度</label><select id="wb"><option value="0" '+(w.noBudget?'':'selected')+'>一般（有價格就扣額度）</option><option value="1" '+(w.noBudget?'selected':'')+'>特殊獎勵（有價格但不扣額度）</option></select>'+
     '<div class="hint">特權型（沒填價格）本來就不扣額度。</div></div>'+
+    '<div class="f"><label>可不可以累積</label><select id="wq"><option value="0" '+(w.stack?'':'selected')+'>一般（一次換一張）</option><option value="1" '+(w.stack?'selected':'')+'>可累積（一次可換多張，之後一起用）</option></select>'+
+    '<div class="hint">適合零食券這種小額券：平常一張一張換，去店裡再一次拿好幾張出來抵。</div></div>'+
     '<div class="f"><label>備註</label><input id="wt" value="'+esc(w.note||'')+'" placeholder="例如：300 元以內" maxlength="30"></div>'+
     '<div class="f"><label>限定誰可以兌換（都不選＝全部）</label><div class="chips" id="wk">'+
       live(S.kids).map(k=>'<button class="chip plain '+(kidIds.includes(k.id)?'on':'')+'" data-k="'+k.id+'">'+esc(k.name)+'</button>').join('')+'</div></div>'+
@@ -2881,6 +3041,16 @@ document.addEventListener('click',async ev=>{
     case 'dodep':return deposit(selKid,clamp(depAmt,0,balanceOf(selKid)));
     case 'claim':return claimSaving(id);
     case 'cpn':return cpnSheet(id);
+    case 'cpnstack':return cpnStackSheet(id);
+    case 'stackhelp':return sheet('🎫 計價券是什麼',
+      '<div class="f hint" style="line-height:1.9">券面標著金額的券，例如<b>小零食券一張 NT$'+VOUCHER['小零食券'].faceNTD+'</b>。<br>'+
+      '拿到之後<b>可以先存著</b>，等要用的時候一次拿好幾張出來折抵 —— '+esc(VOUCHER['小零食券'].where)+'。<br>'+
+      '玩大富翁拿到的計價券<b>不佔每週獎勵額度</b>，因為它不是用分數換來的。</div>'+
+      '<button class="btn pri wide" style="margin-top:12px" data-act="close">知道了</button>');
+    case 'sq-':{stackQty=Math.max(1,stackQty-1);return drawStack()}
+    case 'sq+':{stackQty=Math.min(stackItems(stackRw).length||1,stackQty+1);return drawStack()}
+    case 'usestack':return useStack();
+    case 'cancelstack':return cancelStack();
     case 'usecpn':closeSheet();return useCoupon(id);
     case 'cancelcpn':return cancelCoupon(id);
     case 'rt':return toggleRoutine(t.dataset.kid,id);
@@ -2893,7 +3063,10 @@ document.addEventListener('click',async ev=>{
       closeSheet();return addPoints(k,toSmall(u,n)*(t.dataset.s==='1'?1:-1),lbl,{type:'adjust',emoji:'✎'});
     }
     case 'redeem':return doRedeem(id);
-    case 'dordm':return finishRedeem(id,t.dataset.kid);
+    case 'dordm':{const w=rwOf(id);return isStackRw(w)?qtySheet(id,t.dataset.kid):finishRedeem(id,t.dataset.kid)}
+    case 'dordmq':return finishRedeem(rdmW,rdmK,rdmQty);
+    case 'rq-':{const w=rwOf(rdmW);rdmQty=clamp(rdmQty-1,1,maxQty(w,rdmK));return qtySheet(rdmW,rdmK)}
+    case 'rq+':{const w=rwOf(rdmW);rdmQty=clamp(rdmQty+1,1,maxQty(w,rdmK));return qtySheet(rdmW,rdmK)}
     case 'entry':return entrySheet(id);
     case 'toggleVoid':return toggleVoid(id);
     case 'syncpanel':return ghReady()?(view='set',render(),window.scrollTo(0,0)):ghSetup();
@@ -2961,6 +3134,7 @@ document.addEventListener('click',async ev=>{
       const o={name:$('#wn').value.trim()||'未命名',emoji:$('#we').value.trim()||'🎁',
         unit:$('#wu').value,amount:Math.max(1,parseInt($('#wa').value)||1),
         price:pr===''?null:Math.max(0,parseInt(pr)||0),noBudget:$('#wb')?$('#wb').value==='1':false,
+        stack:$('#wq')?$('#wq').value==='1':false,
         stock:st===''?null:Math.max(0,parseInt(st)||0),note:$('#wt').value.trim(),kidIds:g.kidIds};
       let media=false;
       if(g.img&&g.img.startsWith('data:')){o.image=putMedia(g.img);media=true}else if(!g.img)o.image=null;
@@ -3098,6 +3272,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdat
 window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,dailyEarned,dailyLeft,dailyCap,budgetAvail,finishRedeem,usesBudget,LS,balanceOf,fmtScore,mergeState,mergeLedger,render,
   diceOf,streakOf,allDone,doneCount,routineDone,routinesFor,dayKey,toggleRoutine,
   budgetAvail,budgetUsed,budgetAllowance,usedThisWeek,couponsOf,issueCoupon,useCoupon,weeklyNTD,
+  groupCpns,isStackRw,faceOf,maxQty,rwOf,qtySheet,useStack,cancelStack,cpnStackSheet,VOUCHER,gCoupon,
   deposit,claimSaving,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,liveSavings,matureCount,svValue,svWeeks,svNext,project,RATES,rateOf,interestOf,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
