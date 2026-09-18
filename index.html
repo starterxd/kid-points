@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v17・2026-09-18';
+const BUILD='v18・2026-09-18';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -709,11 +709,14 @@ function defaultCards(){return {
   {t:'goto',   v:16,        label:'星雲指路：直接前進到護盾格'}
  ],
  fate:[
-  {t:'task', v:1, label:'做 10 下開合跳'},
-  {t:'task', v:1, label:'幫忙擦一次桌子'},
-  {t:'task', v:1, label:'幫忙倒垃圾'},
-  {t:'task', v:1, label:'跟家人說三件感謝的事'},
-  {t:'task', v:2, label:'把自己的房間收好'},
+  {t:'task', reward:'遊戲時間 10 分券',  label:'做 10 下開合跳'},
+  {t:'task', reward:'看卡通 1 集券',     label:'幫忙擦一次桌子'},
+  {t:'task', reward:'免做一次家事券',    label:'幫忙倒垃圾'},
+  {t:'task', reward:'今天晚餐我決定券',  label:'跟家人說三件感謝的事'},
+  {t:'task', reward:'遊戲時間 20 分券',  label:'把自己的房間收好'},
+  {t:'none',      label:'訊號中斷：這回合什麼都沒發生'},
+  {t:'move', v:1, label:'太空漫遊：前進 1 格'},
+  {t:'swap',      label:'空間跳躍：跟兄弟姊妹交換位置'},
   {t:'back', v:2, label:'退後 2 格'},
   {t:'pause',     label:'暫停一次骰子'},
   {t:'nocoupon',  label:'這回合不能領券'}
@@ -729,7 +732,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget,stack)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stack:!!stack,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:18, seeded:true,
+    schema:19, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:true,bankKeep:3,bankOncePerDay:true,bankCapGain:25,bankTiers:[[30,100],[30,70],[30,50]],
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -769,7 +772,6 @@ function seed(){
     rewards:[
       W('遊戲時間 10 分鐘','🎮','small',2,null),
       W('看卡通 1 集（30 分）','📺','small',2,null),
-      W('晚睡 30 分鐘','🌙','big',1,null),
       W('今天晚餐我決定','🍜','big',1,null),
       W('選假日去哪玩','🗺️','big',2,null),
       W('小零食一份','🍪','small',3,30),
@@ -1042,6 +1044,14 @@ function migrate(S){
     }
     S.schema=18;
   }
+  if(S.schema<19){   // 命運卡：任務完成改成給特權券，加中性卡；拿掉晚睡獎勵
+    S.game.cards=defaultCards(); S.game.updatedAt=now();
+    for(const w of S.rewards){
+      if(w.deleted||!/^晚睡/.test(w.name))continue;
+      if(!S.coupons.some(c=>!c.voided&&c.rewardId===w.id)){w.deleted=true;touch(w)}
+    }
+    S.schema=19;
+  }
   return S;
 }
 S=migrate(S);
@@ -1280,7 +1290,12 @@ function applyCard(kidId,c,ctx){
         if(ctx.chain<chainCap()){ctx.chain++;return landOn(kidId,p.pos,ctx)}}
       break;
     }
-    case 'task': ctx.task={label:c.label,value:c.v||1}; break;
+    case 'task': ctx.task={label:c.label,reward:c.reward||'神秘券'}; break;
+    case 'none': gLog({emoji:'❓',label:'什麼都沒發生',delta:0},L); break;
+    case 'move': if(ctx.chain<chainCap()){ctx.chain++;
+        gLog({emoji:'⏩',label:'前進 '+(c.v||1)+' 格',delta:0},L);
+        return step(kidId,c.v||1,ctx)}
+      else gLog({emoji:'⏩',label:'前進（連鎖上限，這次跳過）',delta:0},L); break;
     case 'back': {
       const bad={kind:'back',value:c.v||2,label:'退後 '+(c.v||2)+' 格'};
       if(!offerShield(kidId,ctx,bad))return applyBad(kidId,bad,ctx);
@@ -2276,7 +2291,7 @@ function tileDesc(t){
     case 'lucky':    return '幽浮掉了一張獎勵券下來，抽到什麼看運氣（零食、遊戲時間、護盾…）。';
     case 'shield':   return '拿到一張<b>免扣分護盾券</b>，可以擋掉一次壞事（扣分、倒退、暫停）。';
     case 'chance':   return '飛進星雲，抽一張<b>星雲卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
-    case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務才有分，也可能被拉走或暫停一次。';
+    case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務（做完拿<b>特權券</b>，不是分數），也可能什麼都沒發生，或被拉走、暫停一次。';
     case 'move':     return '點燃推進器，往前衝 <b>'+(v||3)+' 格</b>，走到的那一格效果照算 —— 起跑不久就遇到，很容易一口氣衝到水晶區。';
     case 'back':     return '快到基地卻被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>。<b>退到的那一格不會再觸發</b>，只是退回去而已。有護盾券可以擋掉。';
     case 'reroll':   return '穿過位在半路的蟲洞，<b>再骰一次</b>，而且不扣骰子，運氣好可以一路連下去。';
@@ -2300,7 +2315,8 @@ function uniqTiles(){
   return [...m.values()];
 }
 const CARDFX={reroll:['🔁','好'],goto:['⏩','好'],point:['⭐','好'],shield:['🛡️','好'],
-  coupon:['🎫','好'],swap:['🌀','中'],task:['😈','任務'],back:['⏪','壞'],pause:['⏸️','壞'],nocoupon:['🚫','壞']};
+  coupon:['🎫','好'],swap:['🌀','中'],task:['😈','任務'],none:['❓','中'],move:['⏩','中'],
+  back:['⏪','壞'],pause:['⏸️','壞'],nocoupon:['🚫','壞']};
 function cardList(emoji,name,cards,note){
   const row=c=>{const f=CARDFX[c.t]||['⭐','好'];
     return '<div class="evt"><span class="e">'+pxi(f[0])+'</span><b>'+esc(c.label)+'</b>'+
@@ -2442,9 +2458,10 @@ function rollResult(kidId,d,ctx){
       '<button class="btn good" data-act="useshield">'+px('🛡️')+' 用護盾擋掉</button>'+
       '<button class="btn bad" data-act="takehit">'+(b.kind==='trap'?'認了，扣 '+b.value+' 小分':'不用，照做')+'</button></div>';
   }else if(ctx.task){
-    act='<div class="banner" style="margin-top:14px">'+px('😈','big')+'<div><b>'+esc(ctx.task.label)+'</b>做完了就按下面領分數。</div></div>'+
+    act='<div class="banner" style="margin-top:14px">'+px('😈','big')+'<div><b>'+esc(ctx.task.label)+'</b>'+
+      '做完了就按下面領獎勵：<b class="ib">'+esc(ctx.task.reward)+'</b></div></div>'+
       '<div class="row" style="margin-top:10px">'+
-      '<button class="btn good" data-act="taskdone">做完了 +'+ctx.task.value+'</button>'+
+      '<button class="btn good" data-act="taskdone">做完了，拿券</button>'+
       '<button class="btn ghost" data-act="close">下次再說</button></div>';
   }else if(ctx.reroll){
     act='<button class="btn pri wide" style="margin-top:14px" data-act="freeroll">🔁 免費再骰一次</button>';
@@ -3220,8 +3237,11 @@ document.addEventListener('click',async ev=>{
       S.game.updatedAt=now();buzz(120);beep('bad');save();
       return rollResult(g.kidId,gp(g.kidId).lastRoll||1,ctx2)}
     case 'taskdone':{const g=gPending;if(!g||!g.ctx.task)return closeSheet();
-      gPts(g.kidId,g.ctx.task.value,'命運任務：'+g.ctx.task.label,'😈',[]);
-      gPending=null;closeSheet();buzz(40);beep('big');save();return toast('👏 完成任務 +'+g.ctx.task.value)}
+      const name=g.ctx.task.reward;
+      gCoupon(g.kidId,name,[],g.ctx.noCoupon);
+      gPending=null;closeSheet();buzz(40);beep('big');save();
+      return toast(g.ctx.noCoupon?'這回合不能領券，任務算完成了但沒有券'
+                                 :'👏 完成任務，拿到「'+name+'」')}
     case 'rwtab':rwTab=t.dataset.v;rwRar=0;return render();
     case 'logtab':logTab=t.dataset.v;return render();
     case 'rwrar':rwRar=parseInt(t.dataset.v,10)||0;return render();
