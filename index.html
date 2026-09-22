@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v24・2026-09-22';
+const BUILD='v25・2026-09-22';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1221,7 +1221,9 @@ function gLog(ev,list){list.push(ev)}
 function gPts(kidId,small,label,emoji,list){
   let d=small;
   if(small<0&&!S.settings.allowNegative){const bal=balanceOf(kidId);d=-Math.min(Math.abs(small),Math.max(0,bal))}
-  if(d)commit({kidId,small:d,label,type:'game',emoji});
+  /* 棋盤發的分不換骰子：骰子換到分、分又換回骰子，就會變成骰不完的迴圈。
+     分數照樣入帳（可以花、可以存），只是不再回頭生骰子。 */
+  if(d)commit({kidId,small:d,label,type:'game',emoji,nodice:true});
   gLog({emoji,label,delta:d},list);
 }
 function gCoupon(kidId,name,list,noCoupon){
@@ -1615,8 +1617,10 @@ function bonusDice(kidId){
   return n;
 }
 function diceEarned(kidId){
-  let rd=0;const days=new Set();
+  /* 同一項任務、同一天只算一次 —— 舊資料裡若有跨裝置留下的重複打勾，這裡就擋掉了 */
+  let rd=0;const days=new Set(),seen=new Set();
   for(const e of S.routineLog){if(e.voided||e.kidId!==kidId)continue;
+    const key=e.routineId+'@'+e.day; if(seen.has(key))continue; seen.add(key);
     const r=S.routines.find(x=>x.id===e.routineId);rd+=(r&&r.dice)||1;days.add(e.day)}
   for(const d of days)if(allDone(kidId,d))rd+=1;          // 當天全完成再送 1 顆
   const per=Math.max(1,S.settings.dicePerPoints|0||5);
@@ -1634,27 +1638,19 @@ function diceOf(kidId){return Math.max(0,diceRaw(kidId))}
       裝置帶回來，作廢才會跟著 updatedAt 傳出去蓋掉舊的。
    2. 補到 0 的那一筆用固定 id 且每次重算，所以跑幾次、在幾台跑，結果都一樣。
    家長自己手動補的（家長補發）不在這裡動。 */
-const AUTOFIX_RE=/^(修正補償|整理補發紀錄|已經骰掉的不收回)/;
-function keepId(kidId){return 'bd_keep_'+kidId}
+const AUTOFIX_RE=/^(修正補償|整理補發紀錄|已經骰掉的不收回|撤銷紀錄，已經骰掉的不收回)/;
+/* v25：拿掉「自動補骰子」這件事。
+   它原本是為了 v16 回溯扣骰子時不要倒扣，但只要它會自己發骰子，
+   就一定會有「骰完又自己長回來」的風險，而且跨裝置合併後很難算得準。
+   現在這裡只做一件事：把過去系統自動發的補償一律作廢（用墓碑，會跟著同步傳出去）。
+   骰子不夠就是不夠，畫面會標「透支 N 顆」不會偷偷吃掉，家長要補請用設定裡的手動補骰子。 */
 function reconcileDice(){
   if(!S.game)return false;
   if(!S.game.bonus)S.game.bonus=[];
   let changed=false;
   for(const b of S.game.bonus){
     if(!b||b.voided)continue;
-    if(b.id===keepId(b.kidId))continue;             // 這筆下面重算，先留著
-    if(AUTOFIX_RE.test(b.label||'')){b.voided=true;touch(b);changed=true}
-  }
-  for(const k of S.kids){
-    if(k.deleted)continue;
-    const id=keepId(k.id);
-    const cur=S.game.bonus.find(x=>x&&x.id===id);
-    const mine=(cur&&!cur.voided)?(cur.n|0):0;
-    const base=diceRaw(k.id)-mine;                  // 把自己這筆扣掉，看真實結餘
-    const need=base<0?-base:0;
-    if(need>0){
-      if(mine!==need){grantDice(k.id,need,'已經骰掉的不收回',id);changed=true}
-    }else if(cur&&!cur.voided){cur.voided=true;touch(cur);changed=true}
+    if(AUTOFIX_RE.test(b.label||'')||/^bd_keep_/.test(b.id||'')){b.voided=true;touch(b);changed=true}
   }
   if(changed){S.game.updatedAt=now();save()}
   return changed;
@@ -1671,12 +1667,22 @@ function awardRoutineDay(kidId,day){
 function revokeRoutineDay(kidId,day){
   for(const e of S.ledger)if(e.type==='routine'&&e.kidId===kidId&&e.day===day&&!e.voided){e.voided=true;touch(e)}
 }
+const rlId=(kidId,routineId,day)=>'rl_'+kidId+'_'+routineId+'_'+day;
 function toggleRoutine(kidId,routineId){
   const day=dayKey(),wasAll=allDone(kidId,day);
-  const ex=S.routineLog.find(e=>!e.voided&&e.kidId===kidId&&e.routineId===routineId&&e.day===day);
-  if(ex){ex.voided=true;touch(ex)}
-  else{S.routineLog.push({id:uid('rl'),kidId,routineId,day,ts:now(),voided:false,updatedAt:now()});
-       if(S.routineLog.length>800)S.routineLog=S.routineLog.slice(-800)}
+  /* 一次打勾的身分＝「誰 ＋ 哪一項 ＋ 哪一天」，不能用隨機 id：
+     兩台裝置各勾一次就會各留一筆，合併是用 id 聯集，同一項任務就變成兩顆骰子。
+     用固定 id 之後，兩台勾同一項會合併成同一筆。 */
+  const rid=rlId(kidId,routineId,day);
+  const hits=S.routineLog.filter(e=>!e.voided&&e.kidId===kidId&&e.routineId===routineId&&e.day===day);
+  const ex=hits[0];
+  if(ex){for(const h of hits){h.voided=true;touch(h)}}      // 舊資料可能有重複，一次收乾淨
+  else{
+    const old=S.routineLog.find(e=>e.id===rid);
+    if(old){old.voided=false;old.ts=now();touch(old)}
+    else S.routineLog.push({id:rid,kidId,routineId,day,ts:now(),voided:false,updatedAt:now()});
+    if(S.routineLog.length>4000)S.routineLog=S.routineLog.slice(-4000);
+  }
   const isAll=allDone(kidId,day);
   let msg='';
   if(!wasAll&&isAll){const r=awardRoutineDay(kidId,day);
@@ -3151,7 +3157,7 @@ function toggleNoDice(id){
   }
   touch(e);
   const raw=diceRaw(e.kidId);
-  if(raw<0){const b=grantDice(e.kidId,-raw,'已經骰掉的不收回');if(b)e.diceAdjId=b.id;touch(e)}
+  /* v25：不再自動補骰子。骰子變負就讓它顯示「透支」，家長自行決定要不要補。 */
   save();closeSheet();
   const after=diceOf(e.kidId), d=after-before;
   toast(e.nodice?('已改成「只是換算」'+(d<0?'　收回 '+(-d)+' 顆還沒用掉的骰子':'　沒有骰子可以收回'))
@@ -3175,7 +3181,7 @@ function toggleVoid(id){
     }
     const before=diceOf(e.kidId);
     const raw=diceRaw(e.kidId);
-    if(raw<0)grantDice(e.kidId,-raw,'撤銷紀錄，已經骰掉的不收回');
+    /* v25：不再自動補骰子，改由畫面標示透支 */
     save();
     const d=diceOf(e.kidId)-before;
     closeSheet();
