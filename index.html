@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v23・2026-09-22';
+const BUILD='v24・2026-09-22';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1053,48 +1053,21 @@ function migrate(S){
     }
     S.schema=19;
   }
-  if(S.schema<20){   // v16 把「領回存款」從累積賺到的分裡拿掉，回溯少算的骰子要補回來
+  if(S.schema<20){
+    /* 這裡原本會「回溯補骰子」，用 uid() 產 id，每台裝置各補一筆 → 合併後重複。
+       補償改由 reconcileDice() 負責（只看實際透支、固定 id、每次重算），
+       這個區塊就只留下版本號。 */
     if(!S.game.bonus)S.game.bonus=[];
-    const per=Math.max(1,S.settings.dicePerPoints|0||5);
-    for(const k of S.kids){
-      if(k.deleted)continue;
-      let oldE=0,newE=0;
-      for(const e of S.ledger){
-        if(e.voided||e.kidId!==k.id)continue;
-        if(e.small>0)oldE+=e.small;                        // v16 之前的算法
-        newE+=(e.type==='bank-in')?0:(e.type==='bank-out')?(e.interest||0):Math.max(0,e.small);
-      }
-      const owed=Math.floor(oldE/per)-Math.floor(newE/per);
-      if(owed>0)S.game.bonus.push({id:uid('bd'),kidId:k.id,n:owed,ts:now(),
-        label:'修正補償：之前已經骰掉的 '+owed+' 顆',voided:false,updatedAt:now()});
-    }
-    S.game.updatedAt=now();
     S.schema=20;
   }
-  if(S.schema<21){
-    /* schema 20 的補償用 uid() 產生 id，每台裝置各跑一次就會各自產生一筆，
-       合併之後變成重複補發（Stan 的 Ayden 就被補了 4 次）。
-       改成「固定 id ＋ 只看 v19 上線前的帳本」：不管跑幾次、在幾台上跑，
-       結果都一樣，而且金額不會隨著之後的帳本變動。 */
-    const per=Math.max(1,S.settings.dicePerPoints|0||5);
-    const CUT=new Date(2026,8,19).getTime();          // 2026-09-19，v19 上線日
-    S.game.bonus=(S.game.bonus||[]).filter(b=>!(b&&/^修正補償/.test(b.label||'')));
-    for(const k of S.kids){
-      if(k.deleted)continue;
-      let oldE=0,newE=0;
-      for(const e of S.ledger){
-        if(e.voided||e.kidId!==k.id||e.ts>=CUT)continue;
-        if(e.small>0)oldE+=e.small;
-        newE+=(e.type==='bank-in')?0:(e.type==='bank-out')?(e.interest||0):Math.max(0,e.small);
-      }
-      const owed=Math.floor(oldE/per)-Math.floor(newE/per);
-      if(owed>0)S.game.bonus.push({id:'bd_fix20_'+k.id,kidId:k.id,n:owed,ts:now(),
-        label:'修正補償（v16 回溯）',voided:false,updatedAt:now()});
-    }
+  if(S.schema<22){
+    /* schema 20/21 的自動補發是「一次性」的：20 用 uid() 產 id，每台裝置各跑一次
+       就各自留一筆，合併之後重複（Ayden 被補了 4 次）；21 改用固定 id，但清舊資料
+       時用的是「直接刪掉」，而合併是用 id 聯集，舊裝置一同步就又長回來。
+       v24 改成不靠 migration：見下面的 reconcileDice()，每次開啟／同步都重算一次，
+       舊紀錄一律改成「作廢」（墓碑）讓它能跟著合併傳出去，不再用刪的。 */
     S.game.updatedAt=now();
-    S.schema=21;
-    // 收乾淨之後若有人變成透支，補到 0；一樣用固定 id，不會重複
-    S.__fixDeficit=true;
+    S.schema=22;
   }
   return S;
 }
@@ -1655,6 +1628,37 @@ function diceUsed(kidId){
 /* 可能為負 ＝ 骰過的比拿到的多（規則改動或撤銷造成），要讓它看得見，不能默默吞掉 */
 function diceRaw(kidId){return diceEarned(kidId)-diceUsed(kidId)}
 function diceOf(kidId){return Math.max(0,diceRaw(kidId))}
+/* 系統自動補發的骰子，全部由這裡重算一次；每次開啟和每次同步後都跑。
+   兩個重點：
+   1. 舊紀錄用「作廢」而不是「刪除」——合併是用 id 聯集，刪掉的會被還沒更新的
+      裝置帶回來，作廢才會跟著 updatedAt 傳出去蓋掉舊的。
+   2. 補到 0 的那一筆用固定 id 且每次重算，所以跑幾次、在幾台跑，結果都一樣。
+   家長自己手動補的（家長補發）不在這裡動。 */
+const AUTOFIX_RE=/^(修正補償|整理補發紀錄|已經骰掉的不收回)/;
+function keepId(kidId){return 'bd_keep_'+kidId}
+function reconcileDice(){
+  if(!S.game)return false;
+  if(!S.game.bonus)S.game.bonus=[];
+  let changed=false;
+  for(const b of S.game.bonus){
+    if(!b||b.voided)continue;
+    if(b.id===keepId(b.kidId))continue;             // 這筆下面重算，先留著
+    if(AUTOFIX_RE.test(b.label||'')){b.voided=true;touch(b);changed=true}
+  }
+  for(const k of S.kids){
+    if(k.deleted)continue;
+    const id=keepId(k.id);
+    const cur=S.game.bonus.find(x=>x&&x.id===id);
+    const mine=(cur&&!cur.voided)?(cur.n|0):0;
+    const base=diceRaw(k.id)-mine;                  // 把自己這筆扣掉，看真實結餘
+    const need=base<0?-base:0;
+    if(need>0){
+      if(mine!==need){grantDice(k.id,need,'已經骰掉的不收回',id);changed=true}
+    }else if(cur&&!cur.voided){cur.voided=true;touch(cur);changed=true}
+  }
+  if(changed){S.game.updatedAt=now();save()}
+  return changed;
+}
 function awardRoutineDay(kidId,day){
   const st=S.settings,k=kid(kidId);if(!k)return;
   const got=[];
@@ -1971,7 +1975,7 @@ async function pull(quiet){
   setSync('busy');
   try{
     const rs=await ghRead(GH.path||'data.json');
-    if(rs.data){S=migrate(mergeState(S,rs.data));LS.set(K_STATE,S)}
+    if(rs.data){S=migrate(mergeState(S,rs.data));LS.set(K_STATE,S);reconcileDice()}
     const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
     if(rm.data){M=mergeMedia(M,rm.data);LS.set(K_MEDIA,M)}
     if(!GH.ok){GH.ok=true;LS.set(K_GH,GH)}
@@ -3793,18 +3797,7 @@ function applyTheme(){
   if(t==='auto')document.documentElement.removeAttribute('data-theme');
 }
 applyTheme();
-/* schema 21 收乾淨重複補發之後，若有人變成透支就補到 0。
-   要等所有 const 都初始化完才算得出 diceRaw，所以放在這裡而不是 migrate() 裡。 */
-if(S.__fixDeficit){
-  delete S.__fixDeficit;
-  let fixed=false;
-  for(const k of S.kids){
-    if(k.deleted)continue;
-    const raw=diceRaw(k.id);
-    if(raw<0){grantDice(k.id,-raw,'整理補發紀錄，已經骰掉的不收回','bd_keep_'+k.id);fixed=true}
-  }
-  if(fixed)save();
-}
+reconcileDice();
 render();
 if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
 if(ghReady())pull(true);
@@ -3817,7 +3810,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   debtOf,depositable,bankKeep,bankOnce,depositedToday,claimedToday,sinceOf,netDelta,isTransfer,earnDelta,
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
-  grantDice,bonusDice,diceRaw,diceEarned,diceUsed,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
+  grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
   toggleNoDice,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
