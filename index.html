@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v25・2026-09-22';
+const BUILD='v26・2026-09-22';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -716,7 +716,7 @@ function defaultCards(){return {
   {t:'task', reward:'今天晚餐我決定券',  label:'跟家人說三件感謝的事'},
   {t:'task', reward:'遊戲時間 20 分券',  label:'把自己的房間收好'},
   {t:'none',      label:'訊號中斷：這回合什麼都沒發生'},
-  {t:'move', v:1, label:'太空漫遊：前進 1 格'},
+  {t:'move', v:1, label:'太空漫遊：前進 1 格（落點不觸發）'},
   {t:'swap',      label:'空間跳躍：跟兄弟姊妹交換位置'},
   {t:'back', v:2, label:'退後 2 格'},
   {t:'pause',     label:'暫停一次骰子'},
@@ -1243,13 +1243,14 @@ function offerShield(kidId,ctx,bad){
   gLog({emoji:'🛡️',label:'有護盾！可以擋掉「'+bad.label+'」',delta:0},ctx.log);
   return true;
 }
+const pad2=n=>(n<10?'0':'')+n;
 function applyBad(kidId,bad,ctx){
   switch(bad.kind){
     case 'trap': gPts(kidId,-(bad.value||1),bad.label,'💥',ctx.log); break;
     case 'back': {
       const n=bad.value||2, p2=gp(kidId);
       step(kidId,-n,ctx,true);               // 退回去就結束，落點不觸發
-      gLog({emoji:'⏪',label:'倒退 '+n+' 格　→ 第 '+((p2.pos<10?'0':'')+p2.pos)+' 格（這格不觸發）',delta:0},ctx.log);
+      gLog({emoji:'⏪',label:'倒退 '+n+' 格　→ 第 '+pad2(p2.pos)+' 格（這格不觸發）',delta:0},ctx.log);
       break;
     }
     case 'pause': {const p=gp(kidId);p.pause=(p.pause||0)+1;touch(p);
@@ -1275,10 +1276,14 @@ function landOn(kidId,idx,ctx){
     case 'reroll': if(ctx.chain<chainCap()){ctx.chain++;ctx.reroll=true;
         gLog({emoji:'🔁',label:'再骰一次（不扣骰子）',delta:0},L)}
       else gLog({emoji:'🔁',label:'再骰（連鎖上限，這次跳過）',delta:0},L); break;
-    case 'move': if(ctx.chain<chainCap()){ctx.chain++;
-        gLog({emoji:'⏩',label:'前進 '+(t.value||3)+' 格',delta:0},L);
-        return step(kidId,t.value||3,ctx)}
-      else gLog({emoji:'⏩',label:'前進（連鎖上限，這次跳過）',delta:0},L); break;
+    case 'move': {                              // 加速：多骰一顆決定前進幾格
+      const n=1+Math.floor(Math.random()*6);
+      ctx.bonusRoll=n;
+      gLog({emoji:'⏩',label:'加速！多骰一顆 → '+n+' 點',delta:0},L);
+      step(kidId,n,ctx,true);                   // 只移動，落點不觸發
+      gLog({emoji:'📍',label:'前進 '+n+' 格　→ 第 '+pad2(gp(kidId).pos)+' 格（這格不觸發）',delta:0},L);
+      break;
+    }
     case 'back': {
       const bad={kind:'back',value:t.value||2,label:'倒退 '+(t.value||2)+' 格'};
       if(!offerShield(kidId,ctx,bad))return applyBad(kidId,bad,ctx);
@@ -1305,21 +1310,27 @@ function applyCard(kidId,c,ctx){
     case 'point': gPts(kidId,c.v||1,'星雲卡','🌌',L); break;
     case 'shield': gCoupon(kidId,'免扣分護盾券',L,ctx.noCoupon); break;
     case 'coupon': gCoupon(kidId,c.v,L,ctx.noCoupon); break;
-    case 'goto': if(ctx.chain<chainCap()){ctx.chain++;
-        const diff=(((c.v-p.pos)%TN)+TN)%TN; return step(kidId,diff||TN,ctx)} break;
+    case 'goto': {
+      const diff=(((c.v-p.pos)%TN)+TN)%TN;
+      step(kidId,diff||TN,ctx,true);            // 只移動，落點不觸發
+      gLog({emoji:'🛸',label:'移動到第 '+pad2(gp(kidId).pos)+' 格（這格不觸發）',delta:0},L);
+      break;
+    }
     case 'swap': {
       const others=live(S.kids).filter(k=>k.id!==kidId);
       if(others.length){const o=others[0],op=gp(o.id),tmp=p.pos;p.pos=op.pos;op.pos=tmp;
-        touch(op);gLog({emoji:'🔄',label:'跟 '+o.name+' 交換位置',delta:0},L);
-        if(ctx.chain<chainCap()){ctx.chain++;return landOn(kidId,p.pos,ctx)}}
+        touch(op);
+        gLog({emoji:'🔄',label:'跟 '+o.name+' 交換位置　→ 第 '+pad2(p.pos)+' 格（這格不觸發）',delta:0},L)}
       break;
     }
     case 'task': ctx.task={label:c.label,reward:c.reward||'神秘券'}; break;
     case 'none': gLog({emoji:'❓',label:'什麼都沒發生',delta:0},L); break;
-    case 'move': if(ctx.chain<chainCap()){ctx.chain++;
-        gLog({emoji:'⏩',label:'前進 '+(c.v||1)+' 格',delta:0},L);
-        return step(kidId,c.v||1,ctx)}
-      else gLog({emoji:'⏩',label:'前進（連鎖上限，這次跳過）',delta:0},L); break;
+    case 'move': {
+      const n=c.v||1;
+      step(kidId,n,ctx,true);                   // 只移動，落點不觸發
+      gLog({emoji:'⏩',label:'前進 '+n+' 格　→ 第 '+pad2(gp(kidId).pos)+' 格（這格不觸發）',delta:0},L);
+      break;
+    }
     case 'back': {
       const bad={kind:'back',value:c.v||2,label:'退後 '+(c.v||2)+' 格'};
       if(!offerShield(kidId,ctx,bad))return applyBad(kidId,bad,ctx);
@@ -2431,7 +2442,7 @@ function tileDesc(t){
     case 'shield':   return '拿到一張<b>免扣分護盾券</b>，可以擋掉一次壞事（扣分、倒退、暫停）。';
     case 'chance':   return '飛進星雲，抽一張<b>星雲卡</b>。大部分是好事：加分、往前跳、拿券、免費再骰一次。';
     case 'fate':     return '遇到外星人，抽一張<b>命運卡</b>。可能要做一件小任務（做完拿<b>特權券</b>，不是分數），也可能什麼都沒發生，或被拉走、暫停一次。';
-    case 'move':     return '點燃推進器，往前衝 <b>'+(v||3)+' 格</b>，走到的那一格效果照算 —— 起跑不久就遇到，很容易一口氣衝到水晶區。';
+    case 'move':     return '點燃推進器：<b>多骰一顆</b>，骰到幾點就往前衝幾格。走到的那一格<b>只是停在那裡，不會再觸發</b>。';
     case 'back':     return '快到基地卻被引力井拉住，<b class="danger">倒退 '+(v||2)+' 格</b>。<b>退到的那一格不會再觸發</b>，只是退回去而已。有護盾券可以擋掉。';
     case 'reroll':   return '穿過位在半路的蟲洞，<b>再骰一次</b>，而且不扣骰子，運氣好可以一路連下去。';
     default:         return '';
@@ -2474,7 +2485,7 @@ function gameHelpSheet(){
       li('⭐','分數也給骰子','每 '+per+' 小分 +1 顆')+
       li('🛡️','護盾券','擋掉一次扣分 / 倒退 / 暫停')+
       li('🍪','小零食券','面額 NT$'+VOUCHER['小零食券'].faceNTD+'，可以存著一次用掉')+
-      li('🔗','連鎖上限','一次骰子最多連動 '+chainCap()+' 次')+
+      li('🔗','再骰上限','一次骰子最多再骰 '+chainCap()+' 次（前進／後退／交換都不再觸發落點）')+
     '</div>'+
     '<div class="f hint" style="line-height:1.85;margin-top:10px">棋盤上拿到的<b>券</b>要到「獎勵 → 我的券」使用。<br>'+
       '棋盤只會影響遊戲裡的分數，<b class="ib">爸媽的扣分護盾擋不掉</b>。<br>'+
