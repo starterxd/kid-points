@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v19・2026-09-19';
+const BUILD='v23・2026-09-22';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -673,6 +673,7 @@ document.addEventListener('click',ev=>{
 },true);
 
 const K_STATE='kp_state_v1', K_MEDIA='kp_media_v1', K_GH='kp_gh_v1', K_DIRTY='kp_dirty_v1', K_SHA='kp_sha_v1';
+const K_TIP='kp_tip_v1';   // 每天提醒一次「你有多的分可以存」，只記在這支裝置
 
 /* ---------------- 預設資料 ---------------- */
 function defaultTiles(){return [
@@ -732,7 +733,7 @@ function seed(){
   const W=(name,emoji,unit,amount,price,note,noBudget,stack)=>({id:uid('w'),name,emoji,image:null,unit,amount,
     price:(price==null?null:price),noBudget:!!noBudget,stack:!!stack,stock:null,kidIds:[],note:note||'',sort:0,updatedAt:t});
   return {
-    schema:20, seeded:true,
+    schema:21, seeded:true,
     settings:{updatedAt:t,bigUnit:5,ntdPerSmall:10,pinHash:null,allowNegative:true,bankKeep:3,bankOncePerDay:true,bankCapGain:25,bankTiers:[[30,100],[30,70],[30,50]],
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
@@ -1070,6 +1071,31 @@ function migrate(S){
     S.game.updatedAt=now();
     S.schema=20;
   }
+  if(S.schema<21){
+    /* schema 20 的補償用 uid() 產生 id，每台裝置各跑一次就會各自產生一筆，
+       合併之後變成重複補發（Stan 的 Ayden 就被補了 4 次）。
+       改成「固定 id ＋ 只看 v19 上線前的帳本」：不管跑幾次、在幾台上跑，
+       結果都一樣，而且金額不會隨著之後的帳本變動。 */
+    const per=Math.max(1,S.settings.dicePerPoints|0||5);
+    const CUT=new Date(2026,8,19).getTime();          // 2026-09-19，v19 上線日
+    S.game.bonus=(S.game.bonus||[]).filter(b=>!(b&&/^修正補償/.test(b.label||'')));
+    for(const k of S.kids){
+      if(k.deleted)continue;
+      let oldE=0,newE=0;
+      for(const e of S.ledger){
+        if(e.voided||e.kidId!==k.id||e.ts>=CUT)continue;
+        if(e.small>0)oldE+=e.small;
+        newE+=(e.type==='bank-in')?0:(e.type==='bank-out')?(e.interest||0):Math.max(0,e.small);
+      }
+      const owed=Math.floor(oldE/per)-Math.floor(newE/per);
+      if(owed>0)S.game.bonus.push({id:'bd_fix20_'+k.id,kidId:k.id,n:owed,ts:now(),
+        label:'修正補償（v16 回溯）',voided:false,updatedAt:now()});
+    }
+    S.game.updatedAt=now();
+    S.schema=21;
+    // 收乾淨之後若有人變成透支，補到 0；一樣用固定 id，不會重複
+    S.__fixDeficit=true;
+  }
   return S;
 }
 S=migrate(S);
@@ -1095,6 +1121,9 @@ function balanceOf(kidId){let b=arcOf('bal',kidId);for(const e of S.ledger)if(e.
 /* 欠分：可用分為負就是欠分，之後賺到的分會自動先把它補回來（同一個餘額，不需要另一本帳） */
 const bankKeep=()=>Math.max(0,S.settings.bankKeep|0);
 const bankOnce=()=>S.settings.bankOncePerDay!==false;   // 一天只能存一次、領一次
+/* 累積利息的顯示一律「無條件捨去」：0.96 要顯示 0.9，不能四捨五入成 1.0，
+   否則畫面看起來已經有 1 分、但「已賺利息」還是 0，家長會以為程式壞掉 */
+const fmtAcc=v=>(Math.floor((+v||0)*10)/10).toFixed(1);
 function depositedToday(kidId){
   const d=dayKey();
   for(const j of S.savings){
@@ -1117,7 +1146,9 @@ const debtOf=kidId=>Math.max(0,-balanceOf(kidId));
 const depositable=kidId=>Math.max(0,balanceOf(kidId)-bankKeep());
 /* 「累積賺到的分」＝骰子的來源之一。轉存不算賺到（領回存款只有利息才算），
    否則「存進去再領回來」會憑空生出骰子。 */
-const earnDelta=e=>{const d=netDelta(e);return d>0?d:0};
+/* nodice：這筆分數只是「換算進來」的（禮金、壓歲錢、舊分數轉入），
+   可以花、可以存，但不算表現，所以不換骰子 */
+const earnDelta=e=>{if(e.nodice)return 0;const d=netDelta(e);return d>0?d:0};
 function earnedOf(kidId){let b=arcOf('earn',kidId);
   for(const e of S.ledger)if(e.kidId===kidId&&!e.voided)b+=earnDelta(e);return b}
 /* 存進銀行 / 領回來都只是把分數換個地方放，不是賺到也不是被扣掉。
@@ -1527,14 +1558,64 @@ function setJarTarget(kidId,t){
   toast('目標改成 +'+j.target+' 分'+(d!=null?'　還要 '+d+' 天':'　這一輪到不了，要多存一點'));
 }
 
+/* ---- 每天一次：提醒小孩「身上有多的分，存進去可以變多」----
+   只記在這支裝置的 localStorage，不寫進同步資料（純提醒，不該製造同步流量） */
+function tipShownToday(kidId){const m=LS.get(K_TIP,{});return m&&m[kidId]===dayKey()}
+function markTip(kidId){const m=LS.get(K_TIP,{})||{};m[kidId]=dayKey();LS.set(K_TIP,m)}
+function saveTipFor(kidId){
+  const k=kid(kidId);if(!k)return null;
+  if(debtOf(kidId))return null;                       // 還在欠分，先還完再說
+  const av=depositable(kidId);
+  if(av<3)return null;                                // 沒有多的分就不要吵
+  if(bankOnce()&&depositedToday(kidId))return null;   // 今天已經存過了
+  const j=jarOf(kidId);
+  if(j){
+    const v=jarValue(j);
+    if(v.done||v.expired)return null;                 // 已經可以領了，不是存的時機
+    const a=jarDaysLeft(j,0), b=jarDaysLeft(j,av);
+    if(a==null&&b==null)return null;
+    return {kind:'add',name:k.name,av,now:a,then:b,
+            saved:(a!=null&&b!=null)?(a-b):null,target:v.target};
+  }
+  const cap=bankCap(), tg=Math.min(10,cap), d=jarProject(av,tg);
+  return {kind:'new',name:k.name,av,target:tg,days:d};
+}
+function showSaveTip(kidId){
+  const t=saveTipFor(kidId);
+  if(!t)return false;
+  markTip(kidId);
+  const body = t.kind==='add'
+    ? '<div style="font-size:15px;line-height:1.9">你身上還有 <b class="ib" style="color:var(--good)">'+t.av+'</b> 分沒用到。<br>'+
+      (t.saved>0
+        ? '全部加存進存錢罐 → 倒數 <b class="ib">'+t.now+'</b> 天變成 <b class="ib" style="color:var(--gold)">'+t.then+' 天</b>，'+
+          '<b class="ib" style="color:var(--gold);font-size:17px">少等 '+t.saved+' 天</b>就能拿到 +'+t.target+' 分！'
+        : (t.then!=null?'加存進去，<b class="ib">'+t.then+' 天</b>就能拿到 +'+t.target+' 分。'
+                       :'加存進去會更快到目標。'))+'</div>'
+    : '<div style="font-size:15px;line-height:1.9">你身上有 <b class="ib" style="color:var(--good)">'+t.av+'</b> 分沒用到。<br>'+
+      (t.days!=null
+        ? '存進存錢罐放 <b class="ib" style="color:var(--gold);font-size:17px">'+t.days+' 天</b>，就會多賺 <b class="ib">+'+t.target+'</b> 分。'
+        : '開一個存錢罐，放著就會慢慢變多。')+
+      '<br><span style="color:var(--muted);font-size:13px">放著不動才會長大，隨時可以領回來。</span></div>';
+  sheet('💰 '+esc(t.name)+'，要不要存起來？',
+    '<div class="banner" style="margin-top:2px">'+px('🏦','big')+body+'</div>'+
+    '<button class="btn pri wide" style="margin-top:12px" data-act="gobank">好，去存錢</button>'+
+    '<button class="btn ghost wide" style="margin-top:9px" data-act="close">等一下再說</button>');
+  return true;
+}
+
 function grantDice(kidId,n,label){
   n=Math.round(+n||0);
   if(!n)return;
   if(!S.game.bonus)S.game.bonus=[];
-  S.game.bonus.push({id:uid('bd'),kidId,n,ts:now(),label:label||'家長補發',voided:false,updatedAt:now()});
+  const id=(arguments.length>3&&arguments[3])||uid('bd');
+  const old=S.game.bonus.find(x=>x.id===id);
+  const b=old||{id,kidId,ts:now(),voided:false};
+  b.n=n; b.kidId=kidId; b.label=label||'家長補發'; b.voided=false; touch(b);
+  if(!old)S.game.bonus.push(b);
   if(S.game.bonus.length>400)S.game.bonus=S.game.bonus.slice(-400);
   S.game.updatedAt=now();
   save();
+  return b;
 }
 
 /* ---------------- 日常任務 ---------------- */
@@ -1981,7 +2062,13 @@ function render(){
   else if(view==='bank')v.innerHTML=vBank();
   else if(view==='log')v.innerHTML=vLog();
   else v.innerHTML=vSet();
-  if(view==='game')bindBoard();
+  if(view==='game'){
+    bindBoard();
+    // 小孩每天幾乎都會點進遊戲，就在這裡提醒一次「身上的分可以存起來」
+    if(selKid&&!tipShownToday(selKid))setTimeout(()=>{
+      if(view==='game'&&!$('#scrim').classList.contains('on'))showSaveTip(selKid);
+    },700);
+  }
   const fab=$('.fab');if(fab)fab.remove();
   if(view==='home'||view==='score'){
     const b=document.createElement('button');b.className='fab';b.dataset.act='manual';b.innerHTML=px('✎');
@@ -2227,7 +2314,8 @@ function vBank(){
       '<div style="font-size:40px;line-height:1">'+px('🏦','xl')+'</div>'+
       '<div style="margin-top:8px;font-size:13px;color:var(--muted);font-weight:700">罐子裡 <b style="color:var(--ink)">'+v.amount+'</b> 分　目標 <b style="color:var(--gold)">+'+v.target+'</b> 分</div>'+
       '<div class="pg" style="margin:14px 0 8px"><i style="width:'+v.pct.toFixed(0)+'%;background:var(--gold)"></i></div>'+
-      '<div style="font-size:12px;color:var(--muted);font-weight:700">已累積 <b style="color:var(--gold)">'+v.acc.toFixed(1)+'</b> / '+v.target+' 分</div>';
+      '<div style="font-size:12px;color:var(--muted);font-weight:700">已累積 <b style="color:var(--gold)">'+fmtAcc(v.acc)+'</b> / '+v.target+' 分'+
+        '<span style="opacity:.7">（現在可領 '+v.got+' 分）</span></div>';
     if(v.done){
       h+='<div style="margin-top:14px;font-size:22px;font-weight:850;color:var(--good)">🎉 目標達成！</div>'+
          '<button class="btn pri wide" style="margin-top:10px" data-act="claimjar">領回 '+(v.amount+v.got)+' 小分（利息 +'+v.got+'）</button>';
@@ -2752,7 +2840,7 @@ function logRow(e,allowTap){
   const tm=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
   return '<button class="li '+(e.voided?'void':'')+'" '+(allowTap?'data-act="entry" data-id="'+e.id+'"':'')+'>'+
     '<div class="ic">'+px(ic)+'</div><div class="tx"><b>'+esc(e.label||'調整')+'</b>'+
-    '<u>'+tm+' ・ '+esc(k?k.name:'已刪除')+(e.voided?' ・ 已撤銷':'')+'</u></div>'+
+    '<u>'+tm+' ・ '+esc(k?k.name:'已刪除')+(e.nodice?' ・ 不換骰子':'')+(e.voided?' ・ 已撤銷':'')+'</u></div>'+
     (isTransfer(e)
       ? '<span class="delta t">'+(e.type==='bank-in'?'存入 ':'領回 ')+Math.abs(e.small)+' 小分</span>'
       : '<span class="delta '+(p?'p':'n')+'">'+(p?'+':'−')+fmtScore(Math.abs(e.small))+'</span>')+'</button>';
@@ -3022,16 +3110,48 @@ function manualSheet(){
    '<div class="f2"><div class="f"><label>分數類型</label><select id="mu"><option value="small">小分</option><option value="big">大分</option></select></div>'+
    '<div class="f"><label>數量</label><input id="ma" type="number" inputmode="numeric" value="1" min="1"></div></div>'+
    '<div class="f"><label>原因</label><input id="ml" placeholder="例如：主動幫媽媽提東西"></div>'+
+   '<div class="f"><label>這筆算不算表現</label><select id="mn">'+
+     '<option value="0">算表現（會換骰子）</option>'+
+     '<option value="1">只是換算（禮金、壓歲錢、舊分數轉入）—— 不換骰子</option></select>'+
+     '<div class="hint">骰子是「每 '+Math.max(1,S.settings.dicePerPoints|0||5)+' 小分換 1 顆」。'+
+     '一次把一筆禮金換成分數，如果算表現就會一口氣多出一堆骰子。</div></div>'+
    '<div class="row"><button class="btn good" data-act="mdo" data-s="1">＋ 加分</button><button class="btn bad" data-act="mdo" data-s="-1">－ 扣分</button></div>');
 }
 function entrySheet(id){
   const e=S.ledger.find(x=>x.id===id);if(!e)return;
   const k=kid(e.kidId);
+  const per=Math.max(1,S.settings.dicePerPoints|0||5);
+  const canToggle=e.small>0&&!isTransfer(e);
   sheet('🧾 紀錄明細',
     '<div class="f"><div style="font-size:16px;font-weight:800">'+esc(e.label||'調整')+'</div>'+
     '<div class="hint">'+new Date(e.ts).toLocaleString('zh-TW')+' ・ '+esc(k?k.name:'已刪除')+'<br>'+
-    (e.small>0?'+':'−')+fmtScore(Math.abs(e.small))+'（'+e.small+' 小分）'+(e.voided?' ・ <b class="danger">已撤銷</b>':'')+'</div></div>'+
-    '<button class="btn wide '+(e.voided?'good':'bad')+'" data-act="toggleVoid" data-id="'+e.id+'">'+(e.voided?'恢復這筆紀錄':'撤銷這筆紀錄')+'</button>');
+    (e.small>0?'+':'−')+fmtScore(Math.abs(e.small))+'（'+e.small+' 小分）'+(e.voided?' ・ <b class="danger">已撤銷</b>':'')+
+    (canToggle?'<br>'+(e.nodice?'這筆<b>不換骰子</b>（只是換算進來的）':'這筆<b>會換骰子</b>（每 '+per+' 小分 1 顆）'):'')+
+    '</div></div>'+
+    (canToggle?'<button class="btn wide" data-act="togglenodice" data-id="'+e.id+'">'+
+      (e.nodice?'改成「算表現」，會換骰子':'改成「只是換算」，不換骰子')+'</button>'+
+      '<div class="f hint" style="margin-top:8px">'+(e.nodice?'改回來會把這筆該給的骰子補上。'
+        :'已經骰掉的不會被收回，只會收回還沒用掉的。')+'</div>':'')+
+    '<button class="btn wide '+(e.voided?'good':'bad')+'" style="margin-top:'+(canToggle?'4px':'0')+'" data-act="toggleVoid" data-id="'+e.id+'">'+(e.voided?'恢復這筆紀錄':'撤銷這筆紀錄')+'</button>');
+}
+/* 切換「算不算表現」。收回骰子時只收還沒骰掉的 —— 已經骰出去的不追討，
+   否則就會像 v16 那樣把人推進透支。 */
+function toggleNoDice(id){
+  const e=S.ledger.find(x=>x.id===id);if(!e)return;
+  const before=diceOf(e.kidId);
+  e.nodice=!e.nodice;
+  if(!e.nodice&&e.diceAdjId){                    // 改回「算表現」→ 把當初的補平一起撤掉
+    const b=(S.game.bonus||[]).find(x=>x.id===e.diceAdjId);
+    if(b&&!b.voided){b.voided=true;touch(b);S.game.updatedAt=now()}
+    delete e.diceAdjId;
+  }
+  touch(e);
+  const raw=diceRaw(e.kidId);
+  if(raw<0){const b=grantDice(e.kidId,-raw,'已經骰掉的不收回');if(b)e.diceAdjId=b.id;touch(e)}
+  save();closeSheet();
+  const after=diceOf(e.kidId), d=after-before;
+  toast(e.nodice?('已改成「只是換算」'+(d<0?'　收回 '+(-d)+' 顆還沒用掉的骰子':'　沒有骰子可以收回'))
+                :('已改成「算表現」'+(d>0?'　補上 '+d+' 顆骰子':'')));
 }
 function toggleVoid(id){
   const e=S.ledger.find(x=>x.id===id);if(!e)return;
@@ -3049,7 +3169,13 @@ function toggleVoid(id){
         touch(j);
       }
     }
-    closeSheet();save();toast(e.voided?'已撤銷':'已恢復')};
+    const before=diceOf(e.kidId);
+    const raw=diceRaw(e.kidId);
+    if(raw<0)grantDice(e.kidId,-raw,'撤銷紀錄，已經骰掉的不收回');
+    save();
+    const d=diceOf(e.kidId)-before;
+    closeSheet();
+    toast((e.voided?'已撤銷':'已恢復')+(d?('　'+(d<0?'收回 '+(-d):'補上 '+d)+' 顆骰子'):''))};
   (S.settings.pinForUndo&&!unlocked())?askPin('撤銷需要家長密碼',go):go();
 }
 
@@ -3294,6 +3420,7 @@ document.addEventListener('click',async ev=>{
     case 'rwtab':rwTab=t.dataset.v;rwRar=0;return render();
     case 'logtab':logTab=t.dataset.v;return render();
     case 'rwrar':rwRar=parseInt(t.dataset.v,10)||0;return render();
+    case 'gobank':{closeSheet();view='bank';return render()}
     case 'calc':return calcSheet();
     case 'ghelp':return gameHelpSheet();
     case 'crange':chartRange=t.dataset.v;chartPick=null;return render();
@@ -3339,14 +3466,37 @@ document.addEventListener('click',async ev=>{
     case 'takejar':{
       const j=jarOf(selKid);if(!j)return;
       const v=jarValue(j);let n=clamp(5,1,v.amount);
-      const draw=()=>sheet('⬇️ 從罐子領出來',
-        '<div class="f hint" style="margin-top:-6px;line-height:1.8">領出來倒數會<b>變長</b>。全部領出＝結束這一輪，只拿已經累積到的 <b>+'+v.got+'</b> 分。</div>'+
+      const left0=jarDaysLeft(j), give=Math.max(0,v.target-v.got);
+      const draw=()=>{
+        const after=n>=v.amount?null:jarDaysLeft(j,-n);
+        const more=(left0!=null&&after!=null)?(after-left0):null;
+        let head;
+        if(left0!=null&&give>0){
+          head='<div class="card" style="padding:16px;text-align:center;margin-bottom:12px">'+
+            '<div style="font-size:12px;color:var(--muted);font-weight:800">再</div>'+
+            '<div style="font-size:40px;font-weight:850;letter-spacing:-2px;color:var(--brand);line-height:1.1">'+left0+
+              '<span style="font-size:17px;margin-left:3px">天</span></div>'+
+            '<div style="font-size:13px;font-weight:800;margin-top:2px">就可以拿到 <b style="color:var(--gold)">+'+v.target+'</b> 分</div>'+
+            '<div style="font-size:11.5px;color:var(--muted);margin-top:8px;line-height:1.7">'+
+              '現在全部領走只拿得到 <b class="ib">+'+v.got+'</b> 分，'+
+              '等於放棄 <b class="ib" style="color:var(--bad)">'+give+'</b> 分</div></div>';
+        }else{
+          head='<div class="f hint" style="margin-top:-6px;line-height:1.8">全部領出＝結束這一輪，'+
+            '只拿已經累積到的 <b>+'+v.got+'</b> 分。</div>';
+        }
+        sheet('⬇️ 從罐子領出來', head+
         '<div class="card" style="padding:16px"><div class="stepper">'+
         '<button class="sb" data-act="tj-">−</button>'+
         '<div style="flex:1;text-align:center"><div style="font-size:34px;font-weight:850;color:var(--brand)">'+n+'</div>'+
-        '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">'+(n>=v.amount?'全部領出，結束這一輪':'罐子會剩 '+(v.amount-n)+' 分')+'</div></div>'+
+        '<div style="font-size:11.5px;color:var(--muted);margin-top:4px">'+
+          (n>=v.amount?'全部領出，結束這一輪'
+                      :'罐子剩 '+(v.amount-n)+' 分'+(more>0?'　倒數 '+left0+' → <b>'+after+' 天</b>（多等 '+more+' 天）'
+                                                     :after!=null?'　倒數還是 '+after+' 天':'　這一輪就到不了目標了'))+
+        '</div></div>'+
         '<button class="sb" data-act="tj+">＋</button></div></div>'+
-        '<button class="btn ghost wide danger" style="margin-top:12px" data-act="dotakejar">領出 '+n+' 分</button>');
+        '<button class="btn ghost wide danger" style="margin-top:12px" data-act="dotakejar">領出 '+n+' 分</button>'+
+        '<button class="btn pri wide" style="margin-top:9px" data-act="close">再等等，不領了</button>');
+      };
       window.__tj={get n(){return n},inc(d){n=clamp(n+d,1,v.amount);draw()}};
       return draw();
     }
@@ -3380,7 +3530,10 @@ document.addEventListener('click',async ev=>{
     case 'mdo':{
       const k=$('#mk').value,u=$('#mu').value,n=Math.max(1,parseInt($('#ma').value)||1);
       const lbl=$('#ml').value.trim()||(t.dataset.s==='1'?'自訂加分':'自訂扣分');
-      closeSheet();return addPoints(k,toSmall(u,n)*(t.dataset.s==='1'?1:-1),lbl,{type:'adjust',emoji:'✎'});
+      const nd=$('#mn')&&$('#mn').value==='1';
+      closeSheet();
+      return addPoints(k,toSmall(u,n)*(t.dataset.s==='1'?1:-1),lbl,
+                       Object.assign({type:'adjust',emoji:'✎'},nd?{nodice:true}:{}));
     }
     case 'redeem':return doRedeem(id);
     case 'dordm':{const w=rwOf(id);return isStackRw(w)?qtySheet(id,t.dataset.kid):finishRedeem(id,t.dataset.kid)}
@@ -3389,6 +3542,7 @@ document.addEventListener('click',async ev=>{
     case 'rq+':{const w=rwOf(rdmW);rdmQty=clamp(rdmQty+1,1,maxQty(w,rdmK));return qtySheet(rdmW,rdmK)}
     case 'entry':return entrySheet(id);
     case 'toggleVoid':return toggleVoid(id);
+    case 'togglenodice':return toggleNoDice(id);
     case 'syncpanel':return ghReady()?(view='set',render(),window.scrollTo(0,0)):ghSetup();
 
     case 'mkids':return manageKids();
@@ -3639,6 +3793,18 @@ function applyTheme(){
   if(t==='auto')document.documentElement.removeAttribute('data-theme');
 }
 applyTheme();
+/* schema 21 收乾淨重複補發之後，若有人變成透支就補到 0。
+   要等所有 const 都初始化完才算得出 diceRaw，所以放在這裡而不是 migrate() 裡。 */
+if(S.__fixDeficit){
+  delete S.__fixDeficit;
+  let fixed=false;
+  for(const k of S.kids){
+    if(k.deleted)continue;
+    const raw=diceRaw(k.id);
+    if(raw<0){grantDice(k.id,-raw,'整理補發紀錄，已經骰掉的不收回','bd_keep_'+k.id);fixed=true}
+  }
+  if(fixed)save();
+}
 render();
 if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
 if(ghReady())pull(true);
@@ -3651,7 +3817,8 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   debtOf,depositable,bankKeep,bankOnce,depositedToday,claimedToday,sinceOf,netDelta,isTransfer,earnDelta,
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
-  grantDice,bonusDice,diceRaw,diceEarned,diceUsed,
+  grantDice,bonusDice,diceRaw,diceEarned,diceUsed,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
+  toggleNoDice,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
