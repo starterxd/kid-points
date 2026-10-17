@@ -585,7 +585,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v26・2026-09-22';
+const BUILD='v27・2026-10-17';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1627,6 +1627,31 @@ function bonusDice(kidId){
   for(const b of (S.game&&S.game.bonus)||[])if(b&&!b.voided&&b.kidId===kidId)n+=b.n|0;
   return n;
 }
+/* v27：「分數換骰子」是一條進度條。加分往前推，每滿 per 分給 1 顆。
+   2026-10-17 起：家長扣分會讓進度往回退，最多退到 0（已經給的骰子不收回，不會透支）；
+   銀行利息不再換骰子。10/17 以前的紀錄照舊規則算，不回頭重算。
+   全部從帳本推導（排序固定），兩台裝置算出來一定一樣。 */
+const DICE_V27=1792166400000;   // 2026-10-17 00:00（台北）
+const isDeduct=e=>(e.type==='deduct'||e.type==='adjust')&&e.small<0;
+function scoreGain(e){if(e.ts>=DICE_V27&&e.type==='bank-out')return 0;return earnDelta(e)}
+function scoreStart(kidId){
+  const a=ARC(),per=Math.max(1,S.settings.dicePerPoints|0||5);
+  if(a.sd&&a.sd[kidId])return {n:a.sd[kidId].n|0,p:a.sd[kidId].p|0};
+  const e=arcOf('earn',kidId);return {n:Math.floor(e/per),p:e%per};
+}
+function scoreRun(kidId,entries,start,onDie){
+  const per=Math.max(1,S.settings.dicePerPoints|0||5);
+  let n=start.n,p=start.p;
+  const es=entries.filter(e=>e.kidId===kidId&&!e.voided)
+    .sort((a,b)=>(a.ts-b.ts)||(a.id<b.id?-1:a.id>b.id?1:0));
+  for(const e of es){
+    const g=scoreGain(e);
+    if(g>0){p+=g;const k=Math.floor(p/per);if(k){n+=k;p-=k*per;if(onDie)onDie(e,k)}}
+    else if(e.ts>=DICE_V27&&isDeduct(e))p=Math.max(0,p+e.small);
+  }
+  return {n,p,per};
+}
+function scoreDice(kidId,onDie){return scoreRun(kidId,S.ledger,scoreStart(kidId),onDie)}
 function diceEarned(kidId){
   /* 同一項任務、同一天只算一次 —— 舊資料裡若有跨裝置留下的重複打勾，這裡就擋掉了 */
   let rd=0;const days=new Set(),seen=new Set();
@@ -1635,7 +1660,7 @@ function diceEarned(kidId){
     const r=S.routines.find(x=>x.id===e.routineId);rd+=(r&&r.dice)||1;days.add(e.day)}
   for(const d of days)if(allDone(kidId,d))rd+=1;          // 當天全完成再送 1 顆
   const per=Math.max(1,S.settings.dicePerPoints|0||5);
-  return rd+Math.floor(earnedOf(kidId)/per)+bonusDice(kidId);
+  return rd+scoreDice(kidId).n+bonusDice(kidId);
 }
 function diceUsed(kidId){
   return (S.game&&S.game.players&&S.game.players[kidId]&&S.game.players[kidId].rollsUsed)||0;
@@ -2482,14 +2507,16 @@ function gameHelpSheet(){
     '<div class="list">'+
       li('🏁','繞完一圈','+'+lapBonus()+' 小分')+
       li('🎲','骰子哪裡來','日常任務每項 +1，當天全完成再 +1')+
-      li('⭐','分數也給骰子','每 '+per+' 小分 +1 顆')+
+      li('⭐','分數也給骰子','每 '+per+' 小分 +1 顆，被扣分進度會倒退')+
       li('🛡️','護盾券','擋掉一次扣分 / 倒退 / 暫停')+
       li('🍪','小零食券','面額 NT$'+VOUCHER['小零食券'].faceNTD+'，可以存著一次用掉')+
       li('🔗','再骰上限','一次骰子最多再骰 '+chainCap()+' 次（前進／後退／交換都不再觸發落點）')+
     '</div>'+
     '<div class="f hint" style="line-height:1.85;margin-top:10px">棋盤上拿到的<b>券</b>要到「獎勵 → 我的券」使用。<br>'+
       '棋盤只會影響遊戲裡的分數，<b class="ib">爸媽的扣分護盾擋不掉</b>。<br>'+
-      '長按任何一格，就會跳出那一格的說明。</div>'+
+      '長按任何一格，就會跳出那一格的說明。<br>'+
+      '分數換骰子：爸媽加的分每滿 '+per+' 分給 1 顆；被扣分，下一顆的進度會往回退（最多退到 0，已經拿到的不收回）。'+
+      '棋盤上的分和銀行利息不換骰子。</div>'+
     '<div class="sec"><h2>每一格是什麼</h2></div><div class="list">'+
       uniqTiles().map(([t,n])=>'<div class="evt"><span class="e">'+pxi(t.emoji)+'</span>'+
         '<b>'+esc(t.label)+(n>1?' <u class="tn">×'+n+'</u>':'')+'<span class="sub">'+tileDesc(t).replace(/<[^>]+>/g,'')+'</span></b></div>').join('')+
@@ -2872,7 +2899,8 @@ function compactOld(){
   const c=archiveCut(),old=S.ledger.filter(e=>e.ts<c);
   if(!old.length){toast('一年內的紀錄都還在，不用壓縮');return}
   const a=ARC();
-  const arc={ts:c,bal:Object.assign({},a.bal||{}),earn:Object.assign({},a.earn||{})};
+  const arc={ts:c,bal:Object.assign({},a.bal||{}),earn:Object.assign({},a.earn||{}),sd:{}};
+  for(const k of S.kids){const r=scoreRun(k.id,old,scoreStart(k.id));arc.sd[k.id]={n:r.n,p:r.p}}
   for(const e of old){
     if(e.voided)continue;
     arc.bal[e.kidId]=(arc.bal[e.kidId]|0)+e.small;
@@ -2906,12 +2934,7 @@ function diceLog(kidId){
     if(!b||b.voided||b.kidId!==kidId||!b.n)continue;
     add(dayKey(b.ts),b.label||'家長補發','🎁',b.n);
   }
-  const es=S.ledger.filter(e=>e.kidId===kidId&&!e.voided&&earnDelta(e)>0).slice().sort((a,b)=>a.ts-b.ts);
-  let run=arcOf('earn',kidId), had=Math.floor(run/per);
-  for(const e of es){
-    run+=earnDelta(e); const n=Math.floor(run/per);
-    if(n>had){add(dayKey(e.ts),'累積分數（每 '+per+' 小分換 1 顆）','⭐',n-had);had=n}
-  }
+  scoreDice(kidId,(e,k)=>add(dayKey(e.ts),'累積分數（每 '+per+' 小分換 1 顆）','⭐',k));
   return Object.keys(byDay).sort().reverse().map(d=>Object.assign({day:d},byDay[d]));
 }
 function vDiceLog(ks){
@@ -2924,6 +2947,10 @@ function vDiceLog(ks){
     '<div class="st"><b style="color:var(--good)">'+got+'</b><u>總共拿到</u></div>'+
     '<div class="st"><b style="color:var(--muted)">'+used+'</b><u>已經骰掉</u></div>'+
     '<div class="st"><b style="color:var(--'+(raw<0?'bad':'brand')+')">'+diceOf(k.id)+'</b><u>還剩下</u></div></div>';
+  {const sc=scoreDice(k.id);
+   h+='<div class="f hint dprog" style="margin-top:10px">'+px('⭐')+' 下一顆骰子的進度：<b class="ib">'+sc.p+' / '+sc.per+' 分</b><br>'+
+      '爸媽加的分每滿 '+sc.per+' 分給 1 顆；被扣分進度會往回退（最多退到 0，拿到的骰子不會收回）。'+
+      '棋盤上的分和銀行利息不換骰子。</div>'}
   if(raw<0)h+='<div class="banner" style="margin-top:12px">'+px('⚠️','big')+'<div><b>透支 '+(-raw)+' 顆</b>'+
     '骰過的比拿到的多，接下來賺到的骰子會先補這個洞。<br>'+
     '如果不該扣，到<b>設定 → 手動補骰子</b>補回來。</div></div>';
@@ -3054,13 +3081,16 @@ function addPoints(kidId,small,label,extra){
     delta=-Math.min(Math.abs(small),Math.max(0,bal));
     if(delta===0){toast(k.name+' 已經是 0 分，不再扣分');buzz(90);return}
   }
+  const sp0=delta<0?scoreDice(kidId).p:0;
   const e=commit(Object.assign({kidId,small:delta,label},extra||{}));
+  const sc1=delta<0?scoreDice(kidId):null;
   buzz(delta>0?25:90);beep(delta<0?'bad':Math.abs(delta)>=BU()?'big':'good');
   save();
   const nb=balanceOf(kidId);
   toast((delta>0?'✅ ':'⚠️ ')+k.name+' '+(delta>0?'+':'−')+fmtScore(Math.abs(delta))+'　'+label
     +(trimmed?'（今天上限只剩這些）':'')
-    +(nb<0?'　現在欠 '+(-nb)+' 小分，賺到的分會先拿去還':''),()=>{
+    +(nb<0?'　現在欠 '+(-nb)+' 小分，賺到的分會先拿去還':'')
+    +(sc1&&sc1.p<sp0?'　下一顆骰子進度 '+sp0+'→'+sc1.p+'/'+sc1.per:''),()=>{
     e.voided=true;touch(e);save();toast('已復原');
   });
 }
@@ -3135,7 +3165,7 @@ function manualSheet(){
      '<option value="0">算表現（會換骰子）</option>'+
      '<option value="1">只是換算（禮金、壓歲錢、舊分數轉入）—— 不換骰子</option></select>'+
      '<div class="hint">骰子是「每 '+Math.max(1,S.settings.dicePerPoints|0||5)+' 小分換 1 顆」。'+
-     '一次把一筆禮金換成分數，如果算表現就會一口氣多出一堆骰子。</div></div>'+
+     '一次把一筆禮金換成分數，如果算表現就會一口氣多出一堆骰子。<br>扣分會讓下一顆骰子的進度往回退（最多退到 0）。</div></div>'+
    '<div class="row"><button class="btn good" data-act="mdo" data-s="1">＋ 加分</button><button class="btn bad" data-act="mdo" data-s="-1">－ 扣分</button></div>');
 }
 function entrySheet(id){
@@ -3262,7 +3292,8 @@ function rtBonusSheet(){
     '<div class="f"><label>當天全部完成 → 加幾小分</label><input id="b1" type="number" inputmode="numeric" min="0" value="'+st.routineAllBonus+'"></div>'+
     '<div class="f"><label>連續 3 天全勤 → 加幾小分</label><input id="b2" type="number" inputmode="numeric" min="0" value="'+st.streak3Bonus+'"></div>'+
     '<div class="f"><label>連續 7 天全勤 → 加幾小分（之後每 7 天再給一次）</label><input id="b3" type="number" inputmode="numeric" min="0" value="'+st.streak7Bonus+'"></div>'+
-    '<div class="f"><label>每累積幾小分換 1 顆骰子</label><input id="b4" type="number" inputmode="numeric" min="1" value="'+(st.dicePerPoints||5)+'"></div>'+
+    '<div class="f"><label>每累積幾小分換 1 顆骰子</label><input id="b4" type="number" inputmode="numeric" min="1" value="'+(st.dicePerPoints||5)+'">'+
+    '<div class="hint">扣分會讓進度往回退（最多退到 0）；棋盤分數與銀行利息不算。</div></div>'+
     '<button class="btn pri wide" data-act="savertb">儲存</button>');
 }
 function manageRules(){
@@ -3828,7 +3859,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,
+  toggleNoDice,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
