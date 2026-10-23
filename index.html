@@ -553,13 +553,33 @@ nav{border-top:2px solid var(--line)}
 .icoi svg.px{width:22px;height:22px}
 .icoi.on{background:var(--brand-soft);border-color:var(--brand)}
 .icoi:active{transform:scale(.9)}
+/* ---- v29 每日 3C 倒數 ---- */
+.scr{display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:1px solid var(--line)}
+.scr:last-child{border-bottom:0}
+.scr .av{width:36px;height:36px;border-radius:11px;font-size:14px}
+.scr .tx{flex:1;min-width:0}
+.scr .tx>b{display:block;font-size:14.5px}
+.scr .tx u{display:block;text-decoration:none;font-size:12px;color:var(--muted);margin-top:2px;line-height:1.45}
+.scr .tm{font-variant-numeric:tabular-nums;font-weight:850;font-size:22px;letter-spacing:-.5px;min-width:64px;text-align:right}
+.scr.run .tm{color:var(--brand)} .scr.up .tm,.scr.over .tm{color:var(--bad)}
+.scr .btn.sm{flex:0 0 auto}
+.scrbar{display:none;margin:0 12px 8px;gap:8px;flex-direction:column}
+.scrbar.on{display:flex}
+.scrpill{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px;border-radius:14px;background:var(--brand-soft);border:1px solid color-mix(in srgb,var(--brand) 35%,transparent)}
+.scrpill .av{width:26px;height:26px;border-radius:8px;font-size:11px;box-shadow:none}
+.scrpill b{flex:1;font-size:13.5px;min-width:0} .scrpill i{font-style:normal;font-variant-numeric:tabular-nums;font-weight:850;font-size:17px;color:var(--brand)}
+.scrpill.up{background:var(--bad-soft);border-color:var(--bad);animation:scrblink 1s steps(2) infinite} .scrpill.up i{color:var(--bad)}
+@keyframes scrblink{50%{border-color:transparent}}
+.scrbig{text-align:center;padding:6px 0 4px}
+.scrbig .n{font-size:64px;font-weight:850;letter-spacing:-3px;font-variant-numeric:tabular-nums;color:var(--bad);line-height:1.05}
+.scrbig .c{font-size:13.5px;color:var(--muted);margin-top:6px;line-height:1.7}
 </style>
 </head>
 <body>
 <header><div class="hrow">
   <div class="logo"><span id="lg"></span>寶貝積分</div>
   <button class="sync" data-act="syncpanel"><i class="dot" id="sdot"></i><span id="stxt">載入中</span></button>
-</div></header>
+</div><div class="scrbar" id="scrbar"></div></header>
 
 <main class="wrap" id="view"></main>
 
@@ -585,7 +605,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v28・2026-10-17';
+const BUILD='v29・2026-10-23';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -738,7 +758,8 @@ function seed(){
               pinForUndo:false,pinForRedeem:false,sound:true,haptics:true,theme:'auto',
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
               weeklyBudgetNTD:150,budgetStartTs:0,interestCap:20,rates:[3,4,6,8,10],
-              lapBonus:1,chainCap:3},
+              lapBonus:1,chainCap:3,
+              screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:5,screenPen1:1,screenPen2:2},
     kids:[
       {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
       {id:uid('k'),name:'寶貝二號',color:KC[1],avatar:null,sort:1,updatedAt:t}
@@ -887,6 +908,9 @@ function migrate(S){
   if(S.settings.weeklyBudgetNTD==null)S.settings.weeklyBudgetNTD=150;
   if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
   if(!S.savings)S.savings=[];
+  if(!S.screen)S.screen=[];
+  {const st=S.settings,df={screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:5,screenPen1:1,screenPen2:2};
+   for(const k in df)if(st[k]==null)st[k]=df[k]}
   if(!Array.isArray(S.settings.rates)||!S.settings.rates.length)S.settings.rates=[3,4,6,8,10];
   if(S.settings.interestCap==null)S.settings.interestCap=20;
   if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
@@ -1620,6 +1644,195 @@ function streakOf(kidId){
   while(allDone(kidId,dayKey(d))){n++;d.setDate(d.getDate()-1);if(n>400)break}
   return n;
 }
+/* ================= v29 每日 3C 倒數 =================
+   規則（Stan 2026-10-23）：
+   ・當天日常任務全部完成才有 3C 時間，一天 30 分鐘，可以分好幾次用
+   ・每次用 3C 都要手動按「開始」，用完按「停止」
+   ・最晚只能用到 21:00（之後要洗澡準備睡覺），21:00 一到也算時間到
+   ・時間到會響鈴，有 5 分鐘可以按停止；5 分鐘內沒停 → 超時，立刻扣分
+     第一次超時扣 1 分，之後再超時（隔天以後）每次扣 2 分
+   ・時間券（遊戲時間 10／20 分券、看卡通券）照舊，跟這個倒數分開
+   資料：S.screen = [{id,kidId,day,start,end|null,updatedAt}]，用 id 合併；
+   扣分紀錄 id 固定為 scr_<kid>_<day>，兩台同時偵測到也只會有一筆。 */
+const scrSet=()=>S.settings;
+const MIN=60000;
+function scrCut(day){const d=new Date(day+'T00:00:00');return d.getTime()+(scrSet().screenEnd|0||1260)*MIN}
+function scrSessions(kidId,day){return (S.screen||[]).filter(x=>x&&!x.voided&&x.kidId===kidId&&x.day===day).sort((a,b)=>a.start-b.start)}
+/* 把某一天的使用紀錄走一遍：用了多少、什麼時候時間到、有沒有超時 */
+function scrDay(kidId,day,t){
+  t=t||now();
+  const quota=Math.max(0,scrSet().screenMin|0)*MIN, cut=scrCut(day), grace=Math.max(0,scrSet().screenGrace|0)*MIN;
+  let used=0, run=null, upAt=null, viol=null;
+  for(const x of scrSessions(kidId,day)){
+    const e=x.end||t, T=Math.min(x.start+Math.max(0,quota-used),cut);   // 這一段的「時間到」
+    used+=Math.max(0,Math.min(e,T)-x.start);
+    if(!x.end)run=x;
+    if(e>=T&&(!x.end||e>T)){ if(!x.end||upAt==null)upAt=T;
+             if(e>T+grace&&viol==null)viol={ts:T+grace,over:e-T}; }
+  }
+  const left=Math.max(0,Math.min(quota-used,cut-t));
+  return {quota,used,left,run,upAt:run&&upAt!=null&&t>=upAt?upAt:null,viol,cut,grace};
+}
+function scrLocked(kidId,day){
+  if(!scrSet().screenNeedTasks)return 0;
+  const rs=routinesFor(kidId);return rs.length-doneCount(kidId,day||dayKey());
+}
+function scrState(kidId){
+  const day=dayKey(),t=now(),d=scrDay(kidId,day,t);
+  if(d.run)return Object.assign({st:d.upAt!=null?'up':'run'},d);
+  const lk=scrLocked(kidId,day);
+  if(lk>0)return Object.assign({st:'lock',need:lk},d);
+  if(t>=d.cut)return Object.assign({st:'late'},d);
+  if(d.left<=0)return Object.assign({st:'done'},d);
+  return Object.assign({st:'ok'},d);
+}
+const mmss=ms=>{ms=Math.max(0,Math.ceil(ms/1000));return Math.floor(ms/60)+':'+('0'+ms%60).slice(-2)};
+const hhmm=m=>('0'+Math.floor(m/60)).slice(-2)+':'+('0'+m%60).slice(-2);
+function scrStart(kidId){
+  const k=kid(kidId);if(!k)return;
+  const s=scrState(kidId);
+  if(s.st==='run'||s.st==='up')return;
+  if(s.st==='lock'){toast(k.name+' 今天的任務還差 '+s.need+' 項，做完才能用 3C');buzz(120);beep('bad');return}
+  if(s.st==='late'){toast(hhmm(scrSet().screenEnd)+' 以後不能用 3C 了，準備洗澡睡覺');buzz(120);return}
+  if(s.st==='done'){toast(k.name+' 今天的 3C 時間已經用完了');buzz(120);return}
+  const t=now();
+  S.screen.push({id:uid('sc'),kidId,day:dayKey(t),start:t,end:null,updatedAt:t});
+  scrAlarmed.delete(kidId);scrWarned.delete(kidId);
+  unlockAudio();buzz(30);beep('good');save();scrWake();
+  toast('▶ '+k.name+' 開始用 3C，剩 '+mmss(s.left)+'　用完記得按停止');
+}
+function scrStop(kidId){
+  const d=scrDay(kidId,dayKey());
+  // 也收掉前幾天忘記按停止的
+  for(const x of S.screen)if(x.kidId===kidId&&!x.end&&!x.voided){x.end=now();touch(x)}
+  if(!d.run){save();return}
+  const k=kid(kidId),after=scrDay(kidId,dayKey());
+  scrAlarmed.delete(kidId);alarmStop();buzz(30);save();scrWake();
+  if($('#scrim').classList.contains('on')&&$('#sheet').dataset.scr===kidId)closeSheet();
+  toast('■ '+(k?k.name:'')+' 停止　今天還剩 '+mmss(after.left));
+}
+/* 超時扣分：固定 id，跑幾次、幾台裝置都只會有一筆；家長撤銷了也不會再長回來 */
+function scrPenaltyFor(kidId,day){
+  const pre='scr_'+kidId+'_';
+  const prior=S.ledger.filter(e=>e.id&&e.id.startsWith(pre)&&!e.voided&&e.id.slice(pre.length)<day).length;
+  return prior?Math.max(0,scrSet().screenPen2|0):Math.max(0,scrSet().screenPen1|0);
+}
+function scrEnforce(){
+  if(!S.screen||!S.screen.length)return 0;
+  const t=now(),days=new Set();
+  for(const x of S.screen)if(x&&!x.voided&&x.start>t-3*864e5)days.add(x.kidId+'|'+x.day);
+  let n=0;
+  for(const kd of days){
+    const [kidId,day]=kd.split('|');if(!kid(kidId))continue;
+    const d=scrDay(kidId,day,t);if(!d.viol)continue;
+    const id='scr_'+kidId+'_'+day;
+    if(S.ledger.some(e=>e.id===id))continue;
+    let amt=scrPenaltyFor(kidId,day);if(!amt)continue;
+    const nth=S.ledger.filter(e=>e.id&&e.id.startsWith('scr_'+kidId+'_')&&!e.voided).length+1;
+    if(!S.settings.allowNegative)amt=Math.min(amt,Math.max(0,balanceOf(kidId)));
+    commit({id,kidId,ts:d.viol.ts,small:-amt,type:'deduct',emoji:'📱',screenDay:day,
+            label:'3C 超時（第 '+nth+' 次，時間到 '+(scrSet().screenGrace|0)+' 分鐘內沒停）'});
+    n++;
+    const k=kid(kidId);
+    toast('⚠️ '+(k?k.name:'')+' 3C 超時，扣 '+amt+' 小分');beep('bad');buzz([200,100,200]);
+  }
+  if(n)save();
+  return n;
+}
+/* ---- 鈴聲、螢幕保持亮著 ---- */
+let scrAlarmed=new Set(), scrWarned=new Set(), alarmT=null, wakeL=null;
+function unlockAudio(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}}
+function ring(){
+  try{
+    unlockAudio();
+    for(let i=0;i<3;i++)for(const[f,d]of[[988,0],[784,.16]]){
+      const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+i*.42+d;
+      o.type='square';o.frequency.value=f;o.connect(g);g.connect(AC.destination);
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.01);g.gain.exponentialRampToValueAtTime(.0005,t+.15);o.start(t);o.stop(t+.16);
+    }
+  }catch(e){}
+  try{navigator.vibrate&&navigator.vibrate([300,120,300,120,300])}catch(e){}
+}
+function alarmStart(){if(alarmT)return;ring();alarmT=setInterval(ring,2200)}
+function alarmStop(){clearInterval(alarmT);alarmT=null}
+async function scrWake(){
+  const any=live(S.kids).some(k=>{const s=scrState(k.id);return s.st==='run'||s.st==='up'});
+  try{
+    if(any&&!wakeL&&navigator.wakeLock&&!document.hidden){wakeL=await navigator.wakeLock.request('screen');wakeL.addEventListener('release',()=>{wakeL=null})}
+    if(!any&&wakeL){await wakeL.release();wakeL=null}
+  }catch(e){}
+}
+function scrUpSheet(kidId){
+  const k=kid(kidId),s=scrState(kidId);if(!k||s.st!=='up')return;
+  clearTimeout(toastT);$('#toast').classList.remove('on');pendingUndo=null;
+  sheet('⏰ 時間到！',
+    '<div class="scrbig"><div class="n" id="scrupn">'+mmss(s.upAt+s.grace-now())+'</div>'+
+    '<div class="c"><b>'+esc(k.name)+'</b> 的 3C 時間到了'+(s.upAt>=s.cut-1000?'（'+hhmm(scrSet().screenEnd)+' 要準備洗澡睡覺）':'')+'<br>'+
+    '要在倒數結束前<b class="ib">按停止</b>，不然就算超時，會扣 <b class="ib">'+scrPenaltyFor(kidId,dayKey())+'</b> 小分</div></div>'+
+    '<button class="btn bad wide" style="min-height:56px;font-size:18px" data-act="scrstop" data-kid="'+kidId+'">■ 停止</button>',
+    sh=>{sh.dataset.scr=kidId});
+}
+/* ---- 每秒更新：數字、鈴聲、超時偵測 ---- */
+function scrTick(){
+  if(!S||!S.kids)return;
+  const ks=live(S.kids);let bar='',ringNow=false,t=now();
+  for(const k of ks){
+    const s=scrState(k.id);
+    if(s.st==='run'){
+      bar+='<div class="scrpill">'+avatarHTML(k,'')+'<b>'+esc(k.name)+' 正在用 3C</b><i>'+mmss(s.left)+'</i>'+
+        '<button class="btn sm" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button></div>';
+      if(s.left<=5*MIN&&s.left>4.9*MIN&&!scrWarned.has(k.id)){scrWarned.add(k.id);beep('bad');toast('⏳ '+k.name+' 的 3C 剩 5 分鐘')}
+    }else if(s.st==='up'){
+      const g=s.upAt+s.grace-t;
+      bar+='<div class="scrpill up">'+avatarHTML(k,'')+'<b>'+esc(k.name)+(g>0?' 時間到！快停止':' 已經超時了')+'</b><i>'+(g>0?mmss(g):'+'+mmss(t-s.upAt))+'</i>'+
+        '<button class="btn sm bad" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button></div>';
+      if(g>0)ringNow=true;
+      if(!scrAlarmed.has(k.id)){scrAlarmed.add(k.id);if(g>0&&!$('#scrim').classList.contains('on'))scrUpSheet(k.id)}
+      const n=$('#scrupn');if(n&&$('#sheet').dataset.scr===k.id)n.textContent=mmss(g);
+    }
+    for(const el of document.querySelectorAll('[data-scrt="'+k.id+'"]'))el.textContent=s.st==='lock'?'—':mmss(s.left);
+  }
+  const b=$('#scrbar');if(b){if(b.innerHTML!==bar)b.innerHTML=bar;b.classList.toggle('on',!!bar)}
+  if(ringNow&&!document.hidden)alarmStart();else alarmStop();
+  scrEnforce();
+  // 狀態換了（任務做完解鎖、開始、時間到、用完…）首頁要重畫，按鈕才會跟著變
+  const sig=ks.map(k=>{const s=scrState(k.id);return s.st+(s.st==='up'&&s.upAt+s.grace<=t?'!':'')}).join(',');
+  if(sig!==scrTick.sig){const first=scrTick.sig==null;scrTick.sig=sig;if(!first&&view==='home')render()}
+}
+function scrHomeHTML(ks){
+  if(!scrSet().screenOn||!ks.length)return '';
+  let h='<div class="sec"><h2>3C 時間</h2><span class="more" style="color:var(--muted);font-weight:600">每天 '+scrSet().screenMin+' 分 ・ 最晚 '+hhmm(scrSet().screenEnd)+'</span></div><div class="list">';
+  for(const k of ks){
+    const s=scrState(k.id),usedM=Math.floor(s.used/MIN);
+    const sub={lock:'今天任務還差 <b class="ib">'+s.need+'</b> 項，做完才能用',
+               ok:'用之前按「開始」'+(usedM?'・今天用了 '+usedM+' 分':''),
+               run:'正在用，用完記得按停止',
+               up:s.upAt+s.grace>now()?'時間到！'+mmss(s.upAt+s.grace-now())+' 內要按停止':'已經超時了，快按停止',
+               done:'今天的時間用完了',late:hhmm(scrSet().screenEnd)+' 以後不能用，準備洗澡睡覺'}[s.st];
+    const btn=s.st==='run'||s.st==='up'?'<button class="btn sm '+(s.st==='up'?'bad':'')+'" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button>'
+             :s.st==='ok'?'<button class="btn sm pri" data-act="scrstart" data-kid="'+k.id+'">▶ 開始</button>'
+             :'<button class="btn sm" disabled>'+(s.st==='lock'?px('🔒'):'—')+'</button>';
+    h+='<div class="scr '+s.st+'">'+avatarHTML(k)+'<div class="tx"><b>'+esc(k.name)+'</b><u>'+sub+'</u></div>'+
+       '<div class="tm" data-scrt="'+k.id+'">'+(s.st==='lock'?'—':mmss(s.left))+'</div>'+btn+'</div>';
+  }
+  return h+'</div>';
+}
+function scrSetSheet(){
+  const st=S.settings;
+  sheet('📱 每日 3C 時間',
+    '<div class="f hint" style="margin-top:-6px;line-height:1.8">每次用 3C 都要在首頁按「開始」，用完按「停止」。時間到會響鈴，'+
+      '在寬限時間內沒按停止就算超時、自動扣分。<br>時間券（遊戲時間、看卡通）照舊，跟這個倒數分開。</div>'+
+    '<div class="f"><label>這個功能</label><select id="s0"><option value="1" '+(st.screenOn?'selected':'')+'>開啟</option><option value="0" '+(st.screenOn?'':'selected')+'>關閉</option></select></div>'+
+    '<div class="f2"><div class="f"><label>每天幾分鐘</label><input id="s1" type="number" inputmode="numeric" min="0" value="'+st.screenMin+'"></div>'+
+    '<div class="f"><label>最晚用到幾點</label><input id="s2" type="time" value="'+hhmm(st.screenEnd)+'"></div></div>'+
+    '<div class="f"><label>解鎖條件</label><select id="s3"><option value="1" '+(st.screenNeedTasks?'selected':'')+'>當天日常任務全部完成才能用</option>'+
+      '<option value="0" '+(st.screenNeedTasks?'':'selected')+'>不用先完成任務</option></select></div>'+
+    '<div class="f"><label>時間到之後，幾分鐘內要按停止</label><input id="s4" type="number" inputmode="numeric" min="0" value="'+st.screenGrace+'"></div>'+
+    '<div class="f2"><div class="f"><label>第一次超時扣幾小分</label><input id="s5" type="number" inputmode="numeric" min="0" value="'+st.screenPen1+'"></div>'+
+    '<div class="f"><label>之後每次超時扣幾小分</label><input id="s6" type="number" inputmode="numeric" min="0" value="'+st.screenPen2+'"></div></div>'+
+    '<div class="f hint">倒數的時候 App 要開著，螢幕會保持亮著，時間到才響得出來。<br>建議用爸媽的手機計時，不要用小孩正在玩的那台。</div>'+
+    '<button class="btn pri wide" data-act="savescr">儲存</button>');
+}
 /* 家長手動補的骰子（也用來補償規則改動造成的落差）。
    獨立一份清單、用 id 合併，跨裝置不會被覆蓋掉。 */
 function bonusDice(kidId){
@@ -1789,6 +2002,7 @@ $('#tbtn').onclick=()=>{if(pendingUndo){pendingUndo();pendingUndo=null}$('#toast
 function sheet(title,html,onOpen){
   title=String(title).replace(/^([\u2190-\u27BF\u2B00-\u2BFF\uFE0F\u{1F300}-\u{1FAFF}]+)\s*/u,
     (m,e)=>px(e.replace(/\uFE0F/g,''))+' ');
+  $('#sheet').dataset.scr='';
   $('#sheet').innerHTML='<div class="grab"></div><h3>'+title+'<button class="x" data-act="close">✕</button></h3>'+html;
   $('#scrim').classList.add('on');
   document.body.style.overflow='hidden';
@@ -1954,6 +2168,7 @@ function mergeState(L,R){
     routineLog:mergeList(L.routineLog,R.routineLog).filter(keep).slice(-4000),
     coupons:mergeList(L.coupons,R.coupons).filter(keep).slice(-3000),
     savings:mergeList(L.savings,R.savings).filter(keep).slice(-800),
+    screen:mergeList(L.screen,R.screen).filter(keep).sort((a,b)=>a.start-b.start).slice(-1500),
     game:mergeGame(L.game,R.game,cut),
     ledger:lg};
 }
@@ -2170,6 +2385,7 @@ function vHome(){
     }
     h+='</div>';
   }
+  h+=scrHomeHTML(ks);
   const quick=live(S.rules).filter(r=>r.kind==='earn').slice(0,6);
   if(ks.length&&quick.length){
     h+='<div class="sec"><h2>快速加分</h2><span class="more" data-act="tab" data-v="score">全部規則 →</span></div><div class="rules">';
@@ -3011,6 +3227,7 @@ function vSet(){
     nav('ntdrate','💰','1 小分 = ? 元','獎勵品換算基準，1 大分 = NT$'+(NTD()*BU()),'NT$'+NTD())+
     nav('adddice','🎲','手動補骰子',live(S.kids).map(k=>esc(k.name)+' '+diceOf(k.id)+(diceRaw(k.id)<0?'（透支 '+(-diceRaw(k.id))+'）':'')).join('　')||'尚無小孩','補發')+
     nav('dcap','☀️','每天日常加分上限',dailyCap()?'日常規則每天最多 '+dailyCap()+' 小分；特殊加分不受限':'目前沒有上限',dailyCap()||'不限')+
+    nav('scrset','📱','每日 3C 時間',st.screenOn?'每天 '+st.screenMin+' 分・最晚 '+hhmm(st.screenEnd)+'・超時扣 '+st.screenPen1+'／'+st.screenPen2+' 分':'目前關閉',st.screenOn?st.screenMin+' 分':'關')+
     nav('rtbonus','🔥','任務獎勵','全完成 +'+st.routineAllBonus+'、連續 3 天 +'+st.streak3Bonus+'、連續 7 天 +'+st.streak7Bonus,'調整')+
     nav('budget','💳','每週實體獎勵額度','有標價格又非「特殊獎勵」的才會扣，沒用完會累積','NT$'+weeklyNTD())+
     nav('bankgoal','🏦','存款上限與速度',bankCycle()+' 天一輪，一輪最多賺 +'+bankCap()+' 分 ・ 門檻 '+bankTiers().map(t=>t[1]).join(' → '),'+'+bankCap())+
@@ -3609,6 +3826,20 @@ document.addEventListener('click',async ev=>{
     case 'cancelstack':return cancelStack();
     case 'usecpn':closeSheet();return useCoupon(id);
     case 'usenow':return useNow(+t.dataset.n||1);
+    case 'scrstart':return scrStart(t.dataset.kid);
+    case 'scrstop':return scrStop(t.dataset.kid);
+    case 'scrset':return scrSetSheet();
+    case 'savescr':{
+      const st=S.settings,[h,m]=($('#s2').value||'21:00').split(':').map(x=>parseInt(x)||0);
+      st.screenOn=$('#s0').value==='1';
+      st.screenMin=Math.max(0,parseInt($('#s1').value)||0);
+      st.screenEnd=clamp(h*60+m,0,1439);
+      st.screenNeedTasks=$('#s3').value==='1';
+      st.screenGrace=Math.max(0,parseInt($('#s4').value)||0);
+      st.screenPen1=Math.max(0,parseInt($('#s5').value)||0);
+      st.screenPen2=Math.max(0,parseInt($('#s6').value)||0);
+      touch(st);closeSheet();save();return toast('已儲存');
+    }
     case 'undonow':return undoNow();
     case 'cancelcpn':return cancelCoupon(id);
     case 'rt':return toggleRoutine(t.dataset.kid,id);
@@ -3859,7 +4090,7 @@ document.addEventListener('click',async ev=>{
       '<button class="btn ghost wide" style="margin-top:8px" data-act="close">取消</button>');
     case 'doclear':{
       const t=now();
-      S.ledger=[];S.routineLog=[];S.coupons=[];S.savings=[];
+      S.ledger=[];S.routineLog=[];S.coupons=[];S.savings=[];S.screen=[];
       S.game.players={};S.game.bonus=[];S.game.lastRoll=1;S.game.updatedAt=t;
       S.settings.ledgerClearedAt=t;
       S.settings.archive={ts:0,bal:{},earn:{}};        // 歸檔底數也要清，不然分數會留著
@@ -3882,6 +4113,8 @@ function applyTheme(){
 }
 applyTheme();
 reconcileDice();
+setInterval(scrTick,1000);scrTick();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){scrWake();scrTick()}else alarmStop()});
 render();
 if(firstRun)setTimeout(()=>{if(!$('#toast').classList.contains('on'))toast('👋 先去「設定」改小孩名字和規則')},900);
 if(ghReady())pull(true);
@@ -3895,7 +4128,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
+  toggleNoDice,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
