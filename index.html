@@ -605,7 +605,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v29・2026-10-23';
+const BUILD='v30・2026-10-23';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -759,7 +759,7 @@ function seed(){
               routineAllBonus:1,streak3Bonus:1,streak7Bonus:5,dicePerPoints:5,dailyEarnCap:3,
               weeklyBudgetNTD:150,budgetStartTs:0,interestCap:20,rates:[3,4,6,8,10],
               lapBonus:1,chainCap:3,
-              screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:5,screenPen1:1,screenPen2:2},
+              screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:1,screenPen1:1,screenPen2:2,screenGraceV:2},
     kids:[
       {id:uid('k'),name:'寶貝一號',color:KC[0],avatar:null,sort:0,updatedAt:t},
       {id:uid('k'),name:'寶貝二號',color:KC[1],avatar:null,sort:1,updatedAt:t}
@@ -909,8 +909,9 @@ function migrate(S){
   if(!S.settings.budgetStartTs)S.settings.budgetStartTs=startOfWeek();
   if(!S.savings)S.savings=[];
   if(!S.screen)S.screen=[];
-  {const st=S.settings,df={screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:5,screenPen1:1,screenPen2:2};
-   for(const k in df)if(st[k]==null)st[k]=df[k]}
+  {const st=S.settings,df={screenOn:true,screenMin:30,screenNeedTasks:true,screenEnd:1260,screenGrace:1,screenPen1:1,screenPen2:2};
+   for(const k in df)if(st[k]==null)st[k]=df[k];
+   if(st.screenGraceV!==2){st.screenGraceV=2;if(st.screenGrace===5)st.screenGrace=1;st.updatedAt=Date.now()}}   // v30：寬限 5 → 1 分鐘
   if(!Array.isArray(S.settings.rates)||!S.settings.rates.length)S.settings.rates=[3,4,6,8,10];
   if(S.settings.interestCap==null)S.settings.interestCap=20;
   if(!S.game)S.game={updatedAt:now(),players:{},tiles:defaultTiles(),cards:defaultCards()};
@@ -1688,6 +1689,31 @@ function scrState(kidId){
 }
 const mmss=ms=>{ms=Math.max(0,Math.ceil(ms/1000));return Math.floor(ms/60)+':'+('0'+ms%60).slice(-2)};
 const hhmm=m=>('0'+Math.floor(m/60)).slice(-2)+':'+('0'+m%60).slice(-2);
+/* 幾點幾分要關機：現在 + 剩下的時間（已經算進 21:00 的限制） */
+const clockOf=ts=>{const d=new Date(ts);return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)};
+function scrEndAt(s){return s.run?now()+s.left:null}
+/* v30：開始時順便叫手機內建的計時器 —— 網頁關掉也會響。每台手機各自設定，不同步。
+   iPhone：呼叫捷徑「3C計時」（輸入＝秒數 → 開始計時）；Android：時鐘 App 的 SET_TIMER。 */
+const K_NT='kp_native_timer';
+const ntMode=()=>LS.get(K_NT,'off');
+const ntName=()=>LS.get(K_NT+'_name','3C計時');
+function ntURL(sec,label,mode){
+  mode=mode||ntMode();sec=Math.max(1,Math.round(sec));
+  if(mode==='ios'){
+    const back=location.href.split('#')[0];
+    return 'shortcuts://x-callback-url/run-shortcut?name='+encodeURIComponent(ntName())+
+      '&input=text&text='+sec+'&x-success='+encodeURIComponent(back)+'&x-cancel='+encodeURIComponent(back);
+  }
+  if(mode==='android')
+    return 'intent:#Intent;action=android.intent.action.SET_TIMER;i.android.intent.extra.alarm.LENGTH='+sec+
+      ';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label||'3C 時間到')+
+      ';B.android.intent.extra.alarm.SKIP_UI=true;end';
+  return null;
+}
+function ntFire(sec,label){
+  const u=ntURL(sec,label);if(!u)return false;
+  try{location.href=u;return true}catch(e){return false}
+}
 function scrStart(kidId){
   const k=kid(kidId);if(!k)return;
   const s=scrState(kidId);
@@ -1699,7 +1725,18 @@ function scrStart(kidId){
   S.screen.push({id:uid('sc'),kidId,day:dayKey(t),start:t,end:null,updatedAt:t});
   scrAlarmed.delete(kidId);scrWarned.delete(kidId);
   unlockAudio();buzz(30);beep('good');save();scrWake();
-  toast('▶ '+k.name+' 開始用 3C，剩 '+mmss(s.left)+'　用完記得按停止');
+  const end=clockOf(t+s.left),nt=ntFire(s.left/1000,k.name+' 的 3C 時間到了，'+end+' 要關機');
+  scrStartSheet(kidId,end,s.left,nt);
+}
+function scrStartSheet(kidId,end,left,nt){
+  const k=kid(kidId);if(!k)return;
+  clearTimeout(toastT);$('#toast').classList.remove('on');pendingUndo=null;
+  sheet('▶ '+esc(k.name)+' 開始用 3C',
+    '<div class="scrbig"><div class="c" style="margin-top:0">要在</div><div class="n" style="color:var(--brand)">'+end+'</div>'+
+    '<div class="c"><b class="ib">關機並按停止</b>（可以用 '+Math.round(left/MIN)+' 分鐘）<br>'+
+    '時間到會響，之後 <b class="ib">'+(scrSet().screenGrace|0)+' 分鐘</b>內沒按停止就扣分</div></div>'+
+    (nt?'<div class="f hint" style="text-align:center">已經幫你開了手機的計時器；提早停的話，手機計時器要自己關掉</div>':'')+
+    '<button class="btn pri wide" data-act="close">知道了</button>');
 }
 function scrStop(kidId){
   const d=scrDay(kidId,dayKey());
@@ -1779,7 +1816,7 @@ function scrTick(){
   for(const k of ks){
     const s=scrState(k.id);
     if(s.st==='run'){
-      bar+='<div class="scrpill">'+avatarHTML(k,'')+'<b>'+esc(k.name)+' 正在用 3C</b><i>'+mmss(s.left)+'</i>'+
+      bar+='<div class="scrpill">'+avatarHTML(k,'')+'<b>'+esc(k.name)+' '+clockOf(t+s.left)+' 要關機</b><i>'+mmss(s.left)+'</i>'+
         '<button class="btn sm" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button></div>';
       if(s.left<=5*MIN&&s.left>4.9*MIN&&!scrWarned.has(k.id)){scrWarned.add(k.id);beep('bad');toast('⏳ '+k.name+' 的 3C 剩 5 分鐘')}
     }else if(s.st==='up'){
@@ -1787,7 +1824,7 @@ function scrTick(){
       bar+='<div class="scrpill up">'+avatarHTML(k,'')+'<b>'+esc(k.name)+(g>0?' 時間到！快停止':' 已經超時了')+'</b><i>'+(g>0?mmss(g):'+'+mmss(t-s.upAt))+'</i>'+
         '<button class="btn sm bad" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button></div>';
       if(g>0)ringNow=true;
-      if(!scrAlarmed.has(k.id)){scrAlarmed.add(k.id);if(g>0&&!$('#scrim').classList.contains('on'))scrUpSheet(k.id)}
+      if(!scrAlarmed.has(k.id)){scrAlarmed.add(k.id);if(g>0)scrUpSheet(k.id)}   // 時間到最重要，蓋掉其他面板
       const n=$('#scrupn');if(n&&$('#sheet').dataset.scr===k.id)n.textContent=mmss(g);
     }
     for(const el of document.querySelectorAll('[data-scrt="'+k.id+'"]'))el.textContent=s.st==='lock'?'—':mmss(s.left);
@@ -1806,7 +1843,7 @@ function scrHomeHTML(ks){
     const s=scrState(k.id),usedM=Math.floor(s.used/MIN);
     const sub={lock:'今天任務還差 <b class="ib">'+s.need+'</b> 項，做完才能用',
                ok:'用之前按「開始」'+(usedM?'・今天用了 '+usedM+' 分':''),
-               run:'正在用，用完記得按停止',
+               run:'<b class="ib">'+clockOf(now()+s.left)+'</b> 要關機，記得按停止',
                up:s.upAt+s.grace>now()?'時間到！'+mmss(s.upAt+s.grace-now())+' 內要按停止':'已經超時了，快按停止',
                done:'今天的時間用完了',late:hhmm(scrSet().screenEnd)+' 以後不能用，準備洗澡睡覺'}[s.st];
     const btn=s.st==='run'||s.st==='up'?'<button class="btn sm '+(s.st==='up'?'bad':'')+'" data-act="scrstop" data-kid="'+k.id+'">■ 停止</button>'
@@ -1830,8 +1867,27 @@ function scrSetSheet(){
     '<div class="f"><label>時間到之後，幾分鐘內要按停止</label><input id="s4" type="number" inputmode="numeric" min="0" value="'+st.screenGrace+'"></div>'+
     '<div class="f2"><div class="f"><label>第一次超時扣幾小分</label><input id="s5" type="number" inputmode="numeric" min="0" value="'+st.screenPen1+'"></div>'+
     '<div class="f"><label>之後每次超時扣幾小分</label><input id="s6" type="number" inputmode="numeric" min="0" value="'+st.screenPen2+'"></div></div>'+
-    '<div class="f hint">倒數的時候 App 要開著，螢幕會保持亮著，時間到才響得出來。<br>建議用爸媽的手機計時，不要用小孩正在玩的那台。</div>'+
-    '<button class="btn pri wide" data-act="savescr">儲存</button>');
+    '<div class="sec"><h2>這支手機：開始時同時開手機計時器</h2></div>'+
+    '<div class="f hint" style="margin-top:-4px;line-height:1.8">網頁 App 關掉就不會響。打開這個，按「開始」時會順便設好手機內建的計時器，'+
+      '關掉 App、鎖螢幕也照樣響。這個設定<b class="ib">只存在這支手機</b>，每支手機各自設。</div>'+
+    '<div class="f"><select id="s7">'+
+      [['off','不要（只用 App 內的鈴聲）'],['ios','iPhone／iPad（用捷徑）'],['android','Android（用時鐘 App）']]
+        .map(([v,l])=>'<option value="'+v+'" '+(ntMode()===v?'selected':'')+'>'+l+'</option>').join('')+'</select></div>'+
+    '<div class="f hint" id="ntios" style="line-height:1.85;'+(ntMode()==='ios'?'':'display:none')+'">'+
+      '<b>iPhone 要先做一次捷徑（約 1 分鐘）：</b><br>'+
+      '1. 打開「捷徑」App → 右上角 ＋ 新增捷徑<br>'+
+      '2. 名稱取 <b class="ib">'+esc(ntName())+'</b>（要一字不差）<br>'+
+      '3. 加入動作「<b class="ib">從輸入取得數字</b>」<br>'+
+      '4. 再加入動作「<b class="ib">開始計時器</b>」，時間點一下選「數字」，單位改成「<b class="ib">秒</b>」<br>'+
+      '5. 完成。第一次從 App 呼叫時，iPhone 會問要不要打開「捷徑」，按允許</div>'+
+    '<div class="f hint" id="ntand" style="line-height:1.85;'+(ntMode()==='android'?'':'display:none')+'">'+
+      'Android 不用另外設定。第一次可能會問要用哪個 App 開，選「時鐘」並設為一律。</div>'+
+    '<button class="btn wide" data-act="nttest" style="margin-bottom:8px">測試：開一個 10 秒的手機計時器</button>'+
+    '<div class="f hint">沒開手機計時器的話，倒數時 App 要開著才響得出來（螢幕會保持亮著）。'+
+      '超時扣分不受影響，任何一台下次打開 App 都會補判。</div>'+
+    '<button class="btn pri wide" data-act="savescr">儲存</button>',
+    sh=>{const sel=sh.querySelector('#s7');sel.onchange=()=>{sh.querySelector('#ntios').style.display=sel.value==='ios'?'':'none';
+      sh.querySelector('#ntand').style.display=sel.value==='android'?'':'none'}});
 }
 /* 家長手動補的骰子（也用來補償規則改動造成的落差）。
    獨立一份清單、用 id 合併，跨裝置不會被覆蓋掉。 */
@@ -3829,6 +3885,8 @@ document.addEventListener('click',async ev=>{
     case 'scrstart':return scrStart(t.dataset.kid);
     case 'scrstop':return scrStop(t.dataset.kid);
     case 'scrset':return scrSetSheet();
+    case 'nttest':{const m=$('#s7').value;if(m==='off')return toast('先選 iPhone 或 Android');
+      const u=ntURL(10,'測試：寶貝積分',m);try{location.href=u}catch(e){}return toast('如果手機沒有開始計時 10 秒，告訴我是哪一步卡住');}
     case 'savescr':{
       const st=S.settings,[h,m]=($('#s2').value||'21:00').split(':').map(x=>parseInt(x)||0);
       st.screenOn=$('#s0').value==='1';
@@ -3838,6 +3896,7 @@ document.addEventListener('click',async ev=>{
       st.screenGrace=Math.max(0,parseInt($('#s4').value)||0);
       st.screenPen1=Math.max(0,parseInt($('#s5').value)||0);
       st.screenPen2=Math.max(0,parseInt($('#s6').value)||0);
+      LS.set(K_NT,$('#s7').value);
       touch(st);closeSheet();save();return toast('已儲存');
     }
     case 'undonow':return undoNow();
@@ -4128,7 +4187,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
+  toggleNoDice,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
