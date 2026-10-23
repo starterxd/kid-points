@@ -605,7 +605,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v30・2026-10-23';
+const BUILD='v31・2026-10-23';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1699,11 +1699,10 @@ const ntMode=()=>LS.get(K_NT,'off');
 const ntName=()=>LS.get(K_NT+'_name','3C計時');
 function ntURL(sec,label,mode){
   mode=mode||ntMode();sec=Math.max(1,Math.round(sec));
-  if(mode==='ios'){
-    const back=location.href.split('#')[0];
-    return 'shortcuts://x-callback-url/run-shortcut?name='+encodeURIComponent(ntName())+
-      '&input=text&text='+sec+'&x-success='+encodeURIComponent(back)+'&x-cancel='+encodeURIComponent(back);
-  }
+  /* 不用 x-callback 回跳：iPhone 沒辦法直接跳回「主畫面上的網頁 App」，只會開成 Safari 新分頁。
+     捷徑跑完後點左上角的「◀ 寶貝積分」就會回到 App。 */
+  if(mode==='ios')
+    return 'shortcuts://run-shortcut?name='+encodeURIComponent(ntName())+'&input=text&text='+sec;
   if(mode==='android')
     return 'intent:#Intent;action=android.intent.action.SET_TIMER;i.android.intent.extra.alarm.LENGTH='+sec+
       ';S.android.intent.extra.alarm.MESSAGE='+encodeURIComponent(label||'3C 時間到')+
@@ -1735,7 +1734,7 @@ function scrStartSheet(kidId,end,left,nt){
     '<div class="scrbig"><div class="c" style="margin-top:0">要在</div><div class="n" style="color:var(--brand)">'+end+'</div>'+
     '<div class="c"><b class="ib">關機並按停止</b>（可以用 '+Math.round(left/MIN)+' 分鐘）<br>'+
     '時間到會響，之後 <b class="ib">'+(scrSet().screenGrace|0)+' 分鐘</b>內沒按停止就扣分</div></div>'+
-    (nt?'<div class="f hint" style="text-align:center">已經幫你開了手機的計時器；提早停的話，手機計時器要自己關掉</div>':'')+
+    (nt?'<div class="f hint" style="text-align:center">已經幫你開了手機的計時器'+(ntMode()==='ios'?'（從捷徑點左上角「◀ 寶貝積分」回來）':'')+'；提早停的話，手機計時器要自己關掉</div>':'')+
     '<button class="btn pri wide" data-act="close">知道了</button>');
 }
 function scrStop(kidId){
@@ -1877,9 +1876,10 @@ function scrSetSheet(){
       '<b>iPhone 要先做一次捷徑（約 1 分鐘）：</b><br>'+
       '1. 打開「捷徑」App → 右上角 ＋ 新增捷徑<br>'+
       '2. 名稱取 <b class="ib">'+esc(ntName())+'</b>（要一字不差）<br>'+
-      '3. 加入動作「<b class="ib">從輸入取得數字</b>」<br>'+
-      '4. 再加入動作「<b class="ib">開始計時器</b>」，時間點一下選「數字」，單位改成「<b class="ib">秒</b>」<br>'+
-      '5. 完成。第一次從 App 呼叫時，iPhone 會問要不要打開「捷徑」，按允許</div>'+
+      '3. 加入動作「<b class="ib">從輸入取得數字</b>」，點一下淡藍色的「輸入」，改選「<b class="ib">捷徑輸入</b>」'+
+        '（頂端會多出一行「接收…輸入」，那就對了；可以把類型只留「文字」）<br>'+
+      '4. 再加入動作「<b class="ib">倒數計時</b>」，時間點一下選「數字」，單位改成「<b class="ib">秒</b>」<br>'+
+      '5. 完成。之後按開始會跳到「捷徑」跑一下，<b class="ib">點左上角「◀ 寶貝積分」</b>就回到 App</div>'+
     '<div class="f hint" id="ntand" style="line-height:1.85;'+(ntMode()==='android'?'':'display:none')+'">'+
       'Android 不用另外設定。第一次可能會問要用哪個 App 開，選「時鐘」並設為一律。</div>'+
     '<button class="btn wide" data-act="nttest" style="margin-bottom:8px">測試：開一個 10 秒的手機計時器</button>'+
