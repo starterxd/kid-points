@@ -605,7 +605,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v31・2026-10-23';
+const BUILD='v32・2026-10-27';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1093,6 +1093,12 @@ function migrate(S){
        舊紀錄一律改成「作廢」（墓碑）讓它能跟著合併傳出去，不再用刪的。 */
     S.game.updatedAt=now();
     S.schema=22;
+  }
+  if(S.schema<23){
+    /* 2026-10-25 全家出遊，Stan 同意 Ayden 的連勝不因這天中斷（Rex 不算）。固定的日期與 id，跑幾次都一樣 */
+    const a=(S.kids||[]).find(k=>k.id==='kmtvqe31itdz96'&&!k.deleted);
+    if(a&&!(a.streakSkip||[]).includes('2026-10-25')){a.streakSkip=[...(a.streakSkip||[]),'2026-10-25'];a.updatedAt=Date.now()}
+    S.schema=23;
   }
   return S;
 }
@@ -1639,11 +1645,42 @@ function routineDone(kidId,routineId,day){day=day||dayKey();
 function doneCount(kidId,day){return routinesFor(kidId).filter(r=>routineDone(kidId,r.id,day)).length}
 function allDone(kidId,day){const rs=routinesFor(kidId);
   return rs.length>0&&rs.every(r=>routineDone(kidId,r.id,day))}
-function streakOf(kidId){
-  const d=new Date();let n=0;
-  if(!allDone(kidId,dayKey(d)))d.setDate(d.getDate()-1);
-  while(allDone(kidId,dayKey(d))){n++;d.setDate(d.getDate()-1);if(n>400)break}
+/* v32 保留連勝：家長確認過的「整天沒做任務」的日子（出遊之類），
+   連勝不會在這天中斷，但這天也不算進天數。存在小孩資料上 kid.streakSkip = ['2026-10-25',…]
+   （小孩資料每個版本都會原封不動同步，舊版裝置也不會把它弄丟） */
+function streakSkipped(kidId,day){const k=kid(kidId);return !!(k&&Array.isArray(k.streakSkip)&&k.streakSkip.includes(day))}
+const dayAdd=(day,n)=>{const d=new Date(day+'T12:00:00');d.setDate(d.getDate()+n);return dayKey(d.getTime())};
+function streakFrom(kidId,day){      // 從 day 往回數（day 本身要算）
+  let n=0,guard=0;
+  while(guard++<500){
+    if(allDone(kidId,day))n++;
+    else if(!streakSkipped(kidId,day))break;
+    day=dayAdd(day,-1);
+  }
   return n;
+}
+function streakOf(kidId){
+  const today=dayKey();
+  return allDone(kidId,today)?streakFrom(kidId,today):streakFrom(kidId,dayAdd(today,-1));
+}
+/* 昨天（往回連續幾天）一項任務都沒做、而且之前有連勝 → 可以請家長確認延續 */
+function streakGap(kidId){
+  if(!routinesFor(kidId).length)return null;
+  const days=[];let d=dayAdd(dayKey(),-1);
+  while(days.length<7&&doneCount(kidId,d)===0&&!streakSkipped(kidId,d)){days.unshift(d);d=dayAdd(d,-1)}
+  if(!days.length)return null;
+  const prev=streakFrom(kidId,d);
+  return prev>0?{days,prev}:null;
+}
+function keepStreak(kidId){
+  const k=kid(kidId),g=streakGap(kidId);if(!k||!g)return;
+  const md=x=>{const d=new Date(x+'T12:00:00');return (d.getMonth()+1)+'/'+d.getDate()};
+  const go=()=>{
+    k.streakSkip=[...new Set([...(k.streakSkip||[]),...g.days])].sort().slice(-60);touch(k);save();buzz(40);beep('big');
+    toast('🔥 '+k.name+' 的連勝延續了（'+g.days.map(md).join('、')+' 不算中斷）',()=>{
+      k.streakSkip=(k.streakSkip||[]).filter(x=>!g.days.includes(x));touch(k);save();toast('已取消延續')});
+  };
+  askPin('延續 '+k.name+' 的連勝需要家長密碼',go);
 }
 /* ================= v29 每日 3C 倒數 =================
    規則（Stan 2026-10-23）：
@@ -2427,7 +2464,11 @@ function vHome(){
     const d=new Date().toLocaleDateString('zh-TW',{month:'numeric',day:'numeric',weekday:'short'});
     h+='<div class="sec"><h2>今天的任務</h2><span class="more" style="color:var(--muted);font-weight:600">'+d+'</span></div><div class="list">';
     for(const k of ks){
-      const rs=routinesFor(k.id),dn=doneCount(k.id),stk=streakOf(k.id);
+      const rs=routinesFor(k.id),dn=doneCount(k.id),stk=streakOf(k.id),gap=streakGap(k.id);
+      if(gap){const md=x=>{const d=new Date(x+'T12:00:00');return (d.getMonth()+1)+'/'+d.getDate()};
+        h+='<div class="banner" style="margin:10px 12px 0">'+px('🔥','big')+'<div><b>'+esc(k.name)+' '+gap.days.map(md).join('、')+' 任務都沒做</b>'+
+          '原本連勝 <b class="ib">'+gap.prev+'</b> 天。如果是出遊之類的正當理由，可以讓連勝延續（這'+(gap.days.length>1?'幾':'一')+'天不算中斷，也不算進天數）。<br>'+
+          '<button class="btn sm pri" style="margin-top:8px" data-act="keepstreak" data-kid="'+k.id+'">延續連勝（需家長密碼）</button></div></div>'}
       h+='<div class="rt"><div class="rthead">'+avatarHTML(k)+
         '<div class="nm">'+esc(k.name)+'</div>'+
         (stk>0?'<span class="flame">'+px('🔥')+' '+stk+' 天</span>':'')+
@@ -3882,6 +3923,7 @@ document.addEventListener('click',async ev=>{
     case 'cancelstack':return cancelStack();
     case 'usecpn':closeSheet();return useCoupon(id);
     case 'usenow':return useNow(+t.dataset.n||1);
+    case 'keepstreak':return keepStreak(t.dataset.kid);
     case 'scrstart':return scrStart(t.dataset.kid);
     case 'scrstop':return scrStop(t.dataset.kid);
     case 'scrset':return scrSetSheet();
@@ -4187,7 +4229,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
+  toggleNoDice,streakGap,streakFrom,streakSkipped,keepStreak,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
