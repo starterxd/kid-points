@@ -605,7 +605,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v32・2026-10-27';
+const BUILD='v33・2026-10-29';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1100,6 +1100,13 @@ function migrate(S){
     if(a&&!(a.streakSkip||[]).includes('2026-10-25')){a.streakSkip=[...(a.streakSkip||[]),'2026-10-25'];a.updatedAt=Date.now()}
     S.schema=23;
   }
+  if(S.schema<24){
+    /* 2026-10-29 Stan 新增 7 款戰鬥陀螺（特殊獎勵：有價、不扣每週額度；數量＝庫存）。
+       固定 id、固定 updatedAt：每台裝置各跑一次也只有一份；家長之後改或刪，較新的修改會贏，不會被這裡蓋回來 */
+    const add=[{"id": "w_bbx_cx08", "name": "戰鬥陀螺 CX-08 隨機強化組 Vol.7", "emoji": "🎁", "unit": "big", "amount": 7, "price": 350, "noBudget": true, "stack": false, "stock": 2, "note": "隨機抽 1 顆（共 6 種）", "kidIds": [], "image": "rw/cx-08.jpg", "sort": 900, "updatedAt": 1793286000000}, {"id": "w_bbx_cx14", "name": "戰鬥陀螺 CX-14 騎士堡壘", "emoji": "🎁", "unit": "big", "amount": 10, "price": 500, "noBudget": true, "stack": false, "stock": 1, "note": "附發射器", "kidIds": [], "image": "rw/cx-14.jpg", "sort": 901, "updatedAt": 1793286000000}, {"id": "w_bbx_bx49", "name": "戰鬥陀螺 BX-49 蒼龍突擊", "emoji": "🎁", "unit": "big", "amount": 10, "price": 500, "noBudget": true, "stack": false, "stock": 2, "note": "附發射器", "kidIds": [], "image": "rw/bx-49.jpg", "sort": 902, "updatedAt": 1793286000000}, {"id": "w_bbx_cx15", "name": "戰鬥陀螺 CX-15 邪神狂怒", "emoji": "🎁", "unit": "big", "amount": 7, "price": 350, "noBudget": true, "stack": false, "stock": 1, "note": "單顆陀螺", "kidIds": [], "image": "rw/cx-15.jpg", "sort": 903, "updatedAt": 1793286000000}, {"id": "w_bbx_ux17", "name": "戰鬥陀螺 UX-17 隕星龍騎士", "emoji": "🎁", "unit": "big", "amount": 11, "price": 550, "noBudget": true, "stack": false, "stock": 1, "note": "左旋，附左旋發射器", "kidIds": [], "image": "rw/ux-17.jpg", "sort": 904, "updatedAt": 1793286000000}, {"id": "w_bbx_bx50", "name": "戰鬥陀螺 BX-50 隨機強化組 Vol.11", "emoji": "🎁", "unit": "big", "amount": 9, "price": 450, "noBudget": true, "stack": false, "stock": 2, "note": "隨機抽 1 顆（共 6 種）", "kidIds": [], "image": "rw/bx-50.jpg", "sort": 905, "updatedAt": 1793286000000}, {"id": "w_bbx_bx45", "name": "戰鬥陀螺 BX-45 武士魂斬", "emoji": "🎁", "unit": "small", "amount": 33, "price": 330, "noBudget": true, "stack": false, "stock": 1, "note": "單顆陀螺", "kidIds": [], "image": "rw/bx-45.jpg", "sort": 906, "updatedAt": 1793286000000}];
+    for(const w of add)if(!S.rewards.some(x=>x.id===w.id))S.rewards.push(w);
+    S.schema=24;
+  }
   return S;
 }
 S=migrate(S);
@@ -1169,7 +1176,8 @@ function fmtCost(unit,amount){return amount+(unit==='big'?' 大分':' 小分')}
 function kid(id){return S.kids.find(k=>k.id===id)}
 function startOfDay(d){const x=new Date(d||now());x.setHours(0,0,0,0);return x.getTime()}
 function startOfWeek(){const x=new Date();const d=(x.getDay()+6)%7;x.setDate(x.getDate()-d);x.setHours(0,0,0,0);return x.getTime()}
-function mediaUrl(key){return key&&M.items[key]||null}
+function mediaUrl(key){if(key&&/^(https?:|rw\/)/.test(key))return key;   // v33：跟 App 一起放在網站上的圖
+  return key&&M.items[key]||null}
 const NTD=()=>Math.max(1,S.settings.ntdPerSmall|0||10);
 function valueOf(w){return w.price!=null?w.price:toSmall(w.unit,w.amount)*NTD()}
 function priceTag(w){return w.price==null?'特權':(w.noBudget?'★ NT$'+w.price:'NT$'+w.price)}
