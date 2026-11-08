@@ -422,6 +422,7 @@ nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:color-mix(in sr
 .exam h3{margin:0 0 4px;font-size:19px;font-weight:850;letter-spacing:.5px}
 .exam .rows{width:min(320px,100%);display:flex;flex-direction:column;gap:7px}
 .exam .r{display:flex;align-items:center;gap:10px;padding:9px 13px;border-radius:12px;background:rgba(255,255,255,.08);animation:exin .35s both}
+.exam .r.old{opacity:.55;animation:none}.exgrid input.done{opacity:.6}
 .exam .rows.mini{gap:4px}.exam .rows.mini .r{padding:4px 12px}.exam .rows.mini .r i{font-size:15px}
 .exam .r b{width:42px} .exam .r i{font-style:normal;font-weight:850;font-size:20px;flex:1;font-variant-numeric:tabular-nums}
 .exam .r span{font-weight:800;color:#7ee2a8} .exam .r.z span{color:rgba(255,255,255,.4)}
@@ -636,7 +637,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v34・2026-11-06';
+const BUILD='v35・2026-11-06';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -2555,7 +2556,9 @@ function vScore(){
   h+='<div class="card" style="padding:13px;margin-top:12px;display:flex;align-items:center;gap:12px">'+avatarHTML(k)+
      '<div><div style="font-weight:800">'+esc(k.name)+'</div><div style="font-size:12.5px;color:var(--muted)">目前 '+fmtScore(bal)+'（'+bal+' 小分）</div></div>'+
      '<button class="btn sm" style="margin-left:auto" data-act="manual">自訂</button></div>';
-  h+='<button class="exbtn" data-act="exam">'+px('📝','big')+'<div><b>登錄大考成績</b><u>國語・數學・社會・自然・英文，送出後揭曉獎勵</u></div></button>';
+  {const op=ks.map(x=>{const g=examOpenOf(x.id);return g?esc(x.name)+' '+esc(g.name)+' 還差 '+(EX_SUBJ.length-Object.keys(g.scores).length)+' 科':''}).filter(Boolean);
+   h+='<button class="exbtn" data-act="exam">'+px('📝','big')+'<div><b>登錄大考成績</b><u>'+
+     (op.length?'可以補登：'+op.join('、'):'國語・數學・社會・自然・英文，送出後揭曉獎勵')+'</u></div></button>';}
   const all=live(S.rules);
   const day=all.filter(r=>r.kind==='earn'&&r.group!=='special');
   const sp=all.filter(r=>r.kind==='earn'&&r.group==='special');
@@ -3551,90 +3554,148 @@ function revealCard(w,k){
    紀錄都寫在帳本（舊版裝置也會原封不動同步）：基本分一筆帶 exam 資料，加成各一筆帶 examId。 */
 const EX_SUBJ=['國語','數學','社會','自然','英文'];
 function exBase(sc){const bu=BU();return sc>=100?4*bu:sc>=95?2*bu:sc>=90?bu:sc>=85?1:0}
-function examsOf(kidId){return S.ledger.filter(e=>e.kidId===kidId&&!e.voided&&e.exam).sort((a,b)=>a.ts-b.ts)}
+/* v35：同一次大考可以分次補登。每次送出寫一筆基本分（exam.id 相同、scores 只含這次填的科目），
+   合併起來就是這次大考的全部成績；加成每次用合併後的成績重算，只補「還沒發」的差額（不會收回）。 */
+const EX_LINE={n90:'L90',all90:'L90',n100:'L100',all100:'L100',up:'UP'};
+function examGroups(kidId){            // 這個小孩的每一次大考（舊→新）
+  const m=new Map();
+  for(const e of S.ledger){
+    if(e.kidId!==kidId||e.voided)continue;
+    const id=e.exam?e.exam.id:e.examId;if(!id)continue;
+    let g=m.get(id);if(!g){g={id,name:'',scores:{},ts:e.ts,paid:{BASE:0,L90:0,L100:0,UP:0},keys:{}};m.set(id,g)}
+    g.ts=Math.min(g.ts,e.ts);
+    if(e.exam){g.name=e.exam.name;Object.assign(g.scores,e.exam.scores||{});g.paid.BASE+=e.small}
+    else{const L=EX_LINE[e.bonusKey]||'UP';g.paid[L]+=e.small;g.keys[L]=e.bonusKey}
+  }
+  return [...m.values()].filter(g=>Object.keys(g.scores).length).sort((a,b)=>a.ts-b.ts);
+}
+function examsOf(kidId){return examGroups(kidId)}
 const exAvg=sc=>{const v=Object.values(sc).filter(x=>x!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0};
-function examCalc(kidId,scores){
+function examCalc(kidId,scores,exId){
   const bu=BU(),v=EX_SUBJ.filter(x=>scores[x]!=null).map(x=>scores[x]);
   const base=EX_SUBJ.map(x=>({subj:x,score:scores[x],pts:scores[x]==null?0:exBase(scores[x])}));
   const bonus=[],n90=v.filter(x=>x>=90).length,n100=v.filter(x=>x>=100).length;
-  if(n90>=5)bonus.push({key:'all90',name:'全科制霸',why:'五科都 90 分以上',pts:4*bu});
-  else if(n90===4)bonus.push({key:'n90',name:'四科連霸',why:'四科 90 分以上',pts:2*bu});
-  else if(n90===3)bonus.push({key:'n90',name:'三科連霸',why:'三科 90 分以上',pts:bu});
-  if(n100>=5)bonus.push({key:'all100',name:'全科滿分',why:'五科都 100 分！',pts:5*bu,gold:true});
-  else if(n100>=3)bonus.push({key:'n100',name:n100===4?'四百':'三百',why:n100+' 科 100 分',pts:3*bu,gold:true});
-  else if(n100===2)bonus.push({key:'n100',name:'雙百',why:'兩科 100 分',pts:bu,gold:true});
-  const prev=examsOf(kidId).pop();
+  if(n90>=5)bonus.push({key:'all90',line:'L90',name:'全科制霸',why:'五科都 90 分以上',pts:4*bu});
+  else if(n90===4)bonus.push({key:'n90',line:'L90',name:'四科連霸',why:'四科 90 分以上',pts:2*bu});
+  else if(n90===3)bonus.push({key:'n90',line:'L90',name:'三科連霸',why:'三科 90 分以上',pts:bu});
+  if(n100>=5)bonus.push({key:'all100',line:'L100',name:'全科滿分',why:'五科都 100 分！',pts:5*bu,gold:true});
+  else if(n100>=3)bonus.push({key:'n100',line:'L100',name:n100===4?'四百':'三百',why:n100+' 科 100 分',pts:3*bu,gold:true});
+  else if(n100===2)bonus.push({key:'n100',line:'L100',name:'雙百',why:'兩科 100 分',pts:bu,gold:true});
+  const gs=examGroups(kidId),me=exId?gs.find(g=>g.id===exId):null;
+  const prev=gs.filter(g=>g.id!==exId&&(!me||g.ts<me.ts)).pop();
   if(prev&&v.length){
-    const a0=exAvg(prev.exam.scores),a1=exAvg(scores);
-    if(a1-a0>=5)bonus.push({key:'up',name:'進步獎',why:'平均 '+a0.toFixed(1)+' → '+a1.toFixed(1)+'（+'+(a1-a0).toFixed(1)+'）',pts:bu});
+    const a0=exAvg(prev.scores),a1=exAvg(scores);
+    if(a1-a0>=5)bonus.push({key:'up',line:'UP',name:'進步獎',why:'平均 '+a0.toFixed(1)+' → '+a1.toFixed(1)+'（+'+(a1-a0).toFixed(1)+'）',pts:bu});
   }
   const sum=base.reduce((a,b)=>a+b.pts,0),bsum=bonus.reduce((a,b)=>a+b.pts,0);
   return {base,bonus,sum,bsum,total:sum+bsum};
 }
+/* 補登：用合併後成績重算，跟已經發的比，只補正的差額 */
+function examDelta(kidId,g,newScores){
+  const merged=Object.assign({},g?g.scores:{},newScores);
+  const c=examCalc(kidId,merged,g&&g.id);
+  const paid=g?g.paid:{BASE:0,L90:0,L100:0,UP:0};
+  const baseNew=EX_SUBJ.filter(x=>newScores[x]!=null).reduce((a,x)=>a+exBase(newScores[x]),0);
+  const bonus=[];
+  for(const b of c.bonus){const d=b.pts-(paid[b.line]||0);if(d>0)bonus.push(Object.assign({},b,{pts:d,up:(paid[b.line]||0)>0}))}
+  const bsum=bonus.reduce((a,b)=>a+b.pts,0);
+  return {merged,full:c,baseNew,bonus,total:baseNew+bsum,newSubj:Object.keys(newScores),
+    before:g?Object.values(g.paid).reduce((a,b)=>a+b,0):0};
+}
+function examOpenOf(kidId){            // 還沒五科都登錄、而且是最近 60 天的那一次
+  const g=examGroups(kidId).pop();
+  return g&&Object.keys(g.scores).length<EX_SUBJ.length&&now()-g.ts<60*864e5?g:null;
+}
+let exCur=null;
 function examSheet(){
   const ks=live(S.kids);if(!ks.length){toast('請先新增小孩');return}
   if(!ks.some(k=>k.id===selKid))selKid=ks[0].id;
-  const d=new Date(),dn=(d.getMonth()+1)+'/'+d.getDate();
   askPin('登錄大考成績需要家長密碼',()=>{
     sheet('📝 登錄大考成績',
       '<div class="f"><label>誰的成績</label><select id="exk">'+ks.map(k=>'<option value="'+k.id+'" '+(k.id===selKid?'selected':'')+'>'+esc(k.name)+'</option>').join('')+'</select></div>'+
-      '<div class="f"><label>考試名稱</label><input id="exn" placeholder="例如：第一次段考" value="大考 '+dn+'"></div>'+
-      '<div class="exgrid">'+EX_SUBJ.map((x,i)=>'<label for="exs'+i+'">'+x+'</label>'+
-        '<input id="exs'+i+'" type="number" inputmode="numeric" min="0" max="100" placeholder="—">'+
-        '<span class="pt" id="exp'+i+'">—</span>').join('')+'</div>'+
-      '<div class="f hint">100 分 4 大分、95 以上 2 大分、90 以上 1 大分、85 以上 1 小分。沒考的科目留白。</div>'+
-      '<button class="btn pri wide" data-act="examgo">送出成績</button>',
+      '<div class="f"><label>哪一次大考</label><select id="exw"></select></div>'+
+      '<div id="exbody"></div>',
       sh=>{
-        const upd=()=>EX_SUBJ.forEach((x,i)=>{const v=sh.querySelector('#exs'+i).value.trim(),el=sh.querySelector('#exp'+i);
-          if(v===''){el.textContent='—';el.classList.remove('on');return}
-          const p=exBase(clamp(parseInt(v)||0,0,100));el.textContent=p?'+'+fmtScore(p):'0';el.classList.toggle('on',!!p)});
-        sh.querySelectorAll('.exgrid input').forEach(i=>i.addEventListener('input',upd));
+        const fillW=()=>{const kidId=sh.querySelector('#exk').value,o=examOpenOf(kidId);
+          sh.querySelector('#exw').innerHTML=(o?'<option value="'+o.id+'">補登：'+esc(o.name)+'（已登錄 '+Object.keys(o.scores).length+' 科）</option>':'')+
+            '<option value="">新的一次大考</option>';fillB()};
+        const fillB=()=>{const kidId=sh.querySelector('#exk').value,id=sh.querySelector('#exw').value;
+          const g=id?examGroups(kidId).find(x=>x.id===id):null;exCur=g;
+          const d=new Date(),dn=(d.getMonth()+1)+'/'+d.getDate(),left=EX_SUBJ.filter(x=>!g||g.scores[x]==null);
+          sh.querySelector('#exbody').innerHTML=
+            (g?'':'<div class="f"><label>考試名稱</label><input id="exn" placeholder="例如：第一次段考" value="大考 '+dn+'"></div>')+
+            '<div class="exgrid">'+EX_SUBJ.map((x,i)=>{
+              const had=g&&g.scores[x]!=null;
+              return '<label for="exs'+i+'">'+x+'</label>'+
+                (had?'<input id="exs'+i+'" value="'+g.scores[x]+'" disabled class="done">'+'<span class="pt">已登錄</span>'
+                    :'<input id="exs'+i+'" type="number" inputmode="numeric" min="0" max="100" placeholder="—"><span class="pt" id="exp'+i+'">—</span>')}).join('')+'</div>'+
+            (g?'<div class="f hint">這次大考目前累計 <b class="ib">+'+fmtScore(Object.values(g.paid).reduce((a,b)=>a+b,0))+'</b>。補上還沒公布的科目，送出後會用全部的成績重新揭曉。'+
+                '<br>已登錄的分數輸錯的話，到「紀錄」把那筆撤銷再重登。</div>'
+              :'<div class="f hint">100 分 4 大分、95 以上 2 大分、90 以上 1 大分、85 以上 1 小分。還沒公布的科目先留白，之後可以再補登。</div>')+
+            (left.length?'<button class="btn pri wide" data-act="examgo">送出成績</button>'
+                        :'<div class="f hint" style="text-align:center">這次大考五科都登錄了</div>');
+          sh.querySelectorAll('.exgrid input:not(.done)').forEach(inp=>inp.addEventListener('input',()=>{
+            const i=+inp.id.slice(3),v=inp.value.trim(),el=sh.querySelector('#exp'+i);
+            if(v===''){el.textContent='—';el.classList.remove('on');return}
+            const p=exBase(clamp(parseInt(v)||0,0,100));el.textContent=p?'+'+fmtScore(p):'0';el.classList.toggle('on',!!p)}));
+        };
+        sh.querySelector('#exk').addEventListener('change',fillW);
+        sh.querySelector('#exw').addEventListener('change',fillB);
+        fillW();
       });
   });
 }
 function examGo(){
   const kidId=$('#exk').value,k=kid(kidId);if(!k)return;
+  const g=exCur&&exCur.id===$('#exw').value?exCur:null;
   const scores={};let any=false,bad=false;
-  EX_SUBJ.forEach((x,i)=>{const v=$('#exs'+i).value.trim();if(v==='')return;
+  EX_SUBJ.forEach((x,i)=>{const el=$('#exs'+i);if(!el||el.disabled)return;const v=el.value.trim();if(v==='')return;
     const n=parseInt(v);if(!(n>=0&&n<=100)){bad=true;return}scores[x]=n;any=true});
   if(bad){toast('分數要在 0～100 之間');buzz(90);return}
   if(!any){toast('至少要填一科');buzz(90);return}
-  const name=($('#exn').value||'').trim()||'大考';
-  const c=examCalc(kidId,scores),exId=uid('ex'),t=now();
+  const name=g?g.name:(($('#exn')&&$('#exn').value)||'').trim()||'大考';
+  const exId=g?g.id:uid('ex'),t=now(),D=examDelta(kidId,g,scores);
   const short=EX_SUBJ.filter(x=>scores[x]!=null).map(x=>x[0]+scores[x]).join(' ');
   const es=[];
-  es.push(commit({kidId,ts:t,small:c.sum,type:'earn',emoji:'📝',label:name+'：'+short,
-    exam:{id:exId,name,scores,base:c.sum}}));
-  c.bonus.forEach((b,i)=>es.push(commit({kidId,ts:t+i+1,small:b.pts,type:'earn',emoji:b.gold?'💯':'🏆',
-    label:name+' 隱藏獎勵：'+b.name+'（'+b.why+'）',examId:exId,bonusKey:b.key})));
+  es.push(commit({kidId,ts:t,small:D.baseNew,type:'earn',emoji:'📝',label:name+(g?'（補登）':'')+'：'+short,
+    exam:{id:exId,name,scores,base:D.baseNew}}));
+  D.bonus.forEach((b,i)=>es.push(commit({kidId,ts:t+i+1,small:b.pts,type:'earn',emoji:b.gold?'💯':'🏆',
+    label:name+' 隱藏獎勵：'+b.name+(b.up?'（升級補發）':'')+'（'+b.why+'）',examId:exId,bonusKey:b.key})));
   closeSheet();save();
-  examShow(k,name,c,()=>toast('📝 '+k.name+' '+name+' 共 +'+fmtScore(c.total),()=>{
-    for(const e of es){e.voided=true;touch(e)}save();toast('已撤銷這次成績')}));
+  examShow(k,name,D,()=>toast('📝 '+k.name+' '+name+(g?' 補登':'')+' +'+fmtScore(D.total)+(g?'（這次大考累計 +'+fmtScore(D.before+D.total)+'）':''),()=>{
+    for(const e of es){e.voided=true;touch(e)}save();toast('已撤銷這次登錄')}));
 }
-function examShow(k,name,c,done){
+function examShow(k,name,D,done){
+  /* D 可以是 examCalc 的結果（舊呼叫）或 examDelta 的結果 */
+  if(!D.merged)D={merged:Object.fromEntries(D.base.filter(b=>b.score!=null).map(b=>[b.subj,b.score])),baseNew:D.sum,bonus:D.bonus,total:D.total,before:0,fresh:true};
   const d=document.createElement('div');d.className='exam';
   d.innerHTML='<h3>'+esc(k.name)+'・'+esc(name)+'</h3><div class="rows"></div><div class="bx"></div><div class="tap">點一下跳過</div>';
   document.body.appendChild(d);
   const rows=d.querySelector('.rows'),bx=d.querySelector('.bx');
   const steps=[];let T=null,fin=false;
-  c.base.filter(b=>b.score!=null).forEach(b=>steps.push([380,()=>{
-    rows.insertAdjacentHTML('beforeend','<div class="r'+(b.pts?'':' z')+'"><b>'+b.subj+'</b><i>'+b.score+'</i><span>'+(b.pts?'+'+fmtScore(b.pts):'—')+'</span></div>');
-    if(b.pts)beep('good')}]));
-  if(c.bonus.length){
+  EX_SUBJ.filter(x=>D.merged[x]!=null).forEach(x=>{
+    const sc=D.merged[x],pts=exBase(sc),old=D.before&&!D.fresh&&(D.newSubj?!D.newSubj.includes(x):false);
+    steps.push([old?120:380,()=>{
+      rows.insertAdjacentHTML('beforeend','<div class="r'+(pts?'':' z')+(old?' old':'')+'"><b>'+x+'</b><i>'+sc+'</i><span>'+(old?'已登錄':(pts?'+'+fmtScore(pts):'—'))+'</span></div>');
+      if(pts&&!old)beep('good')}]);
+  });
+  if(D.bonus.length){
     steps.push([700,()=>{rows.style.transition='opacity .4s';rows.style.opacity='.45';rows.classList.add('mini');
       bx.innerHTML='<div class="unlock">⚡ 隱藏獎勵解鎖！</div>';beep('big');buzz([60,40,60])}]);
-    c.bonus.forEach((b,i)=>steps.push([1100,()=>{
-      bx.insertAdjacentHTML('beforeend','<div class="bonus'+(b.gold?' gold':'')+'" style="margin-top:8px"><em>'+esc(b.why)+'</em><b>'+(b.gold?'💯 ':'🏆 ')+esc(b.name)+'</b><span>+'+fmtScore(b.pts)+'</span></div>');
+    D.bonus.forEach(b=>steps.push([1100,()=>{
+      bx.insertAdjacentHTML('beforeend','<div class="bonus'+(b.gold?' gold':'')+'" style="margin-top:8px"><em>'+esc(b.why)+'</em><b>'+(b.gold?'💯 ':'🏆 ')+esc(b.name)+(b.up?' 升級！':'')+'</b><span>+'+fmtScore(b.pts)+(b.up?'（補發）':'')+'</span></div>');
       beep('big');buzz(80);
       if(b.gold){let sp='<div class="sparks">';const cols=['#ffd84d','#fff','#f0a000','#ff8a3d'];
         for(let j=0;j<34;j++)sp+='<i style="left:'+Math.random()*100+'%;top:-'+(Math.random()*20+5)+'%;background:'+cols[(Math.random()*4)|0]+';animation-delay:'+(Math.random()*.5)+'s"></i>';
         d.insertAdjacentHTML('afterbegin',sp+'</div>')}}]));
   }
-  steps.push([c.bonus.length?1100:500,()=>{
-    bx.insertAdjacentHTML('beforeend','<div class="tot">共 <b>+'+fmtScore(c.total)+'</b></div>');d.querySelector('.tap').textContent='點一下關閉';fin=true}]);
+  steps.push([D.bonus.length?1100:500,()=>{
+    bx.insertAdjacentHTML('beforeend','<div class="tot">這次 <b>+'+fmtScore(D.total)+'</b>'+
+      (D.before?'<div style="font-size:13px;opacity:.75;margin-top:4px">這次大考累計 +'+fmtScore(D.before+D.total)+'</div>':'')+'</div>');
+    d.querySelector('.tap').textContent='點一下關閉';fin=true}]);
   let i=0;const next=()=>{if(i>=steps.length)return;const[ms,fn]=steps[i];T=setTimeout(()=>{i++;fn();next()},ms)};next();
   d.addEventListener('click',()=>{
-    if(!fin){clearTimeout(T);while(i<steps.length)steps[i++][1]();return}   // 第一下：全部翻開
+    if(!fin){clearTimeout(T);while(i<steps.length)steps[i++][1]();return}
     d.remove();done&&done();
   });
 }
@@ -4368,7 +4429,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,examCalc,exBase,examsOf,examShow,streakGap,streakFrom,streakSkipped,keepStreak,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
+  toggleNoDice,examCalc,exBase,examsOf,examShow,examGroups,examDelta,examOpenOf,streakGap,streakFrom,streakSkipped,keepStreak,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
