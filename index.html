@@ -637,7 +637,7 @@ const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.par
 function h33(s){let h=5381;s=String(s);for(let i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
 const KC=['#5b6cff','#ff6fa5','#12b886','#f5a524','#8b5cf6','#06b6d4','#ef5da8','#2dd4bf'];
 
-const BUILD='v36・2026-11-08';
+const BUILD='v37・2026-11-11';
 let newBuild=null;
 async function checkUpdate(auto){
   if(location.protocol==='file:')return;
@@ -1866,8 +1866,35 @@ function scrPenaltyFor(kidId,day){
   const prior=S.ledger.filter(e=>e.id&&e.id.startsWith(pre)&&!e.voided&&e.id.slice(pre.length)<day).length;
   return prior?Math.max(0,scrSet().screenPen2|0):Math.max(0,scrSet().screenPen1|0);
 }
+/* v37：超時判定一定要用「剛從雲端拿到」的資料。
+   之前的 bug：另一台裝置停止了倒數，但這台還沒同步，一打開就以為倒數還在跑 → 誤扣分
+   （11/7、11/8 兩兄弟、11/11 哥哥都是這樣）。
+   現在：有連雲端時，要在「時間到＋寬限」之後成功同步過、而且是 20 秒內的資料，才會扣分；不夠新就先去同步。
+   另外每次都重新檢查已經扣的超時分：用最新資料算出來其實沒超時，就自動撤銷（退分）。 */
+let scrPullAsk=0;
+function scrFresh(after){
+  if(!ghReady())return true;                       // 沒有雲端同步：只有這台，照本機判斷
+  if(syncOkTs>=after&&now()-syncOkTs<20000)return true;
+  if(now()-scrPullAsk>15000){scrPullAsk=now();pull(true)}
+  return false;
+}
+function scrHeal(){
+  const t=now();let n=0;
+  for(const e of S.ledger){
+    if(!e.id||!e.id.startsWith('scr_')||e.voided)continue;
+    const day=e.screenDay||e.id.slice(e.id.lastIndexOf('_')+1);
+    if(!scrSessions(e.kidId,day).length)continue;          // 沒有當天的使用紀錄就不判斷
+    if(scrDay(e.kidId,day,t).viol)continue;                  // 真的超時，留著
+    if(!scrFresh(0))return 0;
+    e.voided=true;e.autoVoid='v37：用最新紀錄重算沒有超時，自動撤銷';touch(e);n++;
+    const k=kid(e.kidId);toast('↩︎ '+(k?k.name:'')+' '+day.slice(5).replace('-','/')+' 的 3C 超時是誤判，已退回 '+(-e.small)+' 小分');
+  }
+  if(n)save();
+  return n;
+}
 function scrEnforce(){
   if(!S.screen||!S.screen.length)return 0;
+  scrHeal();
   const t=now(),days=new Set();
   for(const x of S.screen)if(x&&!x.voided&&x.start>t-3*864e5)days.add(x.kidId+'|'+x.day);
   let n=0;
@@ -1876,6 +1903,7 @@ function scrEnforce(){
     const d=scrDay(kidId,day,t);if(!d.viol)continue;
     const id='scr_'+kidId+'_'+day;
     if(S.ledger.some(e=>e.id===id))continue;
+    if(!scrFresh(d.viol.ts))continue;                        // 先同步，確定別台沒有已經按停止
     let amt=scrPenaltyFor(kidId,day);if(!amt)continue;
     const nth=S.ledger.filter(e=>e.id&&e.id.startsWith('scr_'+kidId+'_')&&!e.voided).length+1;
     if(!S.settings.allowNegative)amt=Math.min(amt,Math.max(0,balanceOf(kidId)));
@@ -2375,6 +2403,7 @@ function queuePush(media){
   clearTimeout(pushTimer);
   pushTimer=setTimeout(()=>push(),2200);
 }
+let syncOkTs=0;   // v37：最近一次成功從雲端讀到資料的時間（超時判定要用新鮮資料）
 async function push(){
   if(!ghReady()||pushing)return;
   if(!navigator.onLine){setSync('idle');return}
@@ -2382,6 +2411,7 @@ async function push(){
   try{
     const rem=await ghRead(GH.path||'data.json');
     if(rem.data){S=migrate(mergeState(S,rem.data));LS.set(K_STATE,S)}
+    syncOkTs=now();
     await ghWrite(GH.path||'data.json',S,'積分更新 '+new Date().toLocaleString('zh-TW'),
       rd=>{S=migrate(mergeState(S,rd));LS.set(K_STATE,S);return S});
     if(needMedia){
@@ -2402,6 +2432,7 @@ async function pull(quiet){
   try{
     const rs=await ghRead(GH.path||'data.json');
     if(rs.data){S=migrate(mergeState(S,rs.data));LS.set(K_STATE,S);reconcileDice()}
+    syncOkTs=now();
     const rm=await ghRead(GH.mediaPath||'media.json').catch(()=>({missing:true}));
     if(rm.data){M=mergeMedia(M,rm.data);LS.set(K_MEDIA,M)}
     if(!GH.ok){GH.ok=true;LS.set(K_GH,GH)}
@@ -4491,7 +4522,7 @@ window.KP={get S(){return S},get M(){return M},addPoints,applyRule,save,touch,da
   deposit,diceLog,budgetAvail,set logTab(v){logTab=v},diceOf,allDone,bankedOf,interestOf,
   jarOf,jarValue,jarDaysLeft,jarProject,jarGainIn,claimJar,withdrawJar,setJarTarget,bankCap,bankCycle,bankTiers,tierAt,toggleVoid,
   grantDice,bonusDice,diceRaw,diceEarned,diceUsed,reconcileDice,diceLog,fmtAcc,saveTipFor,showSaveTip,tipShownToday,markTip,
-  toggleNoDice,examCalc,exBase,examsOf,examShow,examGroups,examDelta,examOpenOf,streakGap,streakFrom,streakSkipped,keepStreak,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
+  toggleNoDice,scrHeal,scrFresh,set syncOkTs(v){syncOkTs=v},get syncOkTs(){return syncOkTs},examCalc,exBase,examsOf,examShow,examGroups,examDelta,examOpenOf,streakGap,streakFrom,streakSkipped,keepStreak,ntURL,ntMode,clockOf,scrDay,scrState,scrStart,scrStop,scrEnforce,scrTick,scrPenaltyFor,scrCut,scrSetSheet,useNow,undoNow,useNowSheet,scoreDice,scoreRun,scoreStart,scoreGain,isDeduct,DICE_V27,
   rollDice,gp,tileAt,step,applyCard,rollResult,gameHelpSheet,slotHTML,runSlot,uniqTiles,shieldsOf,landOn,lapBonus,chainCap,mergeGame,offerShield,applyBad,tileDesc,tileSheet,
   calcSheet,gameHelpSheet,compactOld,oldCount,archiveCut,chartSeries,chartBox,earnedOf,arcOf,
   px,pxi,fi,FLAT,PXKEYS,icoField,ghSetup,ghCheck,closeSheet,editRule,editRw,editRt,editKid,toggleRoutine,
